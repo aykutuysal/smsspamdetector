@@ -21,8 +21,6 @@ public class SVMSpam {
 	
 	private int featureCount;
 	
-	
-	
 	public SVMSpam(int featureCount) {
 		this.featureCount = featureCount;
 	}
@@ -32,15 +30,19 @@ public class SVMSpam {
 		
 		this.svmSpamTrainProblem = readInput("data/train.1");
 		this.svmSpamParameter = createSvmParameter();
+		do_cross_validation();
 		this.svmSpamModel = train();
-		this.svmSpamTestProblem = readInput("data/test.1");
 		
+//		try {
+//			svm.svm_save_model("model.txt", this.svmSpamModel);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+		this.svmSpamTestProblem = readInput("data/test.1");
 		predict();
 		
 		
-		
-		
-		
+	
 //		double[] target = new double[svmSpamProblem.l];
 //		svm.svm_cross_validation(svmSpamProblem, svmSpamParameter, 5, target );
 //		
@@ -64,18 +66,19 @@ public class SVMSpam {
 			
 			FileWriter output = new FileWriter(new File("data/out.txt"));
 			
-			int count = 0;
+			double count = 0;
 			
-			for(int i=0;i<featureCount;i++) {
+			for(int i=0;i<svmSpamTestProblem.l;i++) {
 				double result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
+				System.out.println(result);
+				output.write(String.valueOf(result) + "\n");
 				if( result == svmSpamTestProblem.y[i] )
 				{
 					count++;
 				}
-				output.write(String.valueOf(result));
 			}
 			
-			System.out.println("Predict Accuracy : %" + count/svmSpamTestProblem.l*100);
+			System.out.println("Predict Accuracy : %" + count/(double)svmSpamTestProblem.l*100);
 			
 			
 		} catch (IOException e) {
@@ -85,17 +88,59 @@ public class SVMSpam {
 
 	}
 	
+	private void do_cross_validation()
+	  {
+	    int j = 0;
+	    double d1 = 0.0D;
+	    double d2 = 0.0D; double d3 = 0.0D; double d4 = 0.0D; double d5 = 0.0D; double d6 = 0.0D;
+	    double[] arrayOfDouble = new double[this.svmSpamTrainProblem.l];
+
+	    svm.svm_cross_validation(this.svmSpamTrainProblem, this.svmSpamParameter, 5, arrayOfDouble);
+	    int i;
+	    if ((this.svmSpamParameter.svm_type == 3) || (this.svmSpamParameter.svm_type == 4))
+	    {
+	      for (i = 0; i < this.svmSpamTrainProblem.l; i++)
+	      {
+	        double d7 = this.svmSpamTrainProblem.y[i];
+	        double d8 = arrayOfDouble[i];
+	        d1 += (d8 - d7) * (d8 - d7);
+	        d2 += d8;
+	        d3 += d7;
+	        d4 += d8 * d8;
+	        d5 += d7 * d7;
+	        d6 += d8 * d7;
+	      }
+	      System.out.print("Cross Validation Mean squared error = " + d1 / this.svmSpamTrainProblem.l + "\n");
+	      System.out.print("Cross Validation Squared correlation coefficient = " + (this.svmSpamTrainProblem.l * d6 - d2 * d3) * (this.svmSpamTrainProblem.l * d6 - d2 * d3) / ((this.svmSpamTrainProblem.l * d4 - d2 * d2) * (this.svmSpamTrainProblem.l * d5 - d3 * d3)) + "\n");
+	    }
+	    else
+	    {
+	      for (i = 0; i < this.svmSpamTrainProblem.l; i++)
+	        if (arrayOfDouble[i] == this.svmSpamTrainProblem.y[i])
+	          j++;
+	      System.out.print("Cross Validation Accuracy = " + 100.0D * j / this.svmSpamTrainProblem.l + "%\n");
+	    }
+	  }
+	
+	
 	public svm_parameter createSvmParameter() {
 		svm_parameter svmParameter = new svm_parameter();
-		svmParameter.svm_type = svm_parameter.C_SVC;
-		svmParameter.kernel_type = svm_parameter.RBF;
-		svmParameter.cache_size = 100;
-		svmParameter.eps = 0.001;
-		svmParameter.nr_weight = 1;
-		svmParameter.probability = 0;
-		svmParameter.shrinking = 1;
-		svmParameter.gamma = 1/featureCount;
-		//svmParameter.C = 3;
+		svmParameter.svm_type = 0;
+	    svmParameter.kernel_type = 2;
+	    svmParameter.degree = 3;
+	    svmParameter.gamma = 1.0/(double)featureCount;
+	    svmParameter.coef0 = 0.0D;
+	    svmParameter.nu = 0.5D;
+	    svmParameter.cache_size = 100.0D;
+	    svmParameter.C = 1.0D;
+	    svmParameter.eps = 0.001D;
+	    svmParameter.p = 0.1D;
+	    svmParameter.shrinking = 1;
+	    svmParameter.probability = 0;
+	    svmParameter.nr_weight = 0;
+	    svmParameter.weight_label = new int[0];
+	    svmParameter.weight = new double[0];
+
 		return svmParameter;
 	}
 	
@@ -136,7 +181,7 @@ public class SVMSpam {
 //			//print nodes
 //			for(int i=0;i<length;i++) {
 //				for(int j=0;j<featureCount;j++) {
-//					System.out.print(nodes[i][j].index + "," + nodes[i][j].value + " ");
+//					System.out.print(i + ". " + yList[i] + " " + nodes[i][j].index + ":" + nodes[i][j].value + " ");
 //				}
 //				System.out.println();
 //			}
