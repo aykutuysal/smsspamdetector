@@ -2,17 +2,22 @@ package com.spamfilter.svm;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 import libsvm.svm;
+import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
 
 public class SVMSpam {
 
-	private svm_problem svmSpamProblem;
+	private svm_problem svmSpamTrainProblem;
+	private svm_problem svmSpamTestProblem;
 	private svm_parameter svmSpamParameter;
+	private svm_model svmSpamModel;
 	
 	private int featureCount;
 	
@@ -20,37 +25,84 @@ public class SVMSpam {
 	
 	public SVMSpam(int featureCount) {
 		this.featureCount = featureCount;
-		this.svmSpamParameter = new svm_parameter();
-		this.svmSpamProblem = new svm_problem();
 	}
 
 	
 	public void start() {
-		readInput();
-		createSvmParameter();
 		
-		double[] target = new double[svmSpamProblem.l];
-		svm.svm_cross_validation(svmSpamProblem, svmSpamParameter, 5, target );
+		this.svmSpamTrainProblem = readInput("data/train.1");
+		this.svmSpamParameter = createSvmParameter();
+		this.svmSpamModel = train();
+		this.svmSpamTestProblem = readInput("data/test.1");
 		
-//		System.out.println("Target array-----------------");
-//		for(int i=0;i<target.length;i++)
-//			System.out.println(target[i] + " - " + svmSpamProblem.y[i]);
-//		System.out.println("target finished ----------------------");
-		System.out.println("Cross Validation Accuracy : " + calculateCrossValidationAccuracy(target));
+		predict();
 		
-		//train();
+		
+		
+		
+		
+//		double[] target = new double[svmSpamProblem.l];
+//		svm.svm_cross_validation(svmSpamProblem, svmSpamParameter, 5, target );
+//		
+////		System.out.println("Target array-----------------");
+////		for(int i=0;i<target.length;i++)
+////			System.out.println(target[i] + " - " + svmSpamProblem.y[i]);
+////		System.out.println("target finished ----------------------");
+//		System.out.println("Cross Validation Accuracy : " + calculateCrossValidationAccuracy(target));
+//		
+//		//train();
 		
 	}
 	
-	public void train() {
-		svm.svm_train(svmSpamProblem, svmSpamParameter);
+	public svm_model train() {
+		return svm.svm_train(svmSpamTrainProblem, svmSpamParameter);
 	}
 	
-	public void readInput() {
-		
+	public void predict() {
 		
 		try {
-			File trainingFile = new File("data/train.1");
+			
+			FileWriter output = new FileWriter(new File("data/out.txt"));
+			
+			int count = 0;
+			
+			for(int i=0;i<featureCount;i++) {
+				double result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
+				if( result == svmSpamTestProblem.y[i] )
+				{
+					count++;
+				}
+				output.write(String.valueOf(result));
+			}
+			
+			System.out.println("Predict Accuracy : %" + count/svmSpamTestProblem.l*100);
+			
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+
+	}
+	
+	public svm_parameter createSvmParameter() {
+		svm_parameter svmParameter = new svm_parameter();
+		svmParameter.svm_type = svm_parameter.C_SVC;
+		svmParameter.kernel_type = svm_parameter.RBF;
+		svmParameter.cache_size = 100;
+		svmParameter.eps = 0.001;
+		svmParameter.nr_weight = 1;
+		svmParameter.probability = 0;
+		svmParameter.shrinking = 1;
+		svmParameter.gamma = 1/featureCount;
+		//svmParameter.C = 3;
+		return svmParameter;
+	}
+	
+	public svm_problem readInput(String path) {
+		
+		try {
+			File trainingFile = new File(path);
 			Scanner scanner = new Scanner(trainingFile);
 			
 			// length of the input
@@ -89,34 +141,25 @@ public class SVMSpam {
 //				System.out.println();
 //			}
 			
-			svmSpamProblem.l = length;
-			svmSpamProblem.y = yList;
-			svmSpamProblem.x = nodes;	
+			svm_problem svmProblem = new svm_problem();
+			svmProblem.l = length;
+			svmProblem.y = yList;
+			svmProblem.x = nodes;	
 			
+			return svmProblem;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		
-	}
-
-
-	public void createSvmParameter() {
-		svmSpamParameter.svm_type = svm_parameter.C_SVC;
-		svmSpamParameter.kernel_type = svm_parameter.RBF;
-		svmSpamParameter.cache_size = 10;
-		svmSpamParameter.eps = 0.001;
-		svmSpamParameter.nr_weight = 0;
-		svmSpamParameter.probability = 0;
-		svmSpamParameter.shrinking = 0;
-		svmSpamParameter.gamma = 1/featureCount;
-		svmSpamParameter.C = 3;
+		return null;
+		
 	}
 	
 	public double calculateCrossValidationAccuracy(double[] target) {
 		int totalMatch = 0;
 		for(int i=0;i<target.length;i++) {
 			
-			if(target[i] == svmSpamProblem.y[i] ){
+			if(target[i] == svmSpamTrainProblem.y[i] ){
 				totalMatch++;
 			}
 			
@@ -126,11 +169,11 @@ public class SVMSpam {
 	
 
 	public svm_problem getSvmSpamProblem() {
-		return svmSpamProblem;
+		return svmSpamTrainProblem;
 	}
 
 	public void setSvmSpamProblem(svm_problem svmSpamProblem) {
-		this.svmSpamProblem = svmSpamProblem;
+		this.svmSpamTrainProblem = svmSpamProblem;
 	}
 
 	public svm_parameter getSvmSpamParameter() {
