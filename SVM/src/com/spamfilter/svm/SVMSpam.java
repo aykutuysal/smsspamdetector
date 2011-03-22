@@ -18,26 +18,36 @@ public class SVMSpam {
 	private svm_problem svmSpamTestProblem;
 	private svm_parameter svmSpamParameter;
 	private svm_model svmSpamModel;
+	private SVMScale scaler;
 	
 	private int featureCount;
 	
 	public SVMSpam(int featureCount) {
 		this.featureCount = featureCount;
+		this.scaler = new SVMScale();
 	}
 
 	
 	public void start() {
 		
-		this.svmSpamTrainProblem = readInput("data/train.1");
+		
+		try {
+			this.scaler.scale("data/range", "data/train.1", "data/train1.scaled", -1.0, 1.0);
+			this.scaler.scale("data/range", "data/test.1", "data/test1.scaled", -1.0, 1.0);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		this.svmSpamTrainProblem = readInput("data/train1.scaled");
 		this.svmSpamParameter = createSvmParameter();
+		
+		
+		
 		do_cross_validation();
+		
 		this.svmSpamModel = train();
 		
-//		try {
-//			svm.svm_save_model("model.txt", this.svmSpamModel);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 		this.svmSpamTestProblem = readInput("data/test.1");
 		predict();
 		
