@@ -2,6 +2,7 @@ package com.spamfilter.svm;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,21 +37,28 @@ public class SVMScale {
 		return new BufferedReader(new FileReader(paramString));
 	}
 
-	public void scale(String rangePath, String inputPath, String outPath,
-			double lowerBound, double upperBound) throws IOException {
+	public void scale(String rangeSavePath, String rangeLoadPath,
+			String inputPath, double lowerBound, double upperBound)
+			throws IOException {
 
 		BufferedReader localBufferedReader1 = null;
 		BufferedReader localBufferedReader2 = null;
-		BufferedReader localBufferedReader3 = null;
 
 		this.lower = lowerBound;
 		this.upper = upperBound;
-		String str1 = rangePath;
-		String str2 = inputPath;
-		String str3 = outPath;
+		String str1 = rangeSavePath;
+		String str2 = rangeLoadPath;
+		String str3 = inputPath;
 
 		localBufferedReader1 = new BufferedReader(new FileReader(str3));
-
+		if (this.upper <= this.lower) {
+			System.err.println("inconsistent lower/upper specification");
+			System.exit(1);
+		}
+		if ((str2 != null) && (str1 != null)) {
+			System.err.println("cannot use -r and -s simultaneously");
+			System.exit(1);
+		}
 		this.max_index = 0;
 
 		if (str2 != null) {
@@ -192,50 +200,47 @@ public class SVMScale {
 
 			if (this.y_scaling) {
 				localFormatter.format("y\n", new Object[0]);
-				localFormatter.format(
-						"%.16g %.16g\n",
-						new Object[] { Double.valueOf(this.y_lower),
-								Double.valueOf(this.y_upper) });
-				localFormatter.format(
-						"%.16g %.16g\n",
+				localFormatter.format("%.16g %.16g\n", new Object[] {
+						Double.valueOf(this.y_lower),
+						Double.valueOf(this.y_upper) });
+				localFormatter.format("%.16g %.16g\n",
 						new Object[] { Double.valueOf(this.y_min),
 								Double.valueOf(this.y_max) });
 			}
 			localFormatter.format("x\n", new Object[0]);
-			localFormatter.format(
-					"%.16g %.16g\n",
-					new Object[] { Double.valueOf(this.lower),
-							Double.valueOf(this.upper) });
+			localFormatter.format("%.16g %.16g\n", new Object[] {
+					Double.valueOf(this.lower), Double.valueOf(this.upper) });
 			for (int i = 1; i <= this.max_index; i++) {
 				if (this.feature_min[i] != this.feature_max[i])
-					localFormatter.format(
-							"%d %.16g %.16g\n",
-							new Object[] { Integer.valueOf(i),
-									Double.valueOf(this.feature_min[i]),
-									Double.valueOf(this.feature_max[i]) });
+					localFormatter.format("%d %.16g %.16g\n", new Object[] {
+							Integer.valueOf(i),
+							Double.valueOf(this.feature_min[i]),
+							Double.valueOf(this.feature_max[i]) });
 			}
 			localBufferedWriter.write(localFormatter.toString());
 			localBufferedWriter.close();
 		}
 
+		FileWriter outFile = new FileWriter(new File(str3 + ".scaled"));
+		
 		while (readline(localBufferedReader1) != null) {
 			int n = 1;
 
 			localStringTokenizer3 = new StringTokenizer(this.line, " \t\n\r\f:");
 			double d2 = Double.parseDouble(localStringTokenizer3.nextToken());
-			output_target(d2);
+			outFile.write(output_target(d2));
 			while (localStringTokenizer3.hasMoreElements()) {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
 				for (int i = n; i < j; i++)
-					output(i, 0.0D);
-				output(j, d4);
+					outFile.write(output(i, 0.0D));
+				outFile.write(output(j, d4));
 				n = j + 1;
 			}
 
 			for (int i = n; i <= this.max_index; i++)
-				output(i, 0.0D);
-			System.out.print("\n");
+				outFile.write(output(i, 0.0D));
+			outFile.write("\n");
 		}
 		if (this.new_num_nonzeros > this.num_nonzeros) {
 			System.err.print("Warning: original #nonzeros " + this.num_nonzeros
@@ -247,7 +252,7 @@ public class SVMScale {
 		localBufferedReader1.close();
 	}
 
-	private void output_target(double paramDouble) {
+	private String output_target(double paramDouble) {
 		if (this.y_scaling) {
 			if (paramDouble == this.y_min)
 				paramDouble = this.y_lower;
@@ -260,12 +265,12 @@ public class SVMScale {
 			}
 		}
 
-		System.out.print(paramDouble + " ");
+		return String.valueOf(paramDouble) + " ";
 	}
 
-	private void output(int paramInt, double paramDouble) {
+	private String output(int paramInt, double paramDouble) {
 		if (this.feature_max[paramInt] == this.feature_min[paramInt]) {
-			return;
+			return null;
 		}
 		if (paramDouble == this.feature_min[paramInt])
 			paramDouble = this.lower;
@@ -278,8 +283,9 @@ public class SVMScale {
 		}
 
 		if (paramDouble != 0.0D) {
-			System.out.print(paramInt + ":" + paramDouble + " ");
 			this.new_num_nonzeros += 1L;
+			return String.valueOf(paramInt) + ":" + String.valueOf(paramDouble) + " ";
 		}
+		return null;
 	}
 }
