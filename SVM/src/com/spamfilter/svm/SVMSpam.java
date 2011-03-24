@@ -32,14 +32,14 @@ public class SVMSpam {
 		
 		
 		try {
-			this.scaler.scale("data/range", "data/train.1", "data/train1.scaled", -1.0, 1.0);
-			this.scaler.scale("data/range", "data/test.1", "data/test1.scaled", -1.0, 1.0);
+			this.scaler.scale("data/range", null, "data/train.1", -1.0, 1.0);
+			this.scaler.scale(null, "data/range", "data/test.1", -1.0, 1.0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		
-		this.svmSpamTrainProblem = readInput("data/train1.scaled");
+		this.svmSpamTrainProblem = readInput("data/train.1.scaled");
 		this.svmSpamParameter = createSvmParameter();
 		
 		
@@ -48,7 +48,7 @@ public class SVMSpam {
 		
 		this.svmSpamModel = train();
 		
-		this.svmSpamTestProblem = readInput("data/test.1");
+		this.svmSpamTestProblem = readInput("data/test.1.scaled");
 		predict();
 		
 		
@@ -80,7 +80,7 @@ public class SVMSpam {
 			
 			for(int i=0;i<svmSpamTestProblem.l;i++) {
 				double result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
-				System.out.println(result);
+//				System.out.println(result);
 				output.write(String.valueOf(result) + "\n");
 				if( result == svmSpamTestProblem.y[i] )
 				{
@@ -150,7 +150,6 @@ public class SVMSpam {
 	    svmParameter.nr_weight = 0;
 	    svmParameter.weight_label = new int[0];
 	    svmParameter.weight = new double[0];
-
 		return svmParameter;
 	}
 	
