@@ -16,11 +16,11 @@ public class SVMScale {
 	private long num_nonzeros;
 	private double[] feature_max;
 	private double[] feature_min;
-	private double y_max;
-	private double y_min;
-	private double y_lower;
-	private double y_upper;
-	private boolean y_scaling;
+//	private double y_max;
+//	private double y_min;
+//	private double y_lower;
+//	private double y_upper;
+//	private boolean y_scaling;
 	private double lower;
 	private double upper;
 	private long new_num_nonzeros;
@@ -115,8 +115,8 @@ public class SVMScale {
 
 			localStringTokenizer3 = new StringTokenizer(this.line, " \t\n\r\f:");
 			double d1 = Double.parseDouble(localStringTokenizer3.nextToken());
-			this.y_max = Math.max(this.y_max, d1);
-			this.y_min = Math.min(this.y_min, d1);
+//			this.y_max = Math.max(this.y_max, d1);
+//			this.y_min = Math.min(this.y_min, d1);
 
 			while (localStringTokenizer3.hasMoreTokens()) {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
@@ -148,17 +148,18 @@ public class SVMScale {
 				localBufferedReader2.readLine();
 				localStringTokenizer4 = new StringTokenizer(
 						localBufferedReader2.readLine());
-				this.y_lower = Double.parseDouble(localStringTokenizer4
-						.nextToken());
-				this.y_upper = Double.parseDouble(localStringTokenizer4
-						.nextToken());
-				localStringTokenizer4 = new StringTokenizer(
-						localBufferedReader2.readLine());
-				this.y_min = Double.parseDouble(localStringTokenizer4
-						.nextToken());
-				this.y_max = Double.parseDouble(localStringTokenizer4
-						.nextToken());
-				this.y_scaling = true;
+//				this.y_lower = Double.parseDouble(localStringTokenizer4
+//						.nextToken());
+//				this.y_upper = Double.parseDouble(localStringTokenizer4
+//						.nextToken());
+//				localStringTokenizer4 = new StringTokenizer(
+//						localBufferedReader2.readLine());
+//				this.y_min = Double.parseDouble(localStringTokenizer4
+//						.nextToken());
+//				this.y_max = Double.parseDouble(localStringTokenizer4
+//						.nextToken());
+//				this.y_scaling = true;
+				System.out.println("I am here O_0");
 			} else {
 				localBufferedReader2.reset();
 			}
@@ -198,15 +199,15 @@ public class SVMScale {
 				System.exit(1);
 			}
 
-			if (this.y_scaling) {
-				localFormatter.format("y\n", new Object[0]);
-				localFormatter.format("%.16g %.16g\n", new Object[] {
-						Double.valueOf(this.y_lower),
-						Double.valueOf(this.y_upper) });
-				localFormatter.format("%.16g %.16g\n",
-						new Object[] { Double.valueOf(this.y_min),
-								Double.valueOf(this.y_max) });
-			}
+//			if (this.y_scaling) {
+//				localFormatter.format("y\n", new Object[0]);
+//				localFormatter.format("%.16g %.16g\n", new Object[] {
+//						Double.valueOf(this.y_lower),
+//						Double.valueOf(this.y_upper) });
+//				localFormatter.format("%.16g %.16g\n",
+//						new Object[] { Double.valueOf(this.y_min),
+//								Double.valueOf(this.y_max) });
+//			}
 			localFormatter.format("x\n", new Object[0]);
 			localFormatter.format("%.16g %.16g\n", new Object[] {
 					Double.valueOf(this.lower), Double.valueOf(this.upper) });
@@ -253,17 +254,17 @@ public class SVMScale {
 	}
 
 	private String output_target(double paramDouble) {
-		if (this.y_scaling) {
-			if (paramDouble == this.y_min)
-				paramDouble = this.y_lower;
-			else if (paramDouble == this.y_max)
-				paramDouble = this.y_upper;
-			else {
-				paramDouble = this.y_lower + (this.y_upper - this.y_lower)
-						* (paramDouble - this.y_min)
-						/ (this.y_max - this.y_min);
-			}
-		}
+//		if (this.y_scaling) {
+//			if (paramDouble == this.y_min)
+//				paramDouble = this.y_lower;
+//			else if (paramDouble == this.y_max)
+//				paramDouble = this.y_upper;
+//			else {
+//				paramDouble = this.y_lower + (this.y_upper - this.y_lower)
+//						* (paramDouble - this.y_min)
+//						/ (this.y_max - this.y_min);
+//			}
+//		}
 
 		return String.valueOf(paramDouble) + " ";
 	}
