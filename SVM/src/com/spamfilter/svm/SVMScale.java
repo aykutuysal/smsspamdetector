@@ -62,9 +62,14 @@ public class SVMScale {
 		this.max_index = 0;
 
 		if (str2 != null) {
-			localBufferedReader2 = new BufferedReader(new FileReader(str2));
-			int i1;
-			if ((i1 = localBufferedReader2.read()) == 121) {
+			try {
+				localBufferedReader2 = new BufferedReader(new FileReader(str2));
+			} catch (Exception localException2) {
+				System.err.println("can't open file " + str2);
+				System.exit(1);
+			}
+			int i2;
+			if ((i2 = localBufferedReader2.read()) == 121) {
 				localBufferedReader2.readLine();
 				localBufferedReader2.readLine();
 				localBufferedReader2.readLine();
@@ -225,7 +230,7 @@ public class SVMScale {
 		FileWriter outFile = new FileWriter(new File(str3 + ".scaled"));
 		
 		while (readline(localBufferedReader1) != null) {
-			int n = 1;
+			int i1 = 1;
 
 			localStringTokenizer3 = new StringTokenizer(this.line, " \t\n\r\f:");
 			double d2 = Double.parseDouble(localStringTokenizer3.nextToken());
@@ -233,13 +238,13 @@ public class SVMScale {
 			while (localStringTokenizer3.hasMoreElements()) {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
-				for (int i = n; i < j; i++)
+				for (int i = i1; i < j; ++i)
 					outFile.write(output(i, 0.0D));
 				outFile.write(output(j, d4));
-				n = j + 1;
+				i1 = j + 1;
 			}
 
-			for (int i = n; i <= this.max_index; i++)
+			for (int i = i1; i <= this.max_index; ++i)
 				outFile.write(output(i, 0.0D));
 			outFile.write("\n");
 		}
@@ -251,6 +256,7 @@ public class SVMScale {
 		}
 
 		localBufferedReader1.close();
+		outFile.close();
 	}
 
 	private String output_target(double paramDouble) {
