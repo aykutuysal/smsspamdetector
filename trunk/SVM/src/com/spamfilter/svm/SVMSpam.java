@@ -21,8 +21,11 @@ public class SVMSpam {
 	private SVMScale scaler;
 	
 	private int featureCount;
+	private String trainFile, testFile;
 	
-	public SVMSpam(int featureCount) {
+	public SVMSpam(int featureCount, String trainFile, String testFile) {
+		this.trainFile = trainFile;
+		this.testFile = testFile;
 		this.featureCount = featureCount;
 		this.scaler = new SVMScale();
 	}
@@ -32,14 +35,14 @@ public class SVMSpam {
 		
 		
 		try {
-			this.scaler.scale("data/range", null, "data/train.1", -1.0, 1.0);
-			this.scaler.scale(null, "data/range", "data/test.1", -1.0, 1.0);
+			this.scaler.scale("data/range", null, "data/" + trainFile, -1.0, 1.0);
+			this.scaler.scale(null, "data/range", "data/" + testFile, -1.0, 1.0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
 		
-		this.svmSpamTrainProblem = readInput("data/train.1.scaled");
+		this.svmSpamTrainProblem = readInput("data/" + trainFile + ".scaled");
 		this.svmSpamParameter = createSvmParameter();
 		
 		
@@ -48,7 +51,7 @@ public class SVMSpam {
 		
 		this.svmSpamModel = train();
 		
-		this.svmSpamTestProblem = readInput("data/test.1.scaled");
+		this.svmSpamTestProblem = readInput("data/" + testFile + ".scaled");
 		predict();
 		
 		
@@ -74,7 +77,7 @@ public class SVMSpam {
 		
 		try {
 			
-			FileWriter output = new FileWriter(new File("data/out.txt"));
+			FileWriter output = new FileWriter(new File("data/predictResults.txt"));
 			
 			double count = 0;
 			
