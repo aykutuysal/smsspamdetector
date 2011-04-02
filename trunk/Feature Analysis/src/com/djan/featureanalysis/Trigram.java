@@ -4,7 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Trigram {
 
@@ -24,14 +25,14 @@ public class Trigram {
 			Scanner scanner = new Scanner(new FileInputStream("spams.txt"),
 					"ISO-8859-9").useDelimiter("\n###Spam Filter Delimiter###\n");
 			String sms = "";
-			Pattern p = Pattern.compile("[^\\W]+? (?=.+? .+?(?=\\W))");
+			Pattern p = Pattern.compile("[^\\W]+? (?=(.+? .+?(?=\\W)))");
 			Matcher m = p.matcher(sms);
 			while (scanner.hasNext()) {
 				sms = scanner.next();
 				m = p.matcher(sms);
 				int c = 1;
 				while(m.find())
-					System.out.println(c++ + ": " + m.group());
+					System.out.println(c++ + ": " + m.group() + m.group(1));
 				break;
 				// String[] tokenList = sms.replaceAll("[]",
 				// "[gusiocGUSIOC]");
@@ -51,7 +52,7 @@ public class Trigram {
 //		try {
 //			// Convert a string to ISO-LATIN-1 bytes in a ByteBuffer
 //			// The new ByteBuffer is ready to be read.
-//			ByteBuffer bbuf = encoder.encode(CharBuffer.wrap("ü"));
+//			ByteBuffer bbuf = encoder.encode(CharBuffer.wrap("ï¿½"));
 //
 //			
 //			// Convert ISO-LATIN-1 bytes in a ByteBuffer to a character
