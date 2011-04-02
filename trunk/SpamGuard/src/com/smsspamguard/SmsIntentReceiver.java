@@ -22,7 +22,7 @@ public class SmsIntentReceiver extends BroadcastReceiver
 			{
 				byte[] byteData = (byte[])pdus[n];
 				retMsgs[n] = SmsMessage.createFromPdu(byteData);
-			}	
+			}
 			
 		}catch(Exception e)
 		{
@@ -34,20 +34,23 @@ public class SmsIntentReceiver extends BroadcastReceiver
 	public void onReceive(Context context, Intent intent) 
 	{
 		Log.i("en bas", "yo");
-		if(!intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED"))
+		if(BaseScreen.toggleApp)
 		{
-			return;
-		}
-		SmsMessage msg[] = getMessagesFromIntent(intent);
-		this.abortBroadcast();
-		for(int i=0; i < msg.length; i++)
-		{
-			Log.i("yo", "yo");
-			String message = msg[i].getDisplayMessageBody();
-			if(message != null && message.length() > 0)
+			if(!intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED"))
 			{
-				Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-				Log.i("trigged", "yo");
+				return;
+			}
+			SmsMessage msg[] = getMessagesFromIntent(intent);
+			this.abortBroadcast();
+			for(int i=0; i < msg.length; i++)
+			{
+				Log.i("yo", "yo");
+				String message = msg[i].getDisplayMessageBody();
+				if(message != null && message.length() > 0)
+				{
+					Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+					Log.i("trigged", "yo");
+				}
 			}
 		}
 	}
