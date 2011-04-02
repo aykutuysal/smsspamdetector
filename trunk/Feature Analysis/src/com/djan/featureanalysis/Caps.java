@@ -25,7 +25,7 @@ public class Caps {
 					else if(Character.isUpperCase(sms.charAt(i)))
 						caps++;
 				}
-				System.out.format(caps + "\t" + smalls +"\t" + sms.length() + "\t%.2f\n", (double)caps/(double)(smalls+1));
+				System.out.format(caps + "\t" + smalls +"\t" + sms.length() + "\t%.2f\n", (double)caps/(double)(smalls+caps));
 			}
 		} catch (IOException e) {
 			System.out.println("spams.txt not found!");
