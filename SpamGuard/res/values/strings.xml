@@ -2,14 +2,22 @@
 <resources>
 	<string name="app_name">SpamGuard</string>
 	
-	<!--Toggle App-->
 	<string name="inline_preferences">Settings</string>
+	
+	<!--Toggle App-->
 	<string name="title_toggle_spamguard">Toggle SpamGuard</string>
 	<string name="summary_toggle_spamguard">Enable/disable SpamGuard</string>
-
+	
 	<!--Regex-->
 	<string name="title_regex_preference">Filter by regex</string>
 	<string name="summary_regex_preference">Marks spam SMSes that matches regex</string>
 	<string name="dialog_title_regex_preference">Enter regex string</string>
-
+	
+	<!--Allow Contacts-->
+	<string name="title_allow_contacts">Allow contacts</string>
+	<string name="summary_allow_contacts">Not coded yet</string>
+	
+	<!--Allow Contacts-->
+	<string name="title_block_nonnumeric">Block non-numeric sender</string>
+	<string name="summary_block_nonnumeric">E.g. &quot;D&amp;R&quot;, &quot;Vodafone&quot;</string>
 </resources>
