@@ -7,12 +7,16 @@ import android.preference.PreferenceManager;
 
 public class BaseScreen extends PreferenceActivity {
 	public static boolean toggleApp;
+	public static boolean allowContacts;
+	public static boolean blockNonnumeric;
 	public static String regexString;
 	
 	private void getPreferences(){
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
+		allowContacts = sp.getBoolean("allow_contacts", true);
 		regexString = sp.getString("regex_string", "");
+		blockNonnumeric = sp.getBoolean("block_nonnumeric", true);
 	}
 	
     @Override

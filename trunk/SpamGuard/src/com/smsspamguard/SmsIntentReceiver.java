@@ -61,7 +61,20 @@ public class SmsIntentReceiver extends BroadcastReceiver
 				}
 			}
 			Log.i("regexMatch", String.valueOf(regexMatch));
-			if(regexMatch)
+			boolean spam = false;
+			Log.i("blockNonnumeric", String.valueOf(BaseScreen.blockNonnumeric));
+			if(BaseScreen.blockNonnumeric)
+			{
+				String sender = msg[0].getDisplayOriginatingAddress();
+				Pattern p = Pattern.compile("[^\\d+]");
+				Matcher m = p.matcher(sender);
+				if(m.find())
+				{
+					spam = true;
+				}
+			}
+			Log.i("spam?", String.valueOf(spam));
+			if(regexMatch || spam)
 			{
 				this.abortBroadcast();
 			}
