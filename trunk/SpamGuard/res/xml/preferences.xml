@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-	<PreferenceCategory android:title="@string/inline_preferences">
-		<CheckBoxPreference android:key="toggle_spamguard"
-			android:title="@string/title_toggle_spamguard" android:defaultValue="true"
+	<PreferenceCategory
+		android:title="@string/inline_preferences">
+		<CheckBoxPreference
+			android:key="toggle_spamguard"
+			android:title="@string/title_toggle_spamguard"
+			android:defaultValue="true"
 			android:summary="@string/summary_toggle_spamguard" />
+		<EditTextPreference
+			android:dependency="toggle_spamguard"
+			android:key="regex_string"
+			android:title="@string/title_regex_preference"
+			android:summary="@string/summary_regex_preference"
+			android:dialogTitle="@string/dialog_title_regex_preference" />
 	</PreferenceCategory>
 </PreferenceScreen>

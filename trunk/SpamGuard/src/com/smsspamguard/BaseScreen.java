@@ -7,25 +7,28 @@ import android.preference.PreferenceManager;
 
 public class BaseScreen extends PreferenceActivity {
 	public static boolean toggleApp;
+	public static String regexString;
 	
 	private void getPreferences(){
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
+		regexString = sp.getString("regex_string", "");
 	}
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getPreferences();
         addPreferencesFromResource(R.xml.preferences);
         
-        /*Preference toggleApp = (Preference) findPreference("toggle_spamguard");
+       /* Preference toggleApp = (Preference) findPreference("regex_string");
         toggleApp.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				SharedPreferences mySharedPref = getSharedPreferences("preferencesFile", 0);
 				SharedPreferences.Editor editor = mySharedPref.edit();
-				editor.putBoolean("toggle_spamguard", preference.isEnabled());
+				editor.putString("regex_string", "");
 				editor.commit();
 				return true;
 			}
