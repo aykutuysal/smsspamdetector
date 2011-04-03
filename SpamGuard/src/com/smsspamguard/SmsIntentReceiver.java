@@ -1,5 +1,8 @@
 package com.smsspamguard;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +36,7 @@ public class SmsIntentReceiver extends BroadcastReceiver
 	
 	public void onReceive(Context context, Intent intent) 
 	{
-		Log.i("en bas", "yo");
+		Log.i("toggleApp", String.valueOf(BaseScreen.toggleApp));
 		if(BaseScreen.toggleApp)
 		{
 			if(!intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED"))
@@ -41,15 +44,33 @@ public class SmsIntentReceiver extends BroadcastReceiver
 				return;
 			}
 			SmsMessage msg[] = getMessagesFromIntent(intent);
-			this.abortBroadcast();
+			boolean regexMatch = false;
+			Log.i("regexString", BaseScreen.regexString);
+			if(!BaseScreen.regexString.equals(""))
+			{
+				Pattern p = Pattern.compile(BaseScreen.regexString);	//Android default takes it unicode case insensitive
+				Matcher m = p.matcher("");
+				for(int i=0; i < msg.length; i++)
+				{
+					m = p.matcher(msg[i].getDisplayMessageBody());
+					if(m.find())
+					{
+						regexMatch = true;
+						break;
+					}
+				}
+			}
+			Log.i("regexMatch", String.valueOf(regexMatch));
+			if(regexMatch)
+			{
+				this.abortBroadcast();
+			}
 			for(int i=0; i < msg.length; i++)
 			{
-				Log.i("yo", "yo");
 				String message = msg[i].getDisplayMessageBody();
 				if(message != null && message.length() > 0)
 				{
 					Toast.makeText(context, message, Toast.LENGTH_LONG).show();
-					Log.i("trigged", "yo");
 				}
 			}
 		}
