@@ -1,20 +1,22 @@
-package aykut.bayesianspamfilter;
+package spamguard.bayesian.test;
 
 import java.util.Scanner;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class Test {
+import spamguard.bayesian.filters.BayesianFilterMonogram;
+
+public class TestMonogram {
 
 	public static void main(String[] args) {
 		
-		BayesianFilter filter = new BayesianFilter();
+		BayesianFilterMonogram filter = new BayesianFilterMonogram();
 		int spamCount = 0, cleanCount = 0;
 		
 		try
 		{
 			//check for GSM 7-bit encoding
-			Scanner scanner = new Scanner(new FileInputStream("spams.txt"), "UTF-8").useDelimiter("\n###Spam Filter Delimiter###\n");
+			Scanner scanner = new Scanner(new FileInputStream("spams.txt"), "ISO-8859-9").useDelimiter("\n###Spam Filter Delimiter###\n");
 			String hede = "";
 			while(scanner.hasNext())
 			{
@@ -32,7 +34,7 @@ public class Test {
 		try
 		{
 			//check for GSM 7-bit encoding
-			Scanner scanner = new Scanner(new FileInputStream("cleans.txt"), "UTF-8").useDelimiter("\r\n###Clean Set Delimiter###\r\n");
+			Scanner scanner = new Scanner(new FileInputStream("cleans.txt"), "ISO-8859-9").useDelimiter("\r\n###Clean Set Delimiter###\r\n");
 			String hede = "";
 			while(scanner.hasNext())
 			{
@@ -49,7 +51,7 @@ public class Test {
 		
 		filter.finalizeTraining();
 		
-		double spamProb = filter.analyze("hadi olm indirim bitecek");
+		double spamProb = filter.analyze("");
 		
 		System.out.println("Spam DB count: " + spamCount);
 		System.out.println("Clean DB count: " + cleanCount);

@@ -1,22 +1,30 @@
-package aykut.bayesianspamfilter;
+package spamguard.bayesian.filters;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Set;
 
-public class BayesianFilter {
+import spamguard.bayesian.common.SmsFormatter;
+import spamguard.bayesian.common.Token;
+
+public abstract class AbstractBayesianFilter {
 	
 	private HashMap<String, Token> tokens;
+
+	protected abstract String[] returnTokenList(String message);
 	
-	
-	public BayesianFilter() {
+	public AbstractBayesianFilter() {
 		this.tokens = new HashMap<String, Token>();
 	}
 	
 	public void train(String message, String type) {
 		
-		String[] tokenList = message.split("\\W");
+//		System.out.println("before format : " + message);
+		message = SmsFormatter.format(message);
+//		System.out.println("after format : " + message);
+		
+		String[] tokenList = this.returnTokenList(message);
 		
 		for(String str : tokenList) {
 			
@@ -56,17 +64,18 @@ public class BayesianFilter {
 		
 		for(String key : keys) {
 			Token t = tokens.get(key);
-			t.calculateSpamRatio(spamTokenCount);
-			t.calculateNonSpamRatio(nonSpamTokenCount);
+			t.calculateSpamRatio(keys.size());
+			t.calculateNonSpamRatio(keys.size());
 			t.calculateSpammicity();
 		}
 	}
 	
 	public double analyze(String message) {
 
-		message = message.toLowerCase();
-		String[] messageTokenList = message.split("\\W");
+		message = SmsFormatter.format(message);
 		
+		String[] messageTokenList = this.returnTokenList(message);
+
 		int limit = 150;
 		
 		PriorityQueue<Token> matchingTokens = new PriorityQueue<Token>(limit, new Comparator<Token>() {
@@ -144,6 +153,7 @@ public class BayesianFilter {
 		System.out.println("----------------- All Tokens Finish --------------------------------------------");
 
 	}
+
 	public HashMap<String, Token> getTokens() {
 		return tokens;
 	}
@@ -151,5 +161,4 @@ public class BayesianFilter {
 	public void setTokens(HashMap<String, Token> tokens) {
 		this.tokens = tokens;
 	}
-
 }
