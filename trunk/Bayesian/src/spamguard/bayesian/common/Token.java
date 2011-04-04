@@ -1,4 +1,4 @@
-package aykut.bayesianspamfilter;
+package spamguard.bayesian.common;
 
 public class Token {
 
@@ -37,8 +37,10 @@ public class Token {
 	}
 	
 	public void calculateSpammicity() {
-		if (spamRatio + nonSpamRatio > 0) spamicity = spamRatio / (spamRatio + nonSpamRatio);
-	    if (spamicity < 0.01) spamicity = 0.01;
+		if (spamRatio + nonSpamRatio > 0) 
+			spamicity = spamRatio / (spamRatio + nonSpamRatio);
+	    
+		if (spamicity < 0.01) spamicity = 0.01;
 	    else if (spamicity > 0.99) spamicity = 0.99;
 	}
 
