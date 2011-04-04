@@ -2,6 +2,7 @@ package com.djan.featureanalysis;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.regex.Matcher;
@@ -25,20 +26,41 @@ public class Trigram {
 			Scanner scanner = new Scanner(new FileInputStream("spams.txt"),
 					"ISO-8859-9").useDelimiter("\n###Spam Filter Delimiter###\n");
 			String sms = "";
-			Pattern p = Pattern.compile("[^\\W]+? (?=(.+? .+?(?=\\W)))");
+			//Pattern p = Pattern.compile("[^\\W]+? (?=(.+? .+?(?=\\W)))");
+			Pattern p = Pattern.compile("[^\\s]+?\\s+(?=([^\\s]+?\\s+[^\\s]+))");
 			Matcher m = p.matcher(sms);
+			String trigram = "";
 			while (scanner.hasNext()) {
 				sms = scanner.next();
 				m = p.matcher(sms);
 				int c = 1;
 				while(m.find())
-					System.out.println(c++ + ": " + m.group() + m.group(1));
-				break;
+				{
+					trigram = m.group() + m.group(1);
+					if(tokens.containsKey(trigram))
+					{
+						tokens.put(trigram, tokens.get(trigram)+1);
+					}
+					else
+					{
+						tokens.put(trigram, 1);
+					}
+					//System.out.println(c++ + ": " + trigram);
+				}
 				// String[] tokenList = sms.replaceAll("[]",
 				// "[gusiocGUSIOC]");
 				// spamCount++;
 				// System.out.println(hede);
 			}
+			System.out.println(tokens.toString());
+			Collection<Integer> vals = tokens.values();
+			/*for(Integer i:vals)
+			{
+				if(i > 2)
+				{
+					System.out.println(i);
+				}
+			}*/
 		} catch (IOException e) {
 			System.out.println("spams.txt not found!");
 		}
