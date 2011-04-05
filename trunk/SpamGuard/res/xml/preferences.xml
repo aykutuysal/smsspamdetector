@@ -19,6 +19,22 @@
 			android:title="@string/title_block_nonnumeric"
 			android:defaultValue="true"
 			android:summary="@string/summary_block_nonnumeric" />
+		<CheckBoxPreference
+			android:dependency="toggle_spamguard"
+			android:key="block_allcapital"
+			android:title="@string/title_block_allcapital"
+			android:defaultValue="false"
+			android:summary="@string/summary_block_allcapital" />
+		<Preference
+			android:dependency="toggle_spamguard"
+			android:key="blacklist"
+			android:title="@string/title_blacklist"
+			android:summary="@string/summary_blacklist"/>
+		<Preference
+			android:dependency="toggle_spamguard"
+			android:key="whitelist"
+			android:title="@string/title_whitelist"
+			android:summary="@string/summary_whitelist"/>
 		<EditTextPreference
 			android:dependency="toggle_spamguard"
 			android:key="regex_string"

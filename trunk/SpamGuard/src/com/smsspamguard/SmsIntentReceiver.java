@@ -37,6 +37,9 @@ public class SmsIntentReceiver extends BroadcastReceiver
 	public void onReceive(Context context, Intent intent) 
 	{
 		Log.i("toggleApp", String.valueOf(BaseScreen.toggleApp));
+		Log.i("regexString", BaseScreen.regexString);
+		Log.i("blockNonnumeric", String.valueOf(BaseScreen.blockNonnumeric));
+		Log.i("blockAllcapital", String.valueOf(BaseScreen.blockAllcapital));
 		if(BaseScreen.toggleApp)
 		{
 			if(!intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED"))
@@ -44,8 +47,8 @@ public class SmsIntentReceiver extends BroadcastReceiver
 				return;
 			}
 			SmsMessage msg[] = getMessagesFromIntent(intent);
+			
 			boolean regexMatch = false;
-			Log.i("regexString", BaseScreen.regexString);
 			if(!BaseScreen.regexString.equals(""))
 			{
 				Pattern p = Pattern.compile(BaseScreen.regexString);	//Android default takes it unicode case insensitive
@@ -60,21 +63,41 @@ public class SmsIntentReceiver extends BroadcastReceiver
 					}
 				}
 			}
-			Log.i("regexMatch", String.valueOf(regexMatch));
-			boolean spam = false;
-			Log.i("blockNonnumeric", String.valueOf(BaseScreen.blockNonnumeric));
+			
+			boolean nonNumeric = false;
 			if(BaseScreen.blockNonnumeric)
 			{
 				String sender = msg[0].getDisplayOriginatingAddress();
-				Pattern p = Pattern.compile("[^\\d+]");
+				Log.i("senderAddress", sender);
+				Pattern p = Pattern.compile("[^+\\d]");
 				Matcher m = p.matcher(sender);
 				if(m.find())
 				{
-					spam = true;
+					nonNumeric = true;
 				}
 			}
-			Log.i("spam?", String.valueOf(spam));
-			if(regexMatch || spam)
+			
+			boolean allCapital = false;
+			if(BaseScreen.blockAllcapital)
+			{
+				allCapital = true;
+				Pattern p = Pattern.compile("[a-z]");
+				Matcher m = p.matcher("");
+				for(int i=0; i < msg.length; i++)
+				{
+					m = p.matcher(msg[i].getDisplayMessageBody());
+					if(m.find())
+					{
+						allCapital = false;
+						break;
+					}
+				}
+			}
+			
+			Log.i("regexMatch", String.valueOf(regexMatch));
+			Log.i("nonNumeric", String.valueOf(nonNumeric));
+			Log.i("allCapital", String.valueOf(allCapital));
+			if(regexMatch || nonNumeric || allCapital)
 			{
 				this.abortBroadcast();
 			}
