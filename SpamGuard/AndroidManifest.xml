@@ -10,6 +10,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name="com.smsspamguard.Blacklist" android:label="@string/title_blacklist"/>
+        <activity android:name="com.smsspamguard.Whitelist" android:label="@string/title_whitelist"/>
 		<receiver android:name="com.smsspamguard.SmsIntentReceiver" android:enabled="true">
 			<intent-filter android:priority="100" >
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />

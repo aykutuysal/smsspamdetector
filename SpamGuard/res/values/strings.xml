@@ -10,14 +10,30 @@
 	
 	<!--Regex-->
 	<string name="title_regex_preference">Filter by regex</string>
-	<string name="summary_regex_preference">Marks spam SMSes that matches regex</string>
+	<string name="summary_regex_preference">Marks spam SMSes that match regex</string>
 	<string name="dialog_title_regex_preference">Enter regex string</string>
 	
 	<!--Allow Contacts-->
 	<string name="title_allow_contacts">Allow contacts</string>
 	<string name="summary_allow_contacts">Not coded yet</string>
 	
-	<!--Allow Contacts-->
+	<!--Block Non-numeric Sender-->
 	<string name="title_block_nonnumeric">Block non-numeric sender</string>
 	<string name="summary_block_nonnumeric">E.g. &quot;D&amp;R&quot;, &quot;Vodafone&quot;</string>
+	
+	<!--Block All-capital SMS-->
+	<string name="title_block_allcapital">Block all-capital letter SMS</string>
+	<string name="summary_block_allcapital"></string>
+	
+	<!--Blacklist-->
+	<string name="title_blacklist">Blacklist</string>
+	<string name="summary_blacklist">Add phone numbers to blacklist</string>
+	
+	<!--Whitelist-->
+	<string name="title_whitelist">Whitelist</string>
+	<string name="summary_whitelist">Add phone numbers to whitelist</string>
+	
+	<!--Menu-->
+	<string name="add_new">Add</string>
+	
 </resources>
