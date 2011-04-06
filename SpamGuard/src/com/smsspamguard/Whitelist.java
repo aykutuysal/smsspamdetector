@@ -3,9 +3,9 @@ package com.smsspamguard;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +22,34 @@ public class Whitelist extends ListActivity {
 	    "Afghanistan", "Albania", "Algeria"};
 	private TextView output;
 	private Database db;
+	
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+        case R.id.add:
+    	LayoutInflater factory = LayoutInflater.from(this);
+        final View textEntryView = factory.inflate(R.layout.insertnumber, null);
+        return new AlertDialog.Builder(Whitelist.this)
+            //.setIcon(R.drawable.alert_dialog_icon)
+            .setTitle(R.string.insert_number)
+            .setView(textEntryView)
+            .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                	EditText mUserText = (EditText)findViewById(R.id.insert_number);
+                	String text = mUserText.getText().toString();
+                	db.insert(text);
+                }
+            })
+            .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+
+                    /* User clicked cancel so do some stuff */
+                }
+            })
+            .create();
+        }
+        return null;
+    }
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,28 +82,34 @@ public class Whitelist extends ListActivity {
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
+    	Log.i("menuClicked", "true");
+    	/*ID'DE PROBLEM VAR ADD IDSI DONMUYOR ONA BAKICAM*/
         switch (item.getItemId()) {
         case R.id.add:
-        	LayoutInflater factory = LayoutInflater.from(this);
-            final View textEntryView = factory.inflate(R.layout.insertnumber, null);
-            new AlertDialog.Builder(Whitelist.this)
-                //.setIcon(R.drawable.alert_dialog_icon)
-                .setTitle(R.string.insert_number)
-                .setView(textEntryView)
-                .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                    	EditText mUserText = (EditText)findViewById(R.id.insert_number);
-                    	String text = mUserText.getText().toString();
-                    	db.insert(text);
-                    }
-                })
-                .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-
-                        /* User clicked cancel so do some stuff */
-                    }
-                })
-                .create();
+//			Intent intent = new Intent(Whitelist.this, AddDialog.class);
+//            startActivity(intent);
+        	Log.i("addClicked", "true");
+            showDialog(R.id.add);
+//        	LayoutInflater factory = LayoutInflater.from(this);
+//            final View textEntryView = factory.inflate(R.layout.insertnumber, null);
+//            new AlertDialog.Builder(Whitelist.this)
+//                //.setIcon(R.drawable.alert_dialog_icon)
+//                .setTitle(R.string.insert_number)
+//                .setView(textEntryView)
+//                .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//                    	EditText mUserText = (EditText)findViewById(R.id.insert_number);
+//                    	String text = mUserText.getText().toString();
+//                    	db.insert(text);
+//                    }
+//                })
+//                .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int whichButton) {
+//
+//                        /* User clicked cancel so do some stuff */
+//                    }
+//                })
+//                .create();
             return true;
         default:
             return super.onOptionsItemSelected(item);
