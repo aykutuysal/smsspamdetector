@@ -95,8 +95,6 @@ public class SVMSpam {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-
 	}
 	
 	private void do_cross_validation()
