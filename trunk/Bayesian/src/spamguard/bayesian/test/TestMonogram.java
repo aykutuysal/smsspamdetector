@@ -1,9 +1,5 @@
 package spamguard.bayesian.test;
 
-import java.util.Scanner;
-import java.io.FileInputStream;
-import java.io.IOException;
-
 import spamguard.bayesian.filters.BayesianFilterMonogram;
 
 public class TestMonogram {
@@ -11,53 +7,14 @@ public class TestMonogram {
 	public static void main(String[] args) {
 		
 		BayesianFilterMonogram filter = new BayesianFilterMonogram();
-		int spamCount = 0, cleanCount = 0;
 		
-		try
-		{
-			//check for GSM 7-bit encoding
-			Scanner scanner = new Scanner(new FileInputStream("spams.txt"), "ISO-8859-9").useDelimiter("\n###Spam Filter Delimiter###\n");
-			String hede = "";
-			while(scanner.hasNext())
-			{
-				hede = scanner.next();
-				filter.train(hede, "spam");
-				spamCount++;
-				//System.out.println(hede);
-			}
-		}
-		catch(IOException e)
-		{
-			System.out.println("spams.txt not found!");
-		}
-		
-		try
-		{
-			//check for GSM 7-bit encoding
-			Scanner scanner = new Scanner(new FileInputStream("cleans.txt"), "ISO-8859-9").useDelimiter("\r\n###Clean Set Delimiter###\r\n");
-			String hede = "";
-			while(scanner.hasNext())
-			{
-				hede = scanner.next();
-				filter.train(hede, "clean");
-				cleanCount++;
-				//System.out.println(hede);
-			}
-		}
-		catch(IOException e)
-		{
-			System.out.println("cleans.txt not found!");
-		}
-		
+		filter.trainBulk("spams.txt", "spam");
+		filter.trainBulk("cleans.txt", "clean");
 		filter.finalizeTraining();
 		
-		double spamProb = filter.analyze("");
-		
-		System.out.println("Spam DB count: " + spamCount);
-		System.out.println("Clean DB count: " + cleanCount);
+		double spamProb = filter.analyze("test ediyorum ben bunu. selam canım");
 		
 		System.out.println("spam prob: " + spamProb);
-		//filter.printTokens();
 		
 		if( spamProb > 0.9 )
 			System.out.println("spam found");

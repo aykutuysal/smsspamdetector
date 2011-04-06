@@ -1,8 +1,11 @@
 package spamguard.bayesian.filters;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.Set;
 
 import spamguard.bayesian.common.SmsFormatter;
@@ -12,7 +15,7 @@ public abstract class AbstractBayesianFilter {
 	
 	private HashMap<String, Token> tokens;
 
-	protected abstract String[] returnTokenList(String message);
+	public abstract String[] returnTokenList(String message);
 	
 	public AbstractBayesianFilter() {
 		this.tokens = new HashMap<String, Token>();
@@ -20,9 +23,7 @@ public abstract class AbstractBayesianFilter {
 	
 	public void train(String message, String type) {
 		
-//		System.out.println("before format : " + message);
 		message = SmsFormatter.format(message);
-//		System.out.println("after format : " + message);
 		
 		String[] tokenList = this.returnTokenList(message);
 		
@@ -45,6 +46,32 @@ public abstract class AbstractBayesianFilter {
 			else
 				temp.markNonSpam();
 		}	
+	}
+	
+	/**
+	 * trains the filter by reading each entry in the specified file
+	 * type -> "spam" or "clean"
+	 * 
+	 * @param filePath
+	 * @param type
+	 */
+	public void trainBulk(String filePath, String type) {
+		int count = 0;
+		try
+		{
+			Scanner scanner = new Scanner(new FileInputStream(filePath), "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
+			while(scanner.hasNext())
+			{
+				String temp = scanner.next();
+				this.train(temp, type);
+				count++;
+			}
+			System.out.println("[trainBulk] " + "Filter is trained by " + count + " " + type + "s found in " + filePath);
+		}
+		catch(IOException e)
+		{
+			System.out.println("[trainBulk] " + filePath + " can not be found!");
+		}
 	}
 	
 	public void finalizeTraining() {
@@ -120,13 +147,7 @@ public abstract class AbstractBayesianFilter {
 					}
 				}
 			}
-		}
-
-//		while(!matchingTokens.isEmpty() ){
-//			Token t = matchingTokens.poll();
-//			System.out.println(t.getText() + t.getInterestingRate()  + " " + t.getSpamicity());
-//		}
-		
+		}		
 
 		// Bayes' rule for computing overall spamicity of the message
 		double spamicityProduct = 1;
@@ -160,5 +181,14 @@ public abstract class AbstractBayesianFilter {
 
 	public void setTokens(HashMap<String, Token> tokens) {
 		this.tokens = tokens;
+	}
+	
+	public Token findToken(String tokenKey) {
+		Set<String> keys = tokens.keySet();
+		for(String key : keys){
+			if( key.equalsIgnoreCase(tokenKey) )
+				return tokens.get(key);
+		}
+		return null;
 	}
 }
