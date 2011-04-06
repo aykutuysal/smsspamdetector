@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import spamguard.bayesian.common.Token;
-import spamguard.bayesian.filters.BayesianFilterAll;
 import spamguard.bayesian.filters.BayesianFilterBigram;
 import spamguard.bayesian.filters.BayesianFilterMonogram;
 import spamguard.bayesian.filters.BayesianFilterTrigram;
@@ -17,14 +16,12 @@ public class InputFileCreator {
 	private static BayesianFilterMonogram monogramFilter;
 	private static BayesianFilterBigram bigramFilter;
 	private static BayesianFilterTrigram trigramFilter;
-	private static BayesianFilterAll allFilter;
 	
 	public static void main(String[] args) {
 		
 		monogramFilter = new BayesianFilterMonogram();
 		bigramFilter = new BayesianFilterBigram();
 		trigramFilter = new BayesianFilterTrigram();
-		allFilter = new BayesianFilterAll();
 		
 		monogramFilter.trainBulk("data/bayesian/spams.txt", "spam");
 		monogramFilter.trainBulk("data/bayesian/cleans.txt", "clean");
@@ -38,16 +35,16 @@ public class InputFileCreator {
 		trigramFilter.trainBulk("data/bayesian/cleans.txt", "clean");
 		trigramFilter.finalizeTraining();
 		
-		populateTrainDataFromFile("data/bayesian/spams.txt", "data/inputset1/train.1", 1);
-		populateTrainDataFromFile("data/bayesian/cleans.txt", "data/inputset1/train.1", 0);
+		createInputDataFromFile("data/bayesian/spams.txt", "data/inputset1/train.1", 1);
+		createInputDataFromFile("data/bayesian/cleans.txt", "data/inputset1/train.1", 0);
 		
-		populateTrainDataFromFile("data/bayesian/spamsTest.txt", "data/inputset1/test.1", 1);
-		populateTrainDataFromFile("data/bayesian/cleansTest.txt", "data/inputset1/test.1", 0);
+		createInputDataFromFile("data/bayesian/spamsTest.txt", "data/inputset1/test.1", 1);
+		createInputDataFromFile("data/bayesian/cleansTest.txt", "data/inputset1/test.1", 0);
 
 
 	}
 	
-	private static void populateTrainDataFromFile(String sourcePath, String destPath, int classNo) {
+	private static void createInputDataFromFile(String sourcePath, String destPath, int classNo) {
 		
 		try
 		{
