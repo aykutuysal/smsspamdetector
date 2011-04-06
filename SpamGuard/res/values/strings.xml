@@ -35,6 +35,8 @@
 	
 	<!--Menu-->
 	<string name="add_new">Add</string>
+	
+	<!--Dialog-->
 	<string name="insert_number">Insert number</string>
 	<string name="alert_dialog_ok">OK</string>
 	<string name="alert_dialog_cancel">Cancel</string>

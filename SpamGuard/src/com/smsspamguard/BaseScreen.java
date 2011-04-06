@@ -7,7 +7,6 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
-import android.util.Log;
 
 public class BaseScreen extends PreferenceActivity {
 	public static boolean toggleApp;
@@ -17,7 +16,7 @@ public class BaseScreen extends PreferenceActivity {
 	public static String regexString;
 	
 	private void getPreferences(){
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
 		allowContacts = sp.getBoolean("allow_contacts", true);
 		regexString = sp.getString("regex_string", "");
@@ -28,7 +27,6 @@ public class BaseScreen extends PreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getPreferences();
         addPreferencesFromResource(R.xml.preferences);
         
         Preference blacklist = (Preference) findPreference("blacklist");
@@ -57,18 +55,28 @@ public class BaseScreen extends PreferenceActivity {
     public void onStart()
     {
     	super.onStart();
-    	getPreferences();
-		Log.i("regexString", regexString);
-		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
-		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
     }
     public void onResume()
     {
     	super.onResume();
+    	getPreferences();
+//    	Log.i("onResume", "onResume");
+//		Log.i("regexString", regexString);
+//		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
+//		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
     }
     public void onPause()
     {
     	super.onPause();
+    	getPreferences();
+//    	Log.i("onPause", "onPause");
+//		Log.i("regexString", regexString);
+//		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
+//		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
+    }
+    public void onStop()
+    {
+    	super.onStop();
     }
     public void onDestroy()
     {

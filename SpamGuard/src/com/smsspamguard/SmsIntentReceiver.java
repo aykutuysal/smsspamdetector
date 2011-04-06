@@ -36,6 +36,12 @@ public class SmsIntentReceiver extends BroadcastReceiver
 	
 	public void onReceive(Context context, Intent intent) 
 	{
+		if(BaseScreen.regexString == null)
+		{
+			BaseScreen.regexString = "";
+			Log.i("nullmis", "a");
+			Log.i("regexString", BaseScreen.regexString);
+		}
 		Log.i("toggleApp", String.valueOf(BaseScreen.toggleApp));
 		Log.i("regexString", BaseScreen.regexString);
 		Log.i("blockNonnumeric", String.valueOf(BaseScreen.blockNonnumeric));
@@ -100,13 +106,14 @@ public class SmsIntentReceiver extends BroadcastReceiver
 			if(regexMatch || nonNumeric || allCapital)
 			{
 				this.abortBroadcast();
-			}
-			for(int i=0; i < msg.length; i++)
-			{
-				String message = msg[i].getDisplayMessageBody();
-				if(message != null && message.length() > 0)
+				
+				for(int i=0; i < msg.length; i++)
 				{
-					Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+					String message = msg[i].getDisplayMessageBody();
+					if(message != null && message.length() > 0)
+					{
+						Toast.makeText(context, "SPAM: " + message, Toast.LENGTH_LONG).show();
+					}
 				}
 			}
 		}

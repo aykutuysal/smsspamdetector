@@ -2,6 +2,7 @@ package com.smsspamguard;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -64,15 +65,18 @@ public class Blacklist extends ListActivity {
         return true;
     }
     public boolean onOptionsItemSelected(MenuItem item) {
+    	Log.i("menuClicked", "true");
+    	Log.i("add_number", String.valueOf(R.id.add_number));
         // Handle item selection
         switch (item.getItemId()) {
-        case R.id.add:
+        case R.id.add_number:
             //newGame();
             return true;
 //        case R.id.help:
 //            showHelp();
 //            return true;
         default:
+        	Log.i("whatIsClicked", String.valueOf(item.getItemId()));
             return super.onOptionsItemSelected(item);
         }
     }
