@@ -23,23 +23,23 @@ public class InputFileCreator {
 		bigramFilter = new BayesianFilterBigram();
 		trigramFilter = new BayesianFilterTrigram();
 		
-		monogramFilter.trainBulk("data/bayesian/spams.txt", "spam");
-		monogramFilter.trainBulk("data/bayesian/cleans.txt", "clean");
+		monogramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
+		monogramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
 		monogramFilter.finalizeTraining();
 		
-		bigramFilter.trainBulk("data/bayesian/spams.txt", "spam");
-		bigramFilter.trainBulk("data/bayesian/cleans.txt", "clean");
+		bigramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
+		bigramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
 		bigramFilter.finalizeTraining();
 		
-		trigramFilter.trainBulk("data/bayesian/spams.txt", "spam");
-		trigramFilter.trainBulk("data/bayesian/cleans.txt", "clean");
+		trigramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
+		trigramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
 		trigramFilter.finalizeTraining();
 		
-		createInputDataFromFile("data/bayesian/spams.txt", "data/inputset1/train.1", 1);
-		createInputDataFromFile("data/bayesian/cleans.txt", "data/inputset1/train.1", 0);
+		createInputDataFromFile("data/bayesian/2/spamsTrain.txt", "data/inputset2/train.2", 1);
+		createInputDataFromFile("data/bayesian/2/cleansTrain.txt", "data/inputset2/train.2", 0);
 		
-		createInputDataFromFile("data/bayesian/spamsTest.txt", "data/inputset1/test.1", 1);
-		createInputDataFromFile("data/bayesian/cleansTest.txt", "data/inputset1/test.1", 0);
+		createInputDataFromFile("data/bayesian/2/spamsTest.txt", "data/inputset2/test.2", 1);
+		createInputDataFromFile("data/bayesian/2/cleansTest.txt", "data/inputset2/test.2", 0);
 
 
 	}
