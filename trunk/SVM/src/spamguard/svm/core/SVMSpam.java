@@ -1,4 +1,4 @@
-package com.spamfilter.svm;
+package spamguard.svm.core;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -80,19 +80,17 @@ public class SVMSpam {
 			FileWriter output = new FileWriter(new File("data/predictResults.txt"));
 			
 			double count = 0;
-			
+			output.write("Real - Predicted\n");
 			for(int i=0;i<svmSpamTestProblem.l;i++) {
 				double result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
-//				System.out.println(result);
-				output.write(String.valueOf(result) + "\n");
-				if( result == svmSpamTestProblem.y[i] )
-				{
+				output.write(svmSpamTestProblem.y[i] + "  -  " + String.valueOf(result) + "\n");
+				if( result == svmSpamTestProblem.y[i] ){
 					count++;
 				}
 			}
 			
 			System.out.println("Predict Accuracy : %" + count/(double)svmSpamTestProblem.l*100);
-			
+			output.close();
 			
 		} catch (IOException e) {
 			e.printStackTrace();

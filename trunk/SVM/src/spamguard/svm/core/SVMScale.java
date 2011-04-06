@@ -1,4 +1,4 @@
-package com.spamfilter.svm;
+package spamguard.svm.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
