@@ -25,7 +25,7 @@ public class Whitelist extends ListActivity {
 	
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-        case R.id.add:
+        case R.id.add_number-2:
     	LayoutInflater factory = LayoutInflater.from(this);
         final View textEntryView = factory.inflate(R.layout.insertnumber, null);
         return new AlertDialog.Builder(Whitelist.this)
@@ -34,9 +34,9 @@ public class Whitelist extends ListActivity {
             .setView(textEntryView)
             .setPositiveButton(R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                	EditText mUserText = (EditText)findViewById(R.id.insert_number);
-                	String text = mUserText.getText().toString();
-                	db.insert(text);
+//                	EditText mUserText = (EditText)findViewById(R.id.insert_number);
+//                	String text = mUserText.getText().toString();
+//                	db.insert(text);
                 }
             })
             .setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
@@ -83,13 +83,14 @@ public class Whitelist extends ListActivity {
     }
     public boolean onOptionsItemSelected(MenuItem item) {
     	Log.i("menuClicked", "true");
+    	Log.i("add_number", String.valueOf(R.id.add_number));
     	/*ID'DE PROBLEM VAR ADD IDSI DONMUYOR ONA BAKICAM*/
         switch (item.getItemId()) {
-        case R.id.add:
+        case R.id.add_number-2:
 //			Intent intent = new Intent(Whitelist.this, AddDialog.class);
 //            startActivity(intent);
         	Log.i("addClicked", "true");
-            showDialog(R.id.add);
+            showDialog(R.id.add_number);
 //        	LayoutInflater factory = LayoutInflater.from(this);
 //            final View textEntryView = factory.inflate(R.layout.insertnumber, null);
 //            new AlertDialog.Builder(Whitelist.this)
@@ -112,6 +113,7 @@ public class Whitelist extends ListActivity {
 //                .create();
             return true;
         default:
+        	Log.i("whatIsClicked", String.valueOf(item.getItemId()));
             return super.onOptionsItemSelected(item);
         }
     }
