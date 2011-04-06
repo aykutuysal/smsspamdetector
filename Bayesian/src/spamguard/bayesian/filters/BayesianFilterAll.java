@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import spamguard.bayesian.common.SmsFormatter;
+
 public class BayesianFilterAll extends AbstractBayesianFilter {
 
 	@Override
-	protected String[] returnTokenList(String message) {
+	public String[] returnTokenList(String message) {
+		message = SmsFormatter.format(message);
 		ArrayList<String> strTokens = new ArrayList<String>();
 
 		Pattern bigramPattern = Pattern.compile("\\w+ (?=(\\w+))");
