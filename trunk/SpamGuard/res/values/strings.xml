@@ -36,6 +36,10 @@
 	<!--Menu-->
 	<string name="add_new">Add</string>
 	
+	<!--ContextMenu-->
+	<string name="update_entry">Update</string>
+	<string name="delete_entry">Delete</string>
+	
 	<!--Dialog-->
 	<string name="insert_number">Insert number</string>
 	<string name="alert_dialog_ok">OK</string>
