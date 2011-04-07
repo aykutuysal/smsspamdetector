@@ -1,99 +1,136 @@
 package com.smsspamguard;
 
+import java.util.List;
+
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.DialogInterface;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.Toast;
 
 public class Blacklist extends ListActivity {
-	 static final String[] COUNTRIES = new String[] {
-		    "Afghanistan", "Albania", "Algeria", "American Samoa", "Andorra",
-		    "Angola", "Anguilla", "Antarctica", "Antigua and Barbuda", "Argentina",
-		    "Armenia", "Aruba", "Australia", "Austria", "Azerbaijan",
-		    "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium",
-		    "Belize", "Benin", "Bermuda", "Bhutan", "Bolivia",
-		    "Bosnia and Herzegovina", "Botswana", "Bouvet Island", "Brazil", "British Indian Ocean Territory",
-		    "British Virgin Islands", "Brunei", "Bulgaria", "Burkina Faso", "Burundi",
-		    "Cote d'Ivoire", "Cambodia", "Cameroon", "Canada", "Cape Verde",
-		    "Cayman Islands", "Central African Republic", "Chad", "Chile", "China",
-		    "Christmas Island", "Cocos (Keeling) Islands", "Colombia", "Comoros", "Congo",
-		    "Cook Islands", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
-		    "Democratic Republic of the Congo", "Denmark", "Djibouti", "Dominica", "Dominican Republic",
-		    "East Timor", "Ecuador", "Egypt", "El Salvador", "Equatorial Guinea", "Eritrea",
-		    "Estonia", "Ethiopia", "Faeroe Islands", "Falkland Islands", "Fiji", "Finland",
-		    "Former Yugoslav Republic of Macedonia", "France", "French Guiana", "French Polynesia",
-		    "French Southern Territories", "Gabon", "Georgia", "Germany", "Ghana", "Gibraltar",
-		    "Greece", "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guinea", "Guinea-Bissau",
-		    "Guyana", "Haiti", "Heard Island and McDonald Islands", "Honduras", "Hong Kong", "Hungary",
-		    "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Israel", "Italy", "Jamaica",
-		    "Japan", "Jordan", "Kazakhstan", "Kenya", "Kiribati", "Kuwait", "Kyrgyzstan", "Laos",
-		    "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein", "Lithuania", "Luxembourg",
-		    "Macau", "Madagascar", "Malawi", "Malaysia", "Maldives", "Mali", "Malta", "Marshall Islands",
-		    "Martinique", "Mauritania", "Mauritius", "Mayotte", "Mexico", "Micronesia", "Moldova",
-		    "Monaco", "Mongolia", "Montserrat", "Morocco", "Mozambique", "Myanmar", "Namibia",
-		    "Nauru", "Nepal", "Netherlands", "Netherlands Antilles", "New Caledonia", "New Zealand",
-		    "Nicaragua", "Niger", "Nigeria", "Niue", "Norfolk Island", "North Korea", "Northern Marianas",
-		    "Norway", "Oman", "Pakistan", "Palau", "Panama", "Papua New Guinea", "Paraguay", "Peru",
-		    "Philippines", "Pitcairn Islands", "Poland", "Portugal", "Puerto Rico", "Qatar",
-		    "Reunion", "Romania", "Russia", "Rwanda", "Sqo Tome and Principe", "Saint Helena",
-		    "Saint Kitts and Nevis", "Saint Lucia", "Saint Pierre and Miquelon",
-		    "Saint Vincent and the Grenadines", "Samoa", "San Marino", "Saudi Arabia", "Senegal",
-		    "Seychelles", "Sierra Leone", "Singapore", "Slovakia", "Slovenia", "Solomon Islands",
-		    "Somalia", "South Africa", "South Georgia and the South Sandwich Islands", "South Korea",
-		    "Spain", "Sri Lanka", "Sudan", "Suriname", "Svalbard and Jan Mayen", "Swaziland", "Sweden",
-		    "Switzerland", "Syria", "Taiwan", "Tajikistan", "Tanzania", "Thailand", "The Bahamas",
-		    "The Gambia", "Togo", "Tokelau", "Tonga", "Trinidad and Tobago", "Tunisia", "Turkey",
-		    "Turkmenistan", "Turks and Caicos Islands", "Tuvalu", "Virgin Islands", "Uganda",
-		    "Ukraine", "United Arab Emirates", "United Kingdom",
-		    "United States", "United States Minor Outlying Islands", "Uruguay", "Uzbekistan",
-		    "Vanuatu", "Vatican City", "Venezuela", "Vietnam", "Wallis and Futuna", "Western Sahara",
-		    "Yemen", "Yugoslavia", "Zambia", "Zimbabwe"
-		  };
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setListAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, COUNTRIES));
-        getListView().setTextFilterEnabled(true);
-    }
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.blackwhitelistmenu, menu);
-        return true;
-    }
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	Log.i("menuClicked", "true");
-    	Log.i("add_number", String.valueOf(R.id.add_number));
-        // Handle item selection
-        switch (item.getItemId()) {
-        case R.id.add_number:
-            //newGame();
-            return true;
-//        case R.id.help:
-//            showHelp();
-//            return true;
-        default:
-        	Log.i("whatIsClicked", String.valueOf(item.getItemId()));
-            return super.onOptionsItemSelected(item);
-        }
-    }
-    public void onStart()
-    {
-    	super.onStart();
-    }
-    public void onResume()
-    {
-    	super.onResume();
-    }
-    public void onPause()
-    {
-    	super.onPause();
-    }
-    public void onDestroy()
-    {
-    	super.onDestroy();
-    }
+	private Database db;
+
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case R.id.add_number:
+			Log.i("dialog", "dialog");
+			Log.i("dialogNumber", String.valueOf(R.id.add_number));
+			final EditText input = new EditText(this);
+			return new AlertDialog.Builder(Blacklist.this).setTitle(
+					R.string.insert_number).setView(input).setPositiveButton(
+					R.string.alert_dialog_ok,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							if (input.getText().toString() != null) {
+								try {
+									db.insert("bn", input.getText().toString());
+									input.setText(null);
+									List<String> names = db.selectAll("b");
+									setListAdapter(new ArrayAdapter<String>(
+											Blacklist.this,
+											android.R.layout.simple_list_item_1,
+											names));
+									getListView().setTextFilterEnabled(true);
+								}
+								catch(SQLiteConstraintException e)
+								{
+									Toast.makeText(Blacklist.this, "Phone number already exists in either whitelist or blacklist.", Toast.LENGTH_LONG).show();
+								}
+							}
+						}
+					}).setNegativeButton(R.string.alert_dialog_cancel,
+					new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog,
+								int whichButton) {
+							input.setText(null);
+						}
+					}).create();
+		default:
+			Log.i("dialogDefault", "dialog");
+			Log.i("dialogCaseNumber", String.valueOf(R.id.add_number));
+			Log.i("dialogReceivedNumber", String.valueOf(id));
+		}
+
+		return null;
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.blackwhitelistmenu, menu);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Log.i("menuClicked", "true");
+		Log.i("add_number", String.valueOf(R.id.add_number));
+		switch (item.getItemId()) {
+		case R.id.add_number:
+			Log.i("addClicked", "true");
+			showDialog(R.id.add_number);
+			return true;
+		default:
+			Log.i("whatIsClicked", String.valueOf(item.getItemId()));
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
+	/** press-hold/context menu */
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle("Choose...");
+		menu.add(0, 0, 0, R.string.delete_entry);
+	}
+
+	/** when press-hold option selected */
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		// AdapterContextMenuInfo info = (AdapterContextMenuInfo)
+		// item.getMenuInfo();
+		// info.
+		// db.delete(item.getTitle().toString());
+		return true;
+	}
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+     
+		this.db = new Database(this);
+		List<String> names = this.db.selectAll("b");
+		setListAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, names));
+		registerForContextMenu(getListView());
+	}
+
+	public void onStart() {
+		super.onStart();
+	}
+
+	public void onResume() {
+		super.onResume();
+	}
+
+	public void onPause() {
+		super.onPause();
+	}
+
+	public void onDestroy() {
+		super.onDestroy();
+		if (db != null) {
+			db.close();
+		}
+	}
 }

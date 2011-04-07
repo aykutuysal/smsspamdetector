@@ -7,6 +7,7 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
+import android.util.Log;
 
 public class BaseScreen extends PreferenceActivity {
 	public static boolean toggleApp;
@@ -60,19 +61,19 @@ public class BaseScreen extends PreferenceActivity {
     {
     	super.onResume();
     	getPreferences();
-//    	Log.i("onResume", "onResume");
-//		Log.i("regexString", regexString);
-//		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
-//		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
+    	Log.i("onResume", "onResume");
+		Log.i("regexString", regexString);
+		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
+		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
     }
     public void onPause()
     {
     	super.onPause();
     	getPreferences();
-//    	Log.i("onPause", "onPause");
-//		Log.i("regexString", regexString);
-//		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
-//		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
+    	Log.i("onPause", "onPause");
+		Log.i("regexString", regexString);
+		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
+		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
     }
     public void onStop()
     {
