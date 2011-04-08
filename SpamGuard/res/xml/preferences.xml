@@ -11,13 +11,12 @@
 			android:dependency="toggle_spamguard"
 			android:key="allow_contacts"
 			android:title="@string/title_allow_contacts"
-			android:defaultValue="true"
-			android:summary="@string/summary_allow_contacts" />
+			android:defaultValue="true" />
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
 			android:key="block_nonnumeric"
 			android:title="@string/title_block_nonnumeric"
-			android:defaultValue="true"
+			android:defaultValue="false"
 			android:summary="@string/summary_block_nonnumeric" />
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"

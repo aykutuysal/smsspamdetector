@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +23,16 @@ import android.widget.Toast;
 public class Blacklist extends ListActivity {
 	private Database db;
 
+	public void refreshList()
+	{
+		List<String> names = db.selectAll("b");
+		setListAdapter(new ArrayAdapter<String>(
+				Blacklist.this,
+				android.R.layout.simple_list_item_1,
+				names));
+		getListView().setTextFilterEnabled(true);
+	}
+	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case R.id.add_number:
@@ -38,12 +49,7 @@ public class Blacklist extends ListActivity {
 								try {
 									db.insert("bn", input.getText().toString());
 									input.setText(null);
-									List<String> names = db.selectAll("b");
-									setListAdapter(new ArrayAdapter<String>(
-											Blacklist.this,
-											android.R.layout.simple_list_item_1,
-											names));
-									getListView().setTextFilterEnabled(true);
+									refreshList();
 								}
 								catch(SQLiteConstraintException e)
 								{
@@ -97,21 +103,18 @@ public class Blacklist extends ListActivity {
 	/** when press-hold option selected */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		// AdapterContextMenuInfo info = (AdapterContextMenuInfo)
-		// item.getMenuInfo();
-		// info.
-		// db.delete(item.getTitle().toString());
+		AdapterView.AdapterContextMenuInfo info=
+			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		db.delete(info.id);
+		refreshList();
 		return true;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-     
 		this.db = new Database(this);
-		List<String> names = this.db.selectAll("b");
-		setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, names));
+		refreshList();
 		registerForContextMenu(getListView());
 	}
 
