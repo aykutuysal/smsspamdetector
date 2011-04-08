@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,21 +16,35 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class Whitelist extends ListActivity {
 	private Database db;
-
+	private Cursor constantsCursor = null;
+	
+	public void refreshList()
+	{
+//		constantsCursor = db.getReadableDatabase().rawQuery("SELECT _ID, title, value "+
+//							"FROM constants ORDER BY title",
+//							null);
+//		ListAdapter adapter = new SimpleCursorAdapter(Whitelist.this, android.R.layout.simple_list_item_1, c, from, to)
+				
+		List<String> names = db.selectAll("w");
+		setListAdapter(new ArrayAdapter<String>(
+				Whitelist.this,
+				android.R.layout.simple_list_item_1,
+				names));
+		getListView().setTextFilterEnabled(true);
+	}
+	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case R.id.add_number:
 			Log.i("dialog", "dialog");
 			Log.i("dialogNumber", String.valueOf(R.id.add_number));
-			// LayoutInflater factory = LayoutInflater.from(this);
-			// final View textEntryView = factory.inflate(R.layout.insertnumber,
-			// null);
 			final EditText input = new EditText(this);
 			return new AlertDialog.Builder(Whitelist.this).setTitle(
 					R.string.insert_number).setView(input).setPositiveButton(
@@ -41,12 +56,7 @@ public class Whitelist extends ListActivity {
 								try {
 									db.insert("wn", input.getText().toString());
 									input.setText(null);
-									List<String> names = db.selectAll("w");
-									setListAdapter(new ArrayAdapter<String>(
-											Whitelist.this,
-											android.R.layout.simple_list_item_1,
-											names));
-									getListView().setTextFilterEnabled(true);
+									refreshList();
 								}
 								catch(SQLiteConstraintException e)
 								{
@@ -100,37 +110,18 @@ public class Whitelist extends ListActivity {
 	/** when press-hold option selected */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		// AdapterContextMenuInfo info = (AdapterContextMenuInfo)
-		// item.getMenuInfo();
-		// info.
-		// db.delete(item.getTitle().toString());
+		AdapterView.AdapterContextMenuInfo info=
+			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+		db.delete(info.id);
+		refreshList();
 		return true;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		// this.output = (TextView) this.findViewById(R.id.out_text);
-		//        
 		this.db = new Database(this);
-		// this.db.deleteAll();
-		// this.db.insert("Porky Pig");
-		// this.db.insert("Foghorn Leghorn");
-		// this.db.insert("Yosemite Sam");
-		// this.db.insert("+905552032593");
-		List<String> names = this.db.selectAll("w");
-		// StringBuilder sb = new StringBuilder();
-		// sb.append("Names in database:\n");
-		// for (String name : names) {
-		// sb.append(name + "\n");
-		// }
-		//        
-		// Log.d("EXAMPLE", "names size - " + names.size());
-		//        
-		// //this.output.setText(sb.toString());//hata burdda////
-		setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, names));
+		refreshList();
 		registerForContextMenu(getListView());
 	}
 

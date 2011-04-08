@@ -9,7 +9,7 @@ import android.preference.PreferenceManager;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.util.Log;
 
-public class BaseScreen extends PreferenceActivity {
+public class Main extends PreferenceActivity {
 	public static boolean toggleApp;
 	public static boolean allowContacts;
 	public static boolean blockNonnumeric;
@@ -35,7 +35,7 @@ public class BaseScreen extends PreferenceActivity {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(BaseScreen.this, Blacklist.class);
+				Intent intent = new Intent(Main.this, Blacklist.class);
                 startActivity(intent);
                 return true;
 			}
@@ -46,7 +46,7 @@ public class BaseScreen extends PreferenceActivity {
 			
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(BaseScreen.this, Whitelist.class);
+				Intent intent = new Intent(Main.this, Whitelist.class);
                 startActivity(intent);
                 return true;
 			}

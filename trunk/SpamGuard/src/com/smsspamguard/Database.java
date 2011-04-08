@@ -43,10 +43,10 @@ public class Database {
 		}
 	}
 
-	public void delete(String value) {
+	public void delete(long id) {
 		this.db.beginTransaction();
 		try {
-			this.db.delete(LIST_TABLE, "value=" + value, null);
+			this.db.delete(LIST_TABLE, "id=" + id, null);
 			this.db.setTransactionSuccessful();
 		} finally {
 			this.db.endTransaction();

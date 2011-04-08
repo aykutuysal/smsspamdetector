@@ -15,14 +15,13 @@
 	
 	<!--Allow Contacts-->
 	<string name="title_allow_contacts">Allow contacts</string>
-	<string name="summary_allow_contacts">Not coded yet</string>
 	
 	<!--Block Non-numeric Sender-->
 	<string name="title_block_nonnumeric">Block non-numeric sender</string>
 	<string name="summary_block_nonnumeric">E.g. &quot;D&amp;R&quot;, &quot;Vodafone&quot;</string>
 	
 	<!--Block All-capital SMS-->
-	<string name="title_block_allcapital">Block all-capital letter SMS</string>
+	<string name="title_block_allcapital">Block all-capital SMS</string>
 	<string name="summary_block_allcapital"></string>
 	
 	<!--Blacklist-->
