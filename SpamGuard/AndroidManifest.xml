@@ -3,7 +3,8 @@
 	package="com.smsspamguard">
 	<uses-permission android:name="android.permission.RECEIVE_SMS" />
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
+	<application android:icon="@drawable/icon" android:label="@string/app_name" 
+					android:theme="@android:style/Theme.NoTitleBar">
 		<activity android:name="com.smsspamguard.Main" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -11,6 +12,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name="com.smsspamguard.Preferences" android:label="@string/title_preferences"/>
         <activity android:name="com.smsspamguard.Blacklist" android:label="@string/title_blacklist"/>
         <activity android:name="com.smsspamguard.Whitelist" android:label="@string/title_whitelist"/>
 		<receiver android:name="com.smsspamguard.SmsIntentReceiver" android:enabled="true">
