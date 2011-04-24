@@ -38,7 +38,7 @@ public class Main extends TabActivity {
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
-	    intent = new Intent().setClass(this, Blacklist.class);
+	    intent = new Intent().setClass(this, Spams.class);
 	    spec = tabHost.newTabSpec("spams").setIndicator("Spams",
 	                      res.getDrawable(R.drawable.tab_spams))
 	                  .setContent(intent);

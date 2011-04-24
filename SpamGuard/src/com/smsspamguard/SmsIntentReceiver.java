@@ -11,6 +11,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
+	
+	private Database db;
+	
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
 		SmsMessage retMsgs[] = null;
 		Bundle bdl = intent.getExtras();
@@ -99,6 +102,9 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						if (message != null && message.length() > 0) {
 							Toast.makeText(context, "SPAM: " + message,
 									Toast.LENGTH_LONG).show();
+							
+							// writing spam sms to db
+							db.insert("spam", message);
 						}
 					}
 				}
