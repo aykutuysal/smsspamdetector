@@ -1,86 +1,49 @@
 package com.smsspamguard;
 
+import android.app.TabActivity;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
-import android.preference.Preference;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.util.Log;
+import android.widget.TabHost;
 
-public class Main extends PreferenceActivity {
-	public static boolean toggleApp;
-	public static boolean allowContacts;
-	public static boolean blockNonnumeric;
-	public static boolean blockAllcapital;
-	public static String regexString;
-	
-	private void getPreferences(){
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-		toggleApp = sp.getBoolean("toggle_spamguard", true);
-		allowContacts = sp.getBoolean("allow_contacts", true);
-		regexString = sp.getString("regex_string", "");
-		blockNonnumeric = sp.getBoolean("block_nonnumeric", true);
-		blockAllcapital = sp.getBoolean("block_allcapital", false);
+public class Main extends TabActivity {
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.main);
+
+	    Resources res = getResources(); // Resource object to get Drawables
+	    TabHost tabHost = getTabHost();  // The activity TabHost
+	    TabHost.TabSpec spec;  // Resusable TabSpec for each tab
+	    Intent intent;  // Reusable Intent for each tab
+
+	    // Create an Intent to launch an Activity for the tab (to be reused)
+	    intent = new Intent().setClass(this, Preferences.class);
+
+	    // Initialize a TabSpec for each tab and add it to the TabHost
+	    spec = tabHost.newTabSpec("preferences").setIndicator("Preferences",
+	                      res.getDrawable(R.drawable.tab_preferences))
+	                  .setContent(intent);
+	    tabHost.addTab(spec);
+
+	    // Do the same for the other tabs
+	    intent = new Intent().setClass(this, Whitelist.class);
+	    spec = tabHost.newTabSpec("whitelist").setIndicator("Whitelist",
+	                      res.getDrawable(R.drawable.tab_whitelist))
+	                  .setContent(intent);
+	    tabHost.addTab(spec);
+
+	    intent = new Intent().setClass(this, Blacklist.class);
+	    spec = tabHost.newTabSpec("blacklist").setIndicator("Blacklist",
+	                      res.getDrawable(R.drawable.tab_blacklist))
+	                  .setContent(intent);
+	    tabHost.addTab(spec);
+
+	    intent = new Intent().setClass(this, Blacklist.class);
+	    spec = tabHost.newTabSpec("spams").setIndicator("Spams",
+	                      res.getDrawable(R.drawable.tab_spams))
+	                  .setContent(intent);
+	    tabHost.addTab(spec);
+	    
+	    tabHost.setCurrentTab(1);
 	}
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.preferences);
-        
-        Preference blacklist = (Preference) findPreference("blacklist");
-        blacklist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(Main.this, Blacklist.class);
-                startActivity(intent);
-                return true;
-			}
-		});
-        
-        Preference whitelist = (Preference) findPreference("whitelist");
-        whitelist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(Main.this, Whitelist.class);
-                startActivity(intent);
-                return true;
-			}
-		});
-    }
-
-    public void onStart()
-    {
-    	super.onStart();
-    }
-    public void onResume()
-    {
-    	super.onResume();
-    	getPreferences();
-    	Log.i("onResume", "onResume");
-		Log.i("regexString", regexString);
-		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
-		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
-    }
-    public void onPause()
-    {
-    	super.onPause();
-    	getPreferences();
-    	Log.i("onPause", "onPause");
-		Log.i("regexString", regexString);
-		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
-		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
-    }
-    public void onStop()
-    {
-    	super.onStop();
-    }
-    public void onDestroy()
-    {
-    	super.onDestroy();
-    }
 }

@@ -30,24 +30,24 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 	public void onReceive(Context context, Intent intent) {
 		context.startService(intent);
-		if (Main.regexString == null) {
-			Main.regexString = "";
+		if (Preferences.regexString == null) {
+			Preferences.regexString = "";
 			Log.i("nullmis", "a");
-			Log.i("regexString", Main.regexString);
+			Log.i("regexString", Preferences.regexString);
 		}
-		Log.i("toggleApp", String.valueOf(Main.toggleApp));
-		Log.i("regexString", Main.regexString);
-		Log.i("blockNonnumeric", String.valueOf(Main.blockNonnumeric));
-		Log.i("blockAllcapital", String.valueOf(Main.blockAllcapital));
-		if (Main.toggleApp) {
+		Log.i("toggleApp", String.valueOf(Preferences.toggleApp));
+		Log.i("regexString", Preferences.regexString);
+		Log.i("blockNonnumeric", String.valueOf(Preferences.blockNonnumeric));
+		Log.i("blockAllcapital", String.valueOf(Preferences.blockAllcapital));
+		if (Preferences.toggleApp) {
 			if (intent.getAction().equals(
 					"android.provider.Telephony.SMS_RECEIVED")) {
 
 				SmsMessage msg[] = getMessagesFromIntent(intent);
 
 				boolean regexMatch = false;
-				if (!Main.regexString.equals("")) {
-					Pattern p = Pattern.compile(Main.regexString); // Android
+				if (!Preferences.regexString.equals("")) {
+					Pattern p = Pattern.compile(Preferences.regexString); // Android
 																	// default
 																	// takes it
 																	// unicode
@@ -64,7 +64,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 
 				boolean nonNumeric = false;
-				if (Main.blockNonnumeric) {
+				if (Preferences.blockNonnumeric) {
 					String sender = msg[0].getDisplayOriginatingAddress();
 					Log.i("senderAddress", sender);
 					Pattern p = Pattern.compile("[^+\\d]");
@@ -75,7 +75,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 
 				boolean allCapital = false;
-				if (Main.blockAllcapital) {
+				if (Preferences.blockAllcapital) {
 					allCapital = true;
 					Pattern p = Pattern.compile("[a-z]");
 					Matcher m = p.matcher("");
