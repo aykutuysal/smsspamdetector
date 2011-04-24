@@ -70,7 +70,11 @@ public class Database {
 			cursor = this.db.query(LIST_TABLE, new String[] { "value" },
 					"type=? OR type=?", new String[] {"bn","bt"}, null, null, "value asc");
 		}
-		else
+		else if(type.equals("spam")) {
+			
+			cursor = this.db.query(LIST_TABLE, new String[] { "value" },
+					"type=? ", new String[] {"spam"}, null, null, "value asc");
+		}else
 		{
 			return list;
 		}

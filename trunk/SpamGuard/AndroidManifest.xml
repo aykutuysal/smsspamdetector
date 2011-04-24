@@ -15,6 +15,8 @@
         <activity android:name="com.smsspamguard.Preferences" android:label="@string/title_preferences"/>
         <activity android:name="com.smsspamguard.Blacklist" android:label="@string/title_blacklist"/>
         <activity android:name="com.smsspamguard.Whitelist" android:label="@string/title_whitelist"/>
+        <activity android:name="com.smsspamguard.Spams" android:label="@string/title_spams"/>
+  
 		<receiver android:name="com.smsspamguard.SmsIntentReceiver" android:enabled="true">
 			<intent-filter android:priority="100" >
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
