@@ -30,27 +30,27 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         
-        Preference blacklist = (Preference) findPreference("blacklist");
-        blacklist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(Preferences.this, Blacklist.class);
-                startActivity(intent);
-                return true;
-			}
-		});
-        
-        Preference whitelist = (Preference) findPreference("whitelist");
-        whitelist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference) {
-				Intent intent = new Intent(Preferences.this, Whitelist.class);
-                startActivity(intent);
-                return true;
-			}
-		});
+//        Preference blacklist = (Preference) findPreference("blacklist");
+//        blacklist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//			
+//			@Override
+//			public boolean onPreferenceClick(Preference preference) {
+//				Intent intent = new Intent(Preferences.this, Blacklist.class);
+//                startActivity(intent);
+//                return true;
+//			}
+//		});
+//        
+//        Preference whitelist = (Preference) findPreference("whitelist");
+//        whitelist.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+//			
+//			@Override
+//			public boolean onPreferenceClick(Preference preference) {
+//				Intent intent = new Intent(Preferences.this, Whitelist.class);
+//                startActivity(intent);
+//                return true;
+//			}
+//		});
     }
 
     public void onStart()

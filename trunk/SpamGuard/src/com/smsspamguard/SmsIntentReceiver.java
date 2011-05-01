@@ -30,7 +30,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		}
 		return retMsgs;
 	}
-
+	
+	@Override
 	public void onReceive(Context context, Intent intent) {
 		context.startService(intent);
 		if (Preferences.regexString == null) {
@@ -104,6 +105,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 									Toast.LENGTH_LONG).show();
 							
 							// writing spam sms to db
+							db = new Database(context);
 							db.insert("spam", message);
 						}
 					}
