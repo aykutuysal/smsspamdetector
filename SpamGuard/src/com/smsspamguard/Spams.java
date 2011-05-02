@@ -1,9 +1,11 @@
 package com.smsspamguard;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ListActivity;
 import android.os.Bundle;
+import android.telephony.SmsMessage;
 import android.widget.ArrayAdapter;
 
 public class Spams extends ListActivity {
@@ -11,8 +13,14 @@ public class Spams extends ListActivity {
 
 	public void refreshList()
 	{
-		List<String> names = db.selectAll("spam");
-		setListAdapter(new ArrayAdapter<String>(Spams.this, android.R.layout.simple_list_item_1, names));
+		List<SmsMessage> spams = db.selectAllSpam();
+		List<String> messageBodies = new ArrayList<String>();
+		
+		for(SmsMessage message : spams) {
+			messageBodies.add(message.getDisplayMessageBody());
+		}
+		
+		setListAdapter(new ArrayAdapter<String>(Spams.this, android.R.layout.simple_list_item_1, messageBodies));
 		getListView().setTextFilterEnabled(true);
 	}
 	

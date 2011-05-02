@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
 	
+	
 	private Database db;
 	
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
@@ -39,6 +40,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Log.i("nullmis", "a");
 			Log.i("regexString", Preferences.regexString);
 		}
+		
 		Log.i("toggleApp", String.valueOf(Preferences.toggleApp));
 		Log.i("regexString", Preferences.regexString);
 		Log.i("blockNonnumeric", String.valueOf(Preferences.blockNonnumeric));
@@ -99,14 +101,15 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					this.abortBroadcast();
 
 					for (int i = 0; i < msg.length; i++) {
-						String message = msg[i].getDisplayMessageBody();
-						if (message != null && message.length() > 0) {
-							Toast.makeText(context, "SPAM: " + message,
+						
+						String displayMessageBody = msg[i].getDisplayMessageBody();
+						
+						if (displayMessageBody != null && displayMessageBody.length() > 0) {
+							Toast.makeText(context, "SPAM: " + displayMessageBody,
 									Toast.LENGTH_LONG).show();
-							
 							// writing spam sms to db
 							db = new Database(context);
-							db.insert("spam", message);
+							db.insertSpam(msg[i]);
 						}
 					}
 				}
