@@ -32,7 +32,7 @@ public class Whitelist extends ListActivity {
 //							null);
 //		ListAdapter adapter = new SimpleCursorAdapter(Whitelist.this, android.R.layout.simple_list_item_1, c, from, to)
 				
-		List<String> names = db.selectAll("w");
+		List<String> names = db.selectAllList("w");
 		setListAdapter(new ArrayAdapter<String>(
 				Whitelist.this,
 				android.R.layout.simple_list_item_1,
@@ -54,7 +54,7 @@ public class Whitelist extends ListActivity {
 								int whichButton) {
 							if (input.getText().toString() != null) {
 								try {
-									db.insert("wn", input.getText().toString());
+									db.insertList("wn", input.getText().toString());
 									input.setText(null);
 									refreshList();
 								}
@@ -112,7 +112,7 @@ public class Whitelist extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterView.AdapterContextMenuInfo info=
 			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		db.delete(info.id);
+		db.deleteList(info.id);
 		refreshList();
 		return true;
 	}

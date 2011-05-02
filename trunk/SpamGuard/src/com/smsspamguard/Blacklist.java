@@ -25,7 +25,7 @@ public class Blacklist extends ListActivity {
 
 	public void refreshList()
 	{
-		List<String> names = db.selectAll("b");
+		List<String> names = db.selectAllList("b");
 		setListAdapter(new ArrayAdapter<String>(
 				Blacklist.this,
 				android.R.layout.simple_list_item_1,
@@ -47,7 +47,7 @@ public class Blacklist extends ListActivity {
 								int whichButton) {
 							if (input.getText().toString() != null) {
 								try {
-									db.insert("bn", input.getText().toString());
+									db.insertList("bn", input.getText().toString());
 									input.setText(null);
 									refreshList();
 								}
@@ -105,7 +105,7 @@ public class Blacklist extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		AdapterView.AdapterContextMenuInfo info=
 			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		db.delete(info.id);
+		db.deleteList(info.id);
 		refreshList();
 		return true;
 	}
