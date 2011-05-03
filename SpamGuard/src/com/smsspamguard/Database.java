@@ -21,7 +21,7 @@ public class Database {
 	
 	private static final String INSERT_LIST = "insert into " + LIST_TABLE + " (type,value) values (?,?)";
 	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE 
-											+ " (displayMessageBody, displayOriginatingAddress, timestampMillis, pdu) "
+											+ " (displayMessageBody,displayOriginatingAddress,timestampMillis,pdu) "
 											+ "values (?,?,?,?)";
 	
 	private Context context;
@@ -34,11 +34,10 @@ public class Database {
 		this.context = context;
 		openHelper = new OpenHelper(this.context);
 		this.db = openHelper.getWritableDatabase();
-//		openHelper.onUpgrade(db, 0, 1);
+		//openHelper.onUpgrade(db, 0, 1);
 	}
 
 	public void insertSpam(SmsMessage message) {
-		this.db.beginTransaction();
 		this.db.beginTransaction();
 		try {
 			this.insertStmt = this.db.compileStatement(INSERT_SPAM);
@@ -163,6 +162,7 @@ public class Database {
 			Log.w("Example",
 					"Upgrading database, this will drop tables and recreate.");
 			db.execSQL("DROP TABLE IF EXISTS " + LIST_TABLE);
+			db.execSQL("DROP TABLE IF EXISTS " + SPAM_TABLE);
 			onCreate(db);
 		}
 	}
