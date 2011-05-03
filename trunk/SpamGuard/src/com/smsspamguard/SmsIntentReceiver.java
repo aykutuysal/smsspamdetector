@@ -2,10 +2,15 @@ package com.smsspamguard;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsMessage;
 import android.util.Log;
 import android.widget.Toast;
@@ -14,6 +19,12 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	
 	
 	private Database db;
+	
+	private boolean toggleApp;
+	private boolean allowContacts;
+	private boolean blockNonnumeric;
+	private boolean blockAllcapital;
+	private String regexString;
 	
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
 		SmsMessage retMsgs[] = null;
@@ -34,26 +45,49 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		context.startService(intent);
-		if (Preferences.regexString == null) {
-			Preferences.regexString = "";
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+		toggleApp = sp.getBoolean("toggle_spamguard", true);
+		allowContacts = sp.getBoolean("allow_contacts", true);
+		regexString = sp.getString("regex_string", "");
+		blockNonnumeric = sp.getBoolean("block_nonnumeric", true);
+		blockAllcapital = sp.getBoolean("block_allcapital", false);
+		
+		if (regexString == null) {
+			regexString = "";
 			Log.i("nullmis", "a");
-			Log.i("regexString", Preferences.regexString);
+			Log.i("regexString", regexString);
 		}
 		
-		Log.i("toggleApp", String.valueOf(Preferences.toggleApp));
-		Log.i("regexString", Preferences.regexString);
-		Log.i("blockNonnumeric", String.valueOf(Preferences.blockNonnumeric));
-		Log.i("blockAllcapital", String.valueOf(Preferences.blockAllcapital));
-		if (Preferences.toggleApp) {
+		Log.i("toggleApp", String.valueOf(toggleApp));
+		Log.i("regexString", regexString);
+		Log.i("blockNonnumeric", String.valueOf(blockNonnumeric));
+		Log.i("blockAllcapital", String.valueOf(blockAllcapital));
+		
+		if (toggleApp) {
 			if (intent.getAction().equals(
 					"android.provider.Telephony.SMS_RECEIVED")) {
 
 				SmsMessage msg[] = getMessagesFromIntent(intent);
 
+				boolean notContact = false;
+				if(allowContacts)
+				{
+					Cursor phones = context.getContentResolver().query(Phone.CONTENT_URI, null,
+				            Phone.NUMBER + " = '" + msg[0].getDisplayOriginatingAddress() + "'", null, null);
+					if(phones.getCount() == 0)
+					{
+						notContact = true;
+						Log.i("phoneNo", "bole bi contact yok");
+					}
+					else
+					{
+						Log.i("phoneNo", "contact buldu");
+					}
+				}
+				
 				boolean regexMatch = false;
-				if (!Preferences.regexString.equals("")) {
-					Pattern p = Pattern.compile(Preferences.regexString); // Android
+				if (!regexString.equals("")) {
+					Pattern p = Pattern.compile(regexString); // Android
 																	// default
 																	// takes it
 																	// unicode
@@ -70,7 +104,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 
 				boolean nonNumeric = false;
-				if (Preferences.blockNonnumeric) {
+				if (blockNonnumeric) {
 					String sender = msg[0].getDisplayOriginatingAddress();
 					Log.i("senderAddress", sender);
 					Pattern p = Pattern.compile("[^+\\d]");
@@ -81,7 +115,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 
 				boolean allCapital = false;
-				if (Preferences.blockAllcapital) {
+				if (blockAllcapital) {
 					allCapital = true;
 					Pattern p = Pattern.compile("[a-z]");
 					Matcher m = p.matcher("");
@@ -97,7 +131,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				Log.i("regexMatch", String.valueOf(regexMatch));
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
-				if (regexMatch || nonNumeric || allCapital) {
+				if (notContact || (regexMatch || nonNumeric || allCapital)) {
 					this.abortBroadcast();
 
 					for (int i = 0; i < msg.length; i++) {
