@@ -132,6 +132,43 @@ public class Database {
 		}
 		return list;
 	}
+	
+	public boolean isListed(String type, String number)
+	{
+		Cursor cursor = null;
+		if(type.equals("w"))
+		{
+			if(number.length() >= 7)	//bu alphanumeric de olabilir o zaman lengthe bakmamali
+			{
+				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
+						"(type=? OR type=?) AND value like %?", new String[] {"wn","wt",number}, null, null, null);
+			}
+			else
+			{
+				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
+						"(type=? OR type=?) AND value like=?", new String[] {"wn","wt",number}, null, null, null);
+			}
+		}
+		else if(type.equals("b"))
+		{
+			if(number.length() >= 7)
+			{
+				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
+						"(type=? OR type=?) AND value like %?", new String[] {"bn","bt",number}, null, null, null);
+			}
+			else
+			{
+				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
+						"(type=? OR type=?) AND value=?", new String[] {"bn","bt",number}, null, null, null);
+			}
+		}
+		
+		if(cursor != null)
+		{
+			return true;
+		}
+		return false;
+	}
 
 	public void close() {
 		// NOTE: openHelper must now be a member of CallDataHelper;
