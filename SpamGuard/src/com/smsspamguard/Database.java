@@ -15,15 +15,14 @@ public class Database {
 
 	private static final String DATABASE_NAME = "spamguard.db";
 	private static final int DATABASE_VERSION = 1;
-	
+
 	private static final String LIST_TABLE = "list_table";
 	private static final String SPAM_TABLE = "spam_table";
-	
+
 	private static final String INSERT_LIST = "insert into " + LIST_TABLE + " (type,value) values (?,?)";
-	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE 
-											+ " (displayMessageBody,displayOriginatingAddress,timestampMillis,pdu) "
-											+ "values (?,?,?,?)";
-	
+	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE + " (displayMessageBody,displayOriginatingAddress,timestampMillis,pdu) "
+			+ "values (?,?,?,?)";
+
 	private Context context;
 	private SQLiteDatabase db;
 	private OpenHelper openHelper = null;
@@ -34,7 +33,7 @@ public class Database {
 		this.context = context;
 		openHelper = new OpenHelper(this.context);
 		this.db = openHelper.getWritableDatabase();
-		//openHelper.onUpgrade(db, 0, 1);
+		// openHelper.onUpgrade(db, 0, 1);
 	}
 
 	public void insertSpam(SmsMessage message) {
@@ -52,12 +51,12 @@ public class Database {
 			this.db.endTransaction();
 		}
 	}
-	
+
 	public List<SmsMessage> selectAllSpam() {
-		
+
 		List<SmsMessage> list = new ArrayList<SmsMessage>();
 		Cursor cursor = this.db.query(SPAM_TABLE, new String[] { "pdu" }, null, null, null, null, null);
-		
+
 		if (cursor.moveToFirst()) {
 			do {
 				SmsMessage smsMessage = SmsMessage.createFromPdu(cursor.getBlob(0));
@@ -69,8 +68,7 @@ public class Database {
 		}
 		return list;
 	}
-	
-	
+
 	public void insertList(String type, String value) {
 		this.db.beginTransaction();
 		try {
@@ -101,27 +99,15 @@ public class Database {
 	public List<String> selectAllList(String type) {
 		List<String> list = new ArrayList<String>();
 		Cursor cursor = null;
-		if(type.equals("w"))
-		{
-			cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-					"type=? OR type=?", new String[] {"wn","wt"}, null, null, "value asc");
+		if (type.equals("w")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { "value" }, "type=? OR type=?", new String[] { "wn", "wt" }, null, null, "value asc");
+		} else if (type.equals("b")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { "value" }, "type=? OR type=?", new String[] { "bn", "bt" }, null, null, "value asc");
 		}
-		else if(type.equals("b"))
-		{
-			cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-					"type=? OR type=?", new String[] {"bn","bt"}, null, null, "value asc");
-		}
-//		else if(type.equals("spam")) {
-//			
-//			cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-//					"type=? ", new String[] {"spam"}, null, null, "value asc");
-//		}
-		else
-		{
+		else {
 			return list;
 		}
-		
-		
+
 		if (cursor.moveToFirst()) {
 			do {
 				list.add(cursor.getString(0));
@@ -132,42 +118,10 @@ public class Database {
 		}
 		return list;
 	}
-	
-	public boolean isListed(String type, String number)
-	{
-		Cursor cursor = null;
-		if(type.equals("w"))
-		{
-			if(number.length() >= 7)	//bu alphanumeric de olabilir o zaman lengthe bakmamali
-			{
-				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-						"(type=? OR type=?) AND value like %?", new String[] {"wn","wt",number}, null, null, null);
-			}
-			else
-			{
-				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-						"(type=? OR type=?) AND value like=?", new String[] {"wn","wt",number}, null, null, null);
-			}
-		}
-		else if(type.equals("b"))
-		{
-			if(number.length() >= 7)
-			{
-				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-						"(type=? OR type=?) AND value like %?", new String[] {"bn","bt",number}, null, null, null);
-			}
-			else
-			{
-				cursor = this.db.query(LIST_TABLE, new String[] { "value" },
-						"(type=? OR type=?) AND value=?", new String[] {"bn","bt",number}, null, null, null);
-			}
-		}
-		
-		if(cursor != null)
-		{
-			return true;
-		}
-		return false;
+
+	public Cursor searchList(String sender) {
+		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "value=?", new String[] { sender }, null, null, null);
+		return cursor;
 	}
 
 	public void close() {
@@ -178,7 +132,7 @@ public class Database {
 		}
 	}
 
-	private static class OpenHelper extends SQLiteOpenHelper {
+	public class OpenHelper extends SQLiteOpenHelper {
 
 		OpenHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -186,18 +140,15 @@ public class Database {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL("CREATE TABLE " + LIST_TABLE
-					+ "(id INTEGER PRIMARY KEY, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
-			
-			db.execSQL("CREATE TABLE " + SPAM_TABLE
-					+ "(id INTEGER PRIMARY KEY, displayMessageBody TEXT, displayOriginatingAddress TEXT, "
+			db.execSQL("CREATE TABLE " + LIST_TABLE + "(id INTEGER PRIMARY KEY, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
+
+			db.execSQL("CREATE TABLE " + SPAM_TABLE + "(id INTEGER PRIMARY KEY, displayMessageBody TEXT, displayOriginatingAddress TEXT, "
 					+ "timestampMillis INTEGER, pdu BLOB UNIQUE ON CONFLICT ROLLBACK)");
 		}
 
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			Log.w("Example",
-					"Upgrading database, this will drop tables and recreate.");
+			Log.w("Example", "Upgrading database, this will drop tables and recreate.");
 			db.execSQL("DROP TABLE IF EXISTS " + LIST_TABLE);
 			db.execSQL("DROP TABLE IF EXISTS " + SPAM_TABLE);
 			onCreate(db);
