@@ -110,7 +110,7 @@ public class Whitelist extends ListActivity {
 	/** when press-hold option selected */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info=
+		AdapterView.AdapterContextMenuInfo info =
 			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
 		db.deleteList(info.id);
 		refreshList();
