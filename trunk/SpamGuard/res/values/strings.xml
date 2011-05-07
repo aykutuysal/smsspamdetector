@@ -4,6 +4,12 @@
 	
 	<string name="inline_preferences">Settings</string>
 	
+	<!--Tabs-->
+	<string name="title_preferences">Preferences</string>
+	<string name="title_whitelist">Whitelist</string>
+	<string name="title_blacklist">Blacklist</string>
+	<string name="title_spams">Spams</string>
+	
 	<!--Toggle App-->
 	<string name="title_toggle_spamguard">Toggle SpamGuard</string>
 	<string name="summary_toggle_spamguard">Enable/disable SpamGuard</string>
@@ -25,25 +31,21 @@
 	<string name="summary_block_allcapital"></string>
 	
 	<!--Blacklist-->
-	<string name="title_blacklist">Blacklist</string>
 	<string name="summary_blacklist">Add phone numbers to blacklist</string>
 	
 	<!--Whitelist-->
-	<string name="title_whitelist">Whitelist</string>
 	<string name="summary_whitelist">Add phone numbers to whitelist</string>
 	
 	<!--Menu-->
 	<string name="add_new">Add</string>
 	
 	<!--ContextMenu-->
-	<string name="update_entry">Update</string>
+	<string name="update_entry">Edit</string>
 	<string name="delete_entry">Delete</string>
 	
 	<!--Dialog-->
 	<string name="insert_number">Insert number</string>
 	<string name="alert_dialog_ok">OK</string>
 	<string name="alert_dialog_cancel">Cancel</string>
-	<string name="title_preferences">Preferences</string>
-	<string name="title_spams">Spams</string>
 	
 </resources>
