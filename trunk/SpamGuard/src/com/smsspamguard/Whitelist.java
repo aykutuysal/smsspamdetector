@@ -26,6 +26,7 @@ public class Whitelist extends ListActivity {
 	private SimpleCursorAdapter cursorAdapter;
 	private long selectedItemId;
 	private String selectedItemValue;
+	private String type;
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -37,9 +38,10 @@ public class Whitelist extends ListActivity {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
 								try {
-									db.insertList("wn", input.getText().toString());
+									db.insertList(type, input.getText().toString());
 									input.setText(null);
 									cursorAdapter.getCursor().requery();
+									//cursorAdapter.notifyDataSetChanged();
 								} catch (SQLiteConstraintException e) {
 									Toast
 											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
@@ -67,11 +69,12 @@ public class Whitelist extends ListActivity {
 			final AlertDialog dialog2 = new AlertDialog.Builder(Whitelist.this).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
-							if (input2.getText().toString() != null) {
+							if (input2.getText().toString() != null) {	//BURDA TEXTINI CEKIP SETLEMEK LAZIM
 								try {
 									ContentValues values = new ContentValues();
 									values.put("value", input2.getText().toString());
-									db.updateList(selectedItemId, values);	//BURDA IDSINI CEKEBILMEK LAZIM
+									db.updateList(selectedItemId, values);
+									cursorAdapter.getCursor().requery();
 								} catch (SQLiteConstraintException e) {
 									Toast
 											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
@@ -113,6 +116,15 @@ public class Whitelist extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.add_number:
+			type = "wn";
+			showDialog(0);
+			return true;
+		case R.id.add_text:
+			type = "wt";
+			showDialog(0);
+			return true;
+		case R.id.add_regex:
+			type = "wr";
 			showDialog(0);
 			return true;
 		}
@@ -133,11 +145,11 @@ public class Whitelist extends ListActivity {
 		case 0:
 			selectedItemId = info.id;
 			showDialog(1);
-			cursorAdapter.getCursor().requery();
+			//cursorAdapter.getCursor().requery();
 			return true;
 		case 1:
 			db.deleteList(info.id);
-			cursorAdapter.getCursor().requery();
+			//cursorAdapter.getCursor().requery();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

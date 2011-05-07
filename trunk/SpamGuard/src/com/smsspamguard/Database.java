@@ -117,9 +117,9 @@ public class Database {
 	{
 		Cursor cursor = null;
 		if (type.equals("w")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type=? OR type=?", new String[] { "wn", "wt" }, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type like 'w%'", null, null, null, "value asc");
 		} else if (type.equals("b")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type=? OR type=?", new String[] { "bn", "bt" }, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type like 'b%'", null, null, null, "value asc");
 		}
 		return cursor;
 	}

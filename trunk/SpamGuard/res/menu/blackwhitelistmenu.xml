@@ -2,7 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item android:id="@+id/add_number"
-        android:title="@string/add_new"
+        android:title="@string/add_number"
+        android:icon="@drawable/ic_menu_add" />
+   	<item android:id="@+id/add_text"
+        android:title="@string/add_text"
+        android:icon="@drawable/ic_menu_add" />
+	<item android:id="@+id/add_regex"
+        android:title="@string/add_regex"
         android:icon="@drawable/ic_menu_add" />
 
 </menu>

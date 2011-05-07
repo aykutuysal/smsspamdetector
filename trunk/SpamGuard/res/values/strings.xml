@@ -37,7 +37,9 @@
 	<string name="summary_whitelist">Add phone numbers to whitelist</string>
 	
 	<!--Menu-->
-	<string name="add_new">Add</string>
+	<string name="add_number">Add Number</string>
+	<string name="add_text">Add Text</string>
+	<string name="add_regex">Add Regex</string>
 	
 	<!--ContextMenu-->
 	<string name="update_entry">Edit</string>
