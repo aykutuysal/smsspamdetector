@@ -3,6 +3,7 @@ package com.smsspamguard;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
@@ -23,6 +24,8 @@ public class Whitelist extends ListActivity {
 	private Database db;
 	private Cursor listCursor = null;
 	private SimpleCursorAdapter cursorAdapter;
+	private long selectedItemId;
+	private String selectedItemValue;
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -66,7 +69,9 @@ public class Whitelist extends ListActivity {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input2.getText().toString() != null) {
 								try {
-									db.updateList(0, input2.getText().toString());	//BURDA IDSINI CEKEBILMEK LAZIM
+									ContentValues values = new ContentValues();
+									values.put("value", input2.getText().toString());
+									db.updateList(selectedItemId, values);	//BURDA IDSINI CEKEBILMEK LAZIM
 								} catch (SQLiteConstraintException e) {
 									Toast
 											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
@@ -126,6 +131,7 @@ public class Whitelist extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case 0:
+			selectedItemId = info.id;
 			showDialog(1);
 			cursorAdapter.getCursor().requery();
 			return true;

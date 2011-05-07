@@ -3,6 +3,7 @@ package com.smsspamguard;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -83,14 +84,15 @@ public class Database {
 		}
 	}
 	
-	public void updateList(int id, String value)
+	public void updateList(long id, ContentValues values)
 	{
 		this.db.beginTransaction();
 		try {
-			this.insertStmt = this.db.compileStatement(UPDATE_LIST);
-			this.insertStmt.bindString(1, value);
-			this.insertStmt.bindLong(2, id);
-			this.insertStmt.executeInsert();
+			this.db.update(LIST_TABLE, values, BaseColumns._ID + "=" + id, null);
+//			this.insertStmt = this.db.compileStatement(UPDATE_LIST);
+//			this.insertStmt.bindString(1, value);
+//			this.insertStmt.bindLong(2, id);
+//			this.insertStmt.executeInsert();
 			this.db.setTransactionSuccessful();
 		} finally {
 			this.db.endTransaction();
