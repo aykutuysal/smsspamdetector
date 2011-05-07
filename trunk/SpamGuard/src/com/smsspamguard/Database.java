@@ -46,7 +46,6 @@ public class Database {
 			this.insertStmt.bindString(2, message.getDisplayOriginatingAddress());
 			this.insertStmt.bindLong(3, message.getTimestampMillis());
 			this.insertStmt.bindBlob(4, message.getPdu());
-
 			this.insertStmt.executeInsert();
 			this.db.setTransactionSuccessful();
 		} finally {
@@ -110,29 +109,6 @@ public class Database {
 
 	public void deleteAllList() {
 		this.db.delete(LIST_TABLE, null, null);
-	}
-
-	public List<String> selectAllList(String type) {
-		List<String> list = new ArrayList<String>();
-		Cursor cursor = null;
-		if (type.equals("w")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { "value" }, "type=? OR type=?", new String[] { "wn", "wt" }, null, null, "value asc");
-		} else if (type.equals("b")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { "value" }, "type=? OR type=?", new String[] { "bn", "bt" }, null, null, "value asc");
-		}
-		else {
-			return list;
-		}
-
-		if (cursor.moveToFirst()) {
-			do {
-				list.add(cursor.getString(0));
-			} while (cursor.moveToNext());
-		}
-		if (cursor != null && !cursor.isClosed()) {
-			cursor.close();
-		}
-		return list;
 	}
 	
 	public Cursor getList(String type)
