@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
+import android.provider.BaseColumns;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
@@ -20,6 +21,7 @@ public class Database {
 	private static final String SPAM_TABLE = "spam_table";
 
 	private static final String INSERT_LIST = "insert into " + LIST_TABLE + " (type,value) values (?,?)";
+	private static final String UPDATE_LIST = "update " + LIST_TABLE + " set value=? where " + BaseColumns._ID + "=?";
 	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE + " (displayMessageBody,displayOriginatingAddress,timestampMillis,pdu) "
 			+ "values (?,?,?,?)";
 
@@ -81,11 +83,25 @@ public class Database {
 			this.db.endTransaction();
 		}
 	}
+	
+	public void updateList(int id, String value)
+	{
+		this.db.beginTransaction();
+		try {
+			this.insertStmt = this.db.compileStatement(UPDATE_LIST);
+			this.insertStmt.bindString(1, value);
+			this.insertStmt.bindLong(2, id);
+			this.insertStmt.executeInsert();
+			this.db.setTransactionSuccessful();
+		} finally {
+			this.db.endTransaction();
+		}
+	}
 
 	public void deleteList(long id) {
 		this.db.beginTransaction();
 		try {
-			this.db.delete(LIST_TABLE, "id=" + id, null);
+			this.db.delete(LIST_TABLE, BaseColumns._ID + "=" + id, null);
 			this.db.setTransactionSuccessful();
 		} finally {
 			this.db.endTransaction();
@@ -118,6 +134,17 @@ public class Database {
 		}
 		return list;
 	}
+	
+	public Cursor getList(String type)
+	{
+		Cursor cursor = null;
+		if (type.equals("w")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type=? OR type=?", new String[] { "wn", "wt" }, null, null, "value asc");
+		} else if (type.equals("b")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type=? OR type=?", new String[] { "bn", "bt" }, null, null, "value asc");
+		}
+		return cursor;
+	}
 
 	public Cursor searchList(String sender) {
 		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "value=?", new String[] { sender }, null, null, null);
@@ -140,9 +167,9 @@ public class Database {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL("CREATE TABLE " + LIST_TABLE + "(id INTEGER PRIMARY KEY, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + LIST_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
 
-			db.execSQL("CREATE TABLE " + SPAM_TABLE + "(id INTEGER PRIMARY KEY, displayMessageBody TEXT, displayOriginatingAddress TEXT, "
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + SPAM_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, displayMessageBody TEXT, displayOriginatingAddress TEXT, "
 					+ "timestampMillis INTEGER, pdu BLOB UNIQUE ON CONFLICT ROLLBACK)");
 		}
 

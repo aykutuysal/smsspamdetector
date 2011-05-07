@@ -1,76 +1,66 @@
 package com.smsspamguard;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class Blacklist extends ListActivity {
 	private Database db;
+	private Cursor listCursor = null;
+	private SimpleCursorAdapter cursorAdapter;
 
-	public void refreshList()
-	{
-		List<String> names = db.selectAllList("b");
-		setListAdapter(new ArrayAdapter<String>(
-				Blacklist.this,
-				android.R.layout.simple_list_item_1,
-				names));
-		getListView().setTextFilterEnabled(true);
-	}
-	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case R.id.add_number:
-			Log.i("dialog", "dialog");
-			Log.i("dialogNumber", String.valueOf(R.id.add_number));
 			final EditText input = new EditText(this);
-			return new AlertDialog.Builder(Blacklist.this).setTitle(
-					R.string.insert_number).setView(input).setPositiveButton(
-					R.string.alert_dialog_ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
+			final AlertDialog dialog = new AlertDialog.Builder(Blacklist.this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
 								try {
 									db.insertList("bn", input.getText().toString());
 									input.setText(null);
-									refreshList();
-								}
-								catch(SQLiteConstraintException e)
-								{
-									Toast.makeText(Blacklist.this, "Phone number already exists in either whitelist or blacklist.", Toast.LENGTH_LONG).show();
+									cursorAdapter.getCursor().requery();
+								} catch (SQLiteConstraintException e) {
+									Toast
+											.makeText(Blacklist.this, "Phone number already exists in either blacklist or blacklist.",
+													Toast.LENGTH_LONG).show();
 								}
 							}
 						}
-					}).setNegativeButton(R.string.alert_dialog_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							input.setText(null);
-						}
-					}).create();
-		default:
-			Log.i("dialogDefault", "dialog");
-			Log.i("dialogCaseNumber", String.valueOf(R.id.add_number));
-			Log.i("dialogReceivedNumber", String.valueOf(id));
-		}
+					}).setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					input.setText(null);
+				}
+			}).create();
 
-		return null;
+			input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+				@Override
+				public void onFocusChange(View v, boolean hasFocus) {
+					if (hasFocus) {
+						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					}
+				}
+			});
+			return dialog;
+		default:
+			return null;
+		}
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,54 +70,43 @@ public class Blacklist extends ListActivity {
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.i("menuClicked", "true");
-		Log.i("add_number", String.valueOf(R.id.add_number));
 		switch (item.getItemId()) {
 		case R.id.add_number:
-			Log.i("addClicked", "true");
 			showDialog(R.id.add_number);
 			return true;
-		default:
-			Log.i("whatIsClicked", String.valueOf(item.getItemId()));
-			return super.onOptionsItemSelected(item);
 		}
+		return super.onOptionsItemSelected(item);
 	}
 
-	/** press-hold/context menu */
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle("Choose...");
-		menu.add(0, 0, 0, R.string.delete_entry);
+		menu.add(0, 0, 0, R.string.update_entry);
+		menu.add(0, 1, 0, R.string.delete_entry);
 	}
 
-	/** when press-hold option selected */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info=
-			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		db.deleteList(info.id);
-		refreshList();
-		return true;
+		switch (item.getItemId()) {
+		case 1:
+			AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+			db.deleteList(info.id);
+			cursorAdapter.getCursor().requery();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.mylist);
 		this.db = new Database(this);
-		refreshList();
+		listCursor = db.getList("b");
+		String[] from = new String[] { listCursor.getColumnName(1) };
+		int[] to = new int[] { R.id.list_entry };
+		cursorAdapter = new SimpleCursorAdapter(this, R.layout.mylist, listCursor, from, to);
+		this.setListAdapter(cursorAdapter);
 		registerForContextMenu(getListView());
-	}
-
-	public void onStart() {
-		super.onStart();
-	}
-
-	public void onResume() {
-		super.onResume();
-	}
-
-	public void onPause() {
-		super.onPause();
 	}
 
 	public void onDestroy() {

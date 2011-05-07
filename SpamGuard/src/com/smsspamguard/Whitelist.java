@@ -1,7 +1,5 @@
 package com.smsspamguard;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -9,134 +7,150 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class Whitelist extends ListActivity {
 	private Database db;
-	private Cursor constantsCursor = null;
-	
-	public void refreshList()
-	{
-//		constantsCursor = db.getReadableDatabase().rawQuery("SELECT _ID, title, value "+
-//							"FROM constants ORDER BY title",
-//							null);
-//		ListAdapter adapter = new SimpleCursorAdapter(Whitelist.this, android.R.layout.simple_list_item_1, c, from, to)
-				
-		List<String> names = db.selectAllList("w");
-		setListAdapter(new ArrayAdapter<String>(
-				Whitelist.this,
-				android.R.layout.simple_list_item_1,
-				names));
-		getListView().setTextFilterEnabled(true);
-	}
-	
+	private Cursor listCursor = null;
+	private SimpleCursorAdapter cursorAdapter;
+
+	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-		case R.id.add_number:
-			Log.i("dialog", "dialog");
-			Log.i("dialogNumber", String.valueOf(R.id.add_number));
+		case 0:
 			final EditText input = new EditText(this);
-			return new AlertDialog.Builder(Whitelist.this).setTitle(
-					R.string.insert_number).setView(input).setPositiveButton(
-					R.string.alert_dialog_ok,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
+			final AlertDialog dialog = new AlertDialog.Builder(Whitelist.this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
 								try {
 									db.insertList("wn", input.getText().toString());
 									input.setText(null);
-									refreshList();
-								}
-								catch(SQLiteConstraintException e)
-								{
-									Toast.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.", Toast.LENGTH_LONG).show();
+									cursorAdapter.getCursor().requery();
+								} catch (SQLiteConstraintException e) {
+									Toast
+											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
+													Toast.LENGTH_LONG).show();
 								}
 							}
 						}
-					}).setNegativeButton(R.string.alert_dialog_cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							input.setText(null);
-						}
-					}).create();
-		default:
-			Log.i("dialogDefault", "dialog");
-			Log.i("dialogCaseNumber", String.valueOf(R.id.add_number));
-			Log.i("dialogReceivedNumber", String.valueOf(id));
-		}
+					}).setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					input.setText(null);
+				}
+			}).create();
 
-		return null;
+			input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+				@Override
+				public void onFocusChange(View v, boolean hasFocus) {
+					if (hasFocus) {
+						dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					}
+				}
+			});
+			return dialog;
+		case 1:
+			final EditText input2 = new EditText(this);
+			final AlertDialog dialog2 = new AlertDialog.Builder(Whitelist.this).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
+					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							if (input2.getText().toString() != null) {
+								try {
+									db.updateList(0, input2.getText().toString());	//BURDA IDSINI CEKEBILMEK LAZIM
+								} catch (SQLiteConstraintException e) {
+									Toast
+											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
+													Toast.LENGTH_LONG).show();
+								}
+							} else {
+								Toast
+								.makeText(Whitelist.this, "Entry cannot be empty.",
+										Toast.LENGTH_LONG).show();
+							}
+						}
+					}).setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+				}
+			}).create();
+
+			input2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+				@Override
+				public void onFocusChange(View v, boolean hasFocus) {
+					if (hasFocus) {
+						dialog2.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+					}
+				}
+			});
+			return dialog2;
+		default:
+			return null;
+		}
 	}
 
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.blackwhitelistmenu, menu);
 		return true;
 	}
 
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Log.i("menuClicked", "true");
-		Log.i("add_number", String.valueOf(R.id.add_number));
 		switch (item.getItemId()) {
 		case R.id.add_number:
-			Log.i("addClicked", "true");
-			showDialog(R.id.add_number);
+			showDialog(0);
 			return true;
-		default:
-			Log.i("whatIsClicked", String.valueOf(item.getItemId()));
-			return super.onOptionsItemSelected(item);
 		}
+		return super.onOptionsItemSelected(item);
 	}
 
-	/** press-hold/context menu */
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle("Choose...");
-		menu.add(0, 0, 0, R.string.delete_entry);
+		menu.add(0, 0, 0, R.string.update_entry);
+		menu.add(0, 1, 0, R.string.delete_entry);
 	}
 
-	/** when press-hold option selected */
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info =
-			(AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
-		db.deleteList(info.id);
-		refreshList();
-		return true;
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		switch (item.getItemId()) {
+		case 0:
+			showDialog(1);
+			cursorAdapter.getCursor().requery();
+			return true;
+		case 1:
+			db.deleteList(info.id);
+			cursorAdapter.getCursor().requery();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		setContentView(R.layout.mylist);
 		this.db = new Database(this);
-		refreshList();
+		listCursor = db.getList("w");
+		String[] from = new String[] { listCursor.getColumnName(1) };
+		int[] to = new int[] { R.id.list_entry };
+		cursorAdapter = new SimpleCursorAdapter(this, R.layout.mylist, listCursor, from, to);
+		this.setListAdapter(cursorAdapter);
 		registerForContextMenu(getListView());
 	}
 
-	public void onStart() {
-		super.onStart();
-	}
-
-	public void onResume() {
-		super.onResume();
-	}
-
-	public void onPause() {
-		super.onPause();
-	}
-
+	@Override
 	public void onDestroy() {
 		super.onDestroy();
 		if (db != null) {
