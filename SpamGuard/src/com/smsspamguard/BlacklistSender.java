@@ -20,7 +20,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
-public class Whitelist extends ListActivity {
+public class BlacklistSender extends ListActivity {
 	private Database db;
 	private Cursor listCursor = null;
 	private SimpleCursorAdapter cursorAdapter;
@@ -33,7 +33,7 @@ public class Whitelist extends ListActivity {
 		switch (id) {
 		case 0:
 			final EditText input = new EditText(this);
-			final AlertDialog dialog = new AlertDialog.Builder(Whitelist.this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+			final AlertDialog dialog = new AlertDialog.Builder(BlacklistSender.this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
@@ -44,7 +44,7 @@ public class Whitelist extends ListActivity {
 									//cursorAdapter.notifyDataSetChanged();
 								} catch (SQLiteConstraintException e) {
 									Toast
-											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(BlacklistSender.this, "Phone number already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							}
@@ -66,7 +66,7 @@ public class Whitelist extends ListActivity {
 			return dialog;
 		case 1:
 			final EditText input2 = new EditText(this);
-			final AlertDialog dialog2 = new AlertDialog.Builder(Whitelist.this).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
+			final AlertDialog dialog2 = new AlertDialog.Builder(BlacklistSender.this).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input2.getText().toString() != null) {	//BURDA TEXTINI CEKIP SETLEMEK LAZIM
@@ -77,12 +77,12 @@ public class Whitelist extends ListActivity {
 									cursorAdapter.getCursor().requery();
 								} catch (SQLiteConstraintException e) {
 									Toast
-											.makeText(Whitelist.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(BlacklistSender.this, "Phone number already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							} else {
 								Toast
-								.makeText(Whitelist.this, "Entry cannot be empty.",
+								.makeText(BlacklistSender.this, "Entry cannot be empty.",
 										Toast.LENGTH_LONG).show();
 							}
 						}
@@ -116,15 +116,11 @@ public class Whitelist extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.add_number:
-			type = "wn";
+			type = "wns";
 			showDialog(0);
 			return true;
-//		case R.id.add_text:
-//			type = "wt";
-//			showDialog(0);
-//			return true;
 		case R.id.add_regex:
-			type = "wr";
+			type = "wnr";
 			showDialog(0);
 			return true;
 		}
@@ -145,11 +141,10 @@ public class Whitelist extends ListActivity {
 		case 0:
 			selectedItemId = info.id;
 			showDialog(1);
-			//cursorAdapter.getCursor().requery();
 			return true;
 		case 1:
 			db.deleteList(info.id);
-			//cursorAdapter.getCursor().requery();
+			cursorAdapter.getCursor().requery();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -160,7 +155,7 @@ public class Whitelist extends ListActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.mylist);
 		this.db = new Database(this);
-		listCursor = db.getList("w");
+		listCursor = db.getList("b");
 		String[] from = new String[] { listCursor.getColumnName(1) };
 		int[] to = new int[] { R.id.list_entry };
 		cursorAdapter = new SimpleCursorAdapter(this, R.layout.mylist, listCursor, from, to);

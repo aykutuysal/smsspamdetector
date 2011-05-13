@@ -8,6 +8,9 @@
 	<string name="title_preferences">Preferences</string>
 	<string name="title_whitelist">Whitelist</string>
 	<string name="title_blacklist">Blacklist</string>
+	<string name="title_blacklist_sender">Sender</string>
+	<string name="title_blacklist_text">Content</string>
+	<string name="title_blacklist_regex">Regex</string>
 	<string name="title_spams">Spams</string>
 	
 	<!--Toggle App-->
@@ -29,12 +32,6 @@
 	<!--Block All-capital SMS-->
 	<string name="title_block_allcapital">Block all-capital SMS</string>
 	<string name="summary_block_allcapital"></string>
-	
-	<!--Blacklist-->
-	<string name="summary_blacklist">Add phone numbers to blacklist</string>
-	
-	<!--Whitelist-->
-	<string name="summary_whitelist">Add phone numbers to whitelist</string>
 	
 	<!--Menu-->
 	<string name="add_number">Add Number</string>

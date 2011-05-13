@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+     	<item android:id="@+id/add_text"
+        android:title="@string/add_text"
+        android:icon="@drawable/ic_menu_add" />
+        <item android:id="@+id/add_regex"
+        android:title="@string/add_regex"
+        android:icon="@drawable/ic_menu_add" />
+</menu>
