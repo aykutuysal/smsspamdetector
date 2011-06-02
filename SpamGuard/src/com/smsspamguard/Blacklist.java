@@ -18,13 +18,13 @@ public class Blacklist extends TabActivity {
 
 	    intent = new Intent().setClass(this, BlacklistSender.class);
 	    spec = tabHost.newTabSpec("blacklistSender").setIndicator("Sender",
-	                      res.getDrawable(R.layout.tab_blacklist_sender))
+	                      res.getDrawable(R.drawable.tab_blacklist_sender))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 
 	    intent = new Intent().setClass(this, BlacklistText.class);
 	    spec = tabHost.newTabSpec("blacklistText").setIndicator("Content",
-	                      res.getDrawable(R.layout.tab_blacklist_text))
+	                      res.getDrawable(R.drawable.tab_blacklist_text))
 	                  .setContent(intent);
 	    tabHost.addTab(spec);
 	    
