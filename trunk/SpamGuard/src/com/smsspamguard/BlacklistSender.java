@@ -116,11 +116,11 @@ public class BlacklistSender extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.add_number:
-			type = "wns";
+			type = "bns";
 			showDialog(0);
 			return true;
 		case R.id.add_regex:
-			type = "wnr";
+			type = "bnr";
 			showDialog(0);
 			return true;
 		}
