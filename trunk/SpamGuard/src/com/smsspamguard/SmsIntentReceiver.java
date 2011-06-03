@@ -39,10 +39,12 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 		Context ctx;
 		String body;
+		Database db;
 		
-		public SpamThread(Context ctx, String body) {
+		public SpamThread(Context ctx, String body, Database db) {
 			this.ctx=ctx;
 			this.body=body;
+			this.db=db;
 		}
 		
 		@Override
@@ -278,7 +280,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
-					Runnable r = new SpamThread(context,body);
+					Runnable r = new SpamThread(context,body,db);
 					new Thread(r).start();
 				
 				}
