@@ -33,6 +33,10 @@
 	<string name="title_block_allcapital">Block all-capital SMS</string>
 	<string name="summary_block_allcapital"></string>
 	
+	<!--Toggle SVM-->
+	<string name="title_toggle_svm">Toggle SVM</string>
+	<string name="summary_toggle_svm">Turns on/off AI filtering</string>
+	
 	<!--Menu-->
 	<string name="add_number">Add Number</string>
 	<string name="add_text">Add Text</string>
