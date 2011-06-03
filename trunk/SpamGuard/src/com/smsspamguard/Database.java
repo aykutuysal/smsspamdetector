@@ -58,14 +58,20 @@ public class Database {
 		}
 	}
 
-	public List<SmsMessage> selectAllSpam() {
+	public List<Message> selectAllSpam() {
 
-		List<SmsMessage> list = new ArrayList<SmsMessage>();
-		Cursor cursor = this.db.query(SPAM_TABLE, new String[] { "pdu" }, null, null, null, null, null);
+		List<Message> list = new ArrayList<Message>();
+		Cursor cursor = this.db.query(SPAM_TABLE, new String[] { "messageId","threadId","address","contactId","date","body" }, null, null, null, null, null);
 
 		if (cursor.moveToFirst()) {
 			do {
-				SmsMessage smsMessage = SmsMessage.createFromPdu(cursor.getBlob(0));
+				long messageId = cursor.getLong(0);
+				long threadId = cursor.getLong(1);
+				String address = cursor.getString(2);
+				long contactId = cursor.getLong(3);
+				long date = cursor.getLong(4);
+				String body = cursor.getString(5);
+				Message smsMessage = new Message(messageId,threadId,address,contactId,date,body);
 				list.add(smsMessage);
 			} while (cursor.moveToNext());
 		}

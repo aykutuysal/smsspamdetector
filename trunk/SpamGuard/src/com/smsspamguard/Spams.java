@@ -3,24 +3,30 @@ package com.smsspamguard;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.smsspamguard.model.Message;
+
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class Spams extends ListActivity {
 	private Database db;
+	private List<String> messageBodies = new ArrayList<String>();
 
 	public void refreshList() {
-		List<SmsMessage> spams = db.selectAllSpam();
-		List<String> messageBodies = new ArrayList<String>();
+		List<Message> spams = db.selectAllSpam();
 
-		for (SmsMessage message : spams) {
-			messageBodies.add(message.getDisplayMessageBody());
+		for (Message message : spams) {
+			messageBodies.add(message.getBody());
 		}
 
 		setListAdapter(new ArrayAdapter<String>(Spams.this,
@@ -77,5 +83,22 @@ public class Spams extends ListActivity {
 
 		
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		menu.setHeaderTitle("Choose...");
+		menu.add(0, 0, 0, R.string.mark_as_not_spam);
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		switch (item.getItemId()) {
+		case 0:
+			
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 }
