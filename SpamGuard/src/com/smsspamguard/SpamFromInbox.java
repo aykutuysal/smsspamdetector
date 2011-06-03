@@ -1,10 +1,10 @@
 package com.smsspamguard;
 
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.SmsMessage;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -53,12 +53,18 @@ public class SpamFromInbox extends ListActivity {
 		switch (item.getItemId()) {
 		case 0:
 			cursor.move(item.getItemId());
-			int index = cursor.getColumnIndex("body");
-			long thread_id = cursor.getLong(1);
 			
-			getContentResolver().delete(Uri.parse("content://sms/conversations/" + thread_id),null,null);
+			long messageId = cursor.getLong(0);
+			long threadId = cursor.getLong(1);
+			String address = cursor.getString(2);
+			long contactId = cursor.getLong(3);
+			String contactId_string = String.valueOf(contactId);
+			long timestamp = cursor.getLong(4);
+			String body = cursor.getString(5);
 			
-			Log.i("SPAMGUARD", "Marking As Spam : " + cursor.getString(index) );
+			getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId),null,null);
+			
+			Log.i("SPAMGUARD", "Marking As Spam : " + body );
 			
 			cursorAdapter.notifyDataSetChanged();
 			//setResult();
