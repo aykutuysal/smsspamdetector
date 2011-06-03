@@ -47,4 +47,10 @@
 	<string name="alert_dialog_ok">OK</string>
 	<string name="alert_dialog_cancel">Cancel</string>
 	
+	<!-- Spams -->
+	<string name="add_spam_from_inbox"></string>
+	
+	<!-- Spams From Inbox -->
+	<string name="mark_as_spam">Mark as spam</string>
+	<string name="title_spam_from_inbox">Mark Spam Messages</string>
 </resources>
