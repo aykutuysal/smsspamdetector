@@ -3,6 +3,8 @@ package com.smsspamguard;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.smsspamguard.model.Message;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,15 +18,15 @@ import android.util.Log;
 public class Database {
 
 	private static final String DATABASE_NAME = "spamguard.db";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	private static final String LIST_TABLE = "list_table";
 	private static final String SPAM_TABLE = "spam_table";
 
 	private static final String INSERT_LIST = "insert into " + LIST_TABLE + " (type,value) values (?,?)";
 	private static final String UPDATE_LIST = "update " + LIST_TABLE + " set value=? where " + BaseColumns._ID + "=?";
-	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE + " (displayMessageBody,displayOriginatingAddress,timestampMillis,pdu) "
-			+ "values (?,?,?,?)";
+	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE + " (messageId, threadId, address, contactId, date, body) "
+			+ "values (?,?,?,?,?,?)";
 
 	private Context context;
 	private SQLiteDatabase db;
@@ -39,14 +41,16 @@ public class Database {
 		openHelper.onUpgrade(db, 0, 1);
 	}
 
-	public void insertSpam(SmsMessage message) {
+	public void insertSpam(Message msg) {
 		this.db.beginTransaction();
 		try {
 			this.insertStmt = this.db.compileStatement(INSERT_SPAM);
-			this.insertStmt.bindString(1, message.getDisplayMessageBody());
-			this.insertStmt.bindString(2, message.getDisplayOriginatingAddress());
-			this.insertStmt.bindLong(3, message.getTimestampMillis());
-			this.insertStmt.bindBlob(4, message.getPdu());
+			this.insertStmt.bindLong(1, msg.getMessageId());
+			this.insertStmt.bindLong(2, msg.getThreadId());
+			this.insertStmt.bindString(3, msg.getAddress());
+			this.insertStmt.bindLong(4, msg.getContactId());
+			this.insertStmt.bindLong(5, msg.getDate());
+			this.insertStmt.bindString(6, msg.getBody());
 			this.insertStmt.executeInsert();
 			this.db.setTransactionSuccessful();
 		} finally {
@@ -147,8 +151,8 @@ public class Database {
 		public void onCreate(SQLiteDatabase db) {
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + LIST_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
 
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + SPAM_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, displayMessageBody TEXT, displayOriginatingAddress TEXT, "
-					+ "timestampMillis INTEGER, pdu BLOB UNIQUE ON CONFLICT ROLLBACK)");
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + SPAM_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, messageId INTEGER, threadId INTEGER, " +
+						"address TEXT, contactId INTEGER, date INTEGER, body TEXT)");
 		}
 
 		@Override

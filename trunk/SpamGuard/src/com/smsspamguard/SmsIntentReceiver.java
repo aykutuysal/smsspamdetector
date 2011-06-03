@@ -3,11 +3,14 @@ package com.smsspamguard;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.smsspamguard.model.Message;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -185,10 +188,35 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 					Toast.makeText(context, "SPAM: " + body, Toast.LENGTH_LONG).show();
 
-					for (int i = 0; i < msg.length; i++) {
-						// writing spam sms to db
-						db.insertSpam(msg[i]);
-					}
+					boolean unreadOnly = false;
+					String SMS_READ_COLUMN = "read";
+					String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
+					String SORT_ORDER = "date DESC";
+
+					Uri uri = Uri.parse("content://sms/inbox");
+
+					Cursor cursor = context.getContentResolver().query(
+							uri,
+							new String[] { "_id", "thread_id", "address", "person", "date",
+									"body" }, WHERE_CONDITION, null, SORT_ORDER);
+				
+					cursor.moveToFirst();
+					
+					long messageId = cursor.getLong(0);
+					long threadId = cursor.getLong(1);
+					String address = cursor.getString(2);
+					long contactId = cursor.getLong(3);
+					long date = cursor.getLong(4);
+					String messageBody = cursor.getString(5);
+					
+					Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
+					db.insertSpam(message);
+					
+					System.out.println(messageId + " " + threadId + " "
+							+ address + " " + contactId + " " + date
+							+ " " + body);
+					
+					context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId),null,null);
 				}
 			}
 			db.close();
