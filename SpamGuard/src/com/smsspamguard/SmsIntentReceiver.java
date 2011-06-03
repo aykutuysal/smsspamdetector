@@ -35,6 +35,77 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
 
+	private class SpamThread implements Runnable {
+
+		Context ctx;
+		String body;
+		
+		public SpamThread(Context ctx, String body) {
+			this.ctx=ctx;
+			this.body=body;
+		}
+		
+		@Override
+		public void run() {
+			Uri uri = Uri.parse("content://sms/inbox");
+			Cursor cursor = ctx.getContentResolver().query(uri,
+					new String[] { "_id" }, null, null, null);
+
+			int before = cursor.getCount();
+			Log.i("before", String.valueOf(before));
+	
+
+			Toast.makeText(ctx, "SPAM: " + body, Toast.LENGTH_LONG)
+					.show();
+
+			while (before == cursor.getCount()) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				cursor.requery();
+			}
+
+			boolean unreadOnly = false;
+			String SMS_READ_COLUMN = "read";
+			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN
+					+ " = 0" : null;
+			String SORT_ORDER = "date DESC";
+
+			cursor = ctx.getContentResolver().query(
+					uri,
+					new String[] { "_id", "thread_id", "address",
+							"person", "date", "body" },
+					WHERE_CONDITION, null, SORT_ORDER);
+
+			cursor.moveToFirst();
+
+			long messageId = cursor.getLong(0);
+			long threadId = cursor.getLong(1);
+			String address = cursor.getString(2);
+			long contactId = cursor.getLong(3);
+			long date = cursor.getLong(4);
+			String messageBody = cursor.getString(5);
+
+			Message message = new Message(messageId, threadId, address,
+					contactId, date, messageBody);
+			db.insertSpam(message);
+
+			System.out.println(messageId + " " + threadId + " "
+					+ address + " " + contactId + " " + date + " "
+					+ body);
+
+			ctx.getContentResolver()
+					.delete(Uri.parse("content://sms/conversations/"
+							+ threadId), "_id=?",
+							new String[] { String.valueOf(messageId) });
+					
+	
+		}
+		
+	}
+	
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
 		SmsMessage retMsgs[] = null;
 		Bundle bdl = intent.getExtras();
@@ -67,7 +138,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+		SharedPreferences sp = PreferenceManager
+				.getDefaultSharedPreferences(context);
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
 		allowContacts = sp.getBoolean("allow_contacts", true);
 		regexString = sp.getString("regex_string", "");
@@ -79,7 +151,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		}
 
 		if (toggleApp) {
-			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
+			if (intent.getAction().equals(
+					"android.provider.Telephony.SMS_RECEIVED")) {
 
 				db = new Database(context);
 				SmsMessage msg[] = getMessagesFromIntent(intent);
@@ -89,7 +162,16 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					body = body + msg[i].getDisplayMessageBody();
 				}
 
-				if (sender.matches("[^+\\d]") && sender.length() >= 7) // if number is conventional, look for matches without country/region code
+				if (sender.matches("[^+\\d]") && sender.length() >= 7) // if
+																		// number
+																		// is
+																		// conventional,
+																		// look
+																		// for
+																		// matches
+																		// without
+																		// country/region
+																		// code
 				{
 					String tmp = sender;
 					for (int i = 0; i <= tmp.length() - 7; i++) {
@@ -99,7 +181,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							break;
 						}
 					}
-				} else // if sender is unconventional, like service number or alphanumeric, look for exact match
+				} else // if sender is unconventional, like service number or
+						// alphanumeric, look for exact match
 				{
 					checkLists(sender);
 				}
@@ -116,7 +199,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							String tmp = sender;
 							for (int i = 0; i <= tmp.length() - 7; i++) {
 								tmp = sender.substring(i, sender.length());
-								phones = context.getContentResolver().query(Phone.CONTENT_URI, null, Phone.NUMBER + " = '" + tmp + "'", null, null);
+								phones = context.getContentResolver().query(
+										Phone.CONTENT_URI, null,
+										Phone.NUMBER + " = '" + tmp + "'",
+										null, null);
 								if (phones.getCount() == 0) {
 									notContact = true;
 								} else {
@@ -125,7 +211,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 								}
 							}
 						} else {
-							phones = context.getContentResolver().query(Phone.CONTENT_URI, null, Phone.NUMBER + " = '" + sender + "'", null, null);
+							phones = context.getContentResolver().query(
+									Phone.CONTENT_URI, null,
+									Phone.NUMBER + " = '" + sender + "'", null,
+									null);
 							if (phones.getCount() == 0) {
 								notContact = true;
 							} else {
@@ -135,42 +224,45 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						}
 					}
 
-					if (notContact) // this if is not necessary
-					{
-						// Regex Filtering
-						if (!regexString.equals("")) {
-							Pattern p = Pattern.compile(regexString); // Android default takes it unicode case insensitive
-							Matcher m = p.matcher("");
-							for (int i = 0; i < msg.length; i++) {
-								m = p.matcher(msg[i].getDisplayMessageBody());
-								if (m.find()) {
-									regexMatch = true;
-									break;
-								}
-							}
-						}
-
-						// Block Non-Numeric Sender
-						if (blockNonnumeric) {
-							Log.i("senderAddress", sender);
-							Pattern p = Pattern.compile("[^+\\d]");
-							Matcher m = p.matcher(sender);
+					// Regex Filtering
+					if (!regexString.equals("")) {
+						Pattern p = Pattern.compile(regexString); // Android
+																	// default
+																	// takes
+																	// it
+																	// unicode
+																	// case
+																	// insensitive
+						Matcher m = p.matcher("");
+						for (int i = 0; i < msg.length; i++) {
+							m = p.matcher(msg[i].getDisplayMessageBody());
 							if (m.find()) {
-								nonNumeric = true;
+								regexMatch = true;
+								break;
 							}
 						}
+					}
 
-						// Block All-Capital Message
-						if (blockAllcapital) {
-							allCapital = true;
-							Pattern p = Pattern.compile("[a-z]");
-							Matcher m = p.matcher("");
-							for (int i = 0; i < msg.length; i++) {
-								m = p.matcher(msg[i].getDisplayMessageBody());
-								if (m.find()) {
-									allCapital = false;
-									break;
-								}
+					// Block Non-Numeric Sender
+					if (blockNonnumeric) {
+						Log.i("senderAddress", sender);
+						Pattern p = Pattern.compile("[^+\\d]");
+						Matcher m = p.matcher(sender);
+						if (m.find()) {
+							nonNumeric = true;
+						}
+					}
+
+					// Block All-Capital Message
+					if (blockAllcapital) {
+						allCapital = true;
+						Pattern p = Pattern.compile("[a-z]");
+						Matcher m = p.matcher("");
+						for (int i = 0; i < msg.length; i++) {
+							m = p.matcher(msg[i].getDisplayMessageBody());
+							if (m.find()) {
+								allCapital = false;
+								break;
 							}
 						}
 					}
@@ -183,43 +275,17 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				Log.i("allowContacts", String.valueOf(allowContacts));
 
 				// deduce spam or not
+
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
-
-					Toast.makeText(context, "SPAM: " + body, Toast.LENGTH_LONG).show();
-
-					boolean unreadOnly = false;
-					String SMS_READ_COLUMN = "read";
-					String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
-					String SORT_ORDER = "date DESC";
-
-					Uri uri = Uri.parse("content://sms/inbox");
-
-					Cursor cursor = context.getContentResolver().query(
-							uri,
-							new String[] { "_id", "thread_id", "address", "person", "date",
-									"body" }, WHERE_CONDITION, null, SORT_ORDER);
+					Runnable r = new SpamThread(context,body);
+					new Thread(r).start();
 				
-					cursor.moveToFirst();
-					
-					long messageId = cursor.getLong(0);
-					long threadId = cursor.getLong(1);
-					String address = cursor.getString(2);
-					long contactId = cursor.getLong(3);
-					long date = cursor.getLong(4);
-					String messageBody = cursor.getString(5);
-					
-					Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
-					db.insertSpam(message);
-					
-					System.out.println(messageId + " " + threadId + " "
-							+ address + " " + contactId + " " + date
-							+ " " + body);
-					
-					context.getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId),null,null);
 				}
 			}
 			db.close();
 		}
 	}
+	
+	
 }

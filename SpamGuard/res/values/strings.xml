@@ -49,6 +49,8 @@
 	
 	<!-- Spams -->
 	<string name="add_spam_from_inbox"></string>
+	<string name="mark_as_not_spam">Mark as not spam</string>
+	
 	
 	<!-- Spams From Inbox -->
 	<string name="mark_as_spam">Mark as spam</string>
