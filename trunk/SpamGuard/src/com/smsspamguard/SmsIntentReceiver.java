@@ -55,8 +55,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Log.i("before", String.valueOf(before));
 	
 
-			Toast.makeText(ctx, "SPAM: " + body, Toast.LENGTH_LONG)
-					.show();
+//			Toast.makeText(ctx, "SPAM: " + body, Toast.LENGTH_LONG)
+//					.show();
 
 			while (before == cursor.getCount()) {
 				try {
