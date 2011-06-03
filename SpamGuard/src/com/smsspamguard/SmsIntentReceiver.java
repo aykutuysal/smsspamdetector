@@ -41,14 +41,15 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		String body;
 		Database db;
 		
-		public SpamThread(Context ctx, String body, Database db) {
+		public SpamThread(Context ctx, String body) {
 			this.ctx=ctx;
 			this.body=body;
-			this.db=db;
 		}
 		
 		@Override
 		public void run() {
+			
+			db = new Database(ctx);
 			Uri uri = Uri.parse("content://sms/inbox");
 			Cursor cursor = ctx.getContentResolver().query(uri,
 					new String[] { "_id" }, null, null, null);
@@ -280,7 +281,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
-					Runnable r = new SpamThread(context,body,db);
+					Runnable r = new SpamThread(context,body);
 					new Thread(r).start();
 				
 				}
