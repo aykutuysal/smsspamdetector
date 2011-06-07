@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,8 +33,10 @@ public class BlacklistSender extends ListActivity {
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 		case 0:
+			Log.i("dialog", "start");
 			final EditText input = new EditText(this);
-			final AlertDialog dialog = new AlertDialog.Builder(BlacklistSender.this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+			Log.i("dialog", "1");
+			final AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
@@ -54,7 +57,7 @@ public class BlacklistSender extends ListActivity {
 					input.setText(null);
 				}
 			}).create();
-
+			Log.i("dialog", "2");
 			input.setOnFocusChangeListener(new View.OnFocusChangeListener() {
 				@Override
 				public void onFocusChange(View v, boolean hasFocus) {
@@ -63,6 +66,7 @@ public class BlacklistSender extends ListActivity {
 					}
 				}
 			});
+			Log.i("dialog", "3");
 			return dialog;
 		case 1:
 			final EditText input2 = new EditText(this);
@@ -118,6 +122,7 @@ public class BlacklistSender extends ListActivity {
 		case R.id.add_number:
 			type = "bns";
 			showDialog(0);
+			Log.i("passed","passed");
 			return true;
 		case R.id.add_regex:
 			type = "bnr";
