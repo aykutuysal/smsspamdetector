@@ -3,9 +3,8 @@ package com.smsspamguard;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.smsspamguard.model.Message;
-
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +15,8 @@ import android.preference.PreferenceManager;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsMessage;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.smsspamguard.model.Message;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
 
@@ -30,7 +30,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 	private boolean isBlacklisted = false;
 	private boolean isWhitelisted = false;
-	private boolean notContact = false;
 	private boolean regexMatch = false;
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
@@ -79,7 +78,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			cursor = ctx.getContentResolver().query(
 					uri,
 					new String[] { "_id", "thread_id", "address",
-							"person", "date", "body" },
+							"person", "date", "body", "read" },
 					WHERE_CONDITION, null, SORT_ORDER);
 
 			cursor.moveToFirst();
@@ -99,6 +98,11 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					+ address + " " + contactId + " " + date + " "
 					+ body);
 
+			ContentValues values = new ContentValues();
+			values.put("read", 1);
+			ctx.getContentResolver().update(Uri.parse("content://sms/conversations/"
+							+ threadId), values, "_id=?", new String[] { String.valueOf(messageId) });
+			
 			ctx.getContentResolver()
 					.delete(Uri.parse("content://sms/conversations/"
 							+ threadId), "_id=?",
@@ -168,7 +172,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					body = body + msg[i].getDisplayMessageBody();
 				}
 
-				if (sender.matches("[^+\\d]") && sender.length() >= 7) // if
+				if (!sender.matches("[^+\\d]") && sender.length() >= 7) // if
 																		// number
 																		// is
 																		// conventional,
@@ -194,24 +198,24 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 
 				if (isWhitelisted) {
-					Log.i("whitelist", "true");
+					Log.i("whitelist", "whitelisted");
 					db.close();
 					return; // do not run spam filter for whitelist sender
 				} else {
 					// Allow Contacts
-					if (allowContacts && sender.matches("[^+\\d]")) {
+					if (allowContacts && !sender.matches("[^+\\d]")) {
 						Cursor phones = null;
 						if (sender.length() >= 7) {
 							String tmp = sender;
 							for (int i = 0; i <= tmp.length() - 7; i++) {
 								tmp = sender.substring(i, sender.length());
+								Log.i("tmp", tmp);
 								phones = context.getContentResolver().query(
 										Phone.CONTENT_URI, null,
 										Phone.NUMBER + " = '" + tmp + "'",
 										null, null);
-								if (phones.getCount() == 0) {
-									notContact = true;
-								} else {
+								if (phones.getCount() > 0) {
+									Log.i("contact", "found");
 									phones.close();
 									db.close();
 									return;
@@ -222,9 +226,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 									Phone.CONTENT_URI, null,
 									Phone.NUMBER + " = '" + sender + "'", null,
 									null);
-							if (phones.getCount() == 0) {
-								notContact = true;
-							} else {
+							if (phones.getCount() > 0) {
 								phones.close();
 								db.close();
 								return;
@@ -254,9 +256,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					// Block Non-Numeric Sender
 					if (blockNonnumeric) {
 						Log.i("senderAddress", sender);
-						Pattern p = Pattern.compile("[^+\\d]");
-						Matcher m = p.matcher(sender);
-						if (m.find()) {
+						if (sender.matches("[^+\\d]")) {
 							nonNumeric = true;
 						}
 					}
@@ -280,20 +280,15 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
 				Log.i("isBlacklisted", String.valueOf(isBlacklisted));
-				Log.i("allowContacts", String.valueOf(allowContacts));
 
 				// deduce spam or not
-
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
 					Runnable r = new SpamThread(context,body);
 					new Thread(r).start();
-				
 				}
 			}
 			db.close();
 		}
 	}
-	
-	
 }
