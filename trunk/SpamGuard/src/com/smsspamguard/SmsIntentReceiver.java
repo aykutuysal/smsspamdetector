@@ -103,10 +103,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					.delete(Uri.parse("content://sms/conversations/"
 							+ threadId), "_id=?",
 							new String[] { String.valueOf(messageId) });
-					
-	
+			
+			cursor.close();
+			db.close();
 		}
-		
 	}
 	
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
@@ -136,6 +136,9 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			} else {
 				isWhitelisted = true;
 			}
+		}
+		if (c != null && !c.isClosed()) {
+			c.close();
 		}
 	}
 
@@ -209,6 +212,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 								if (phones.getCount() == 0) {
 									notContact = true;
 								} else {
+									phones.close();
 									db.close();
 									return;
 								}
@@ -221,6 +225,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							if (phones.getCount() == 0) {
 								notContact = true;
 							} else {
+								phones.close();
 								db.close();
 								return;
 							}
