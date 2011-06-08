@@ -9,9 +9,9 @@ public class Message {
 	private long contactId;
 	private long date;
 	private String body;
+	private boolean isTrained = false;
 	
-	public Message() {
-	}
+	public Message() {}
 	
 	public Message(long messageId, long threadId, String address,
 			long contactId, long date, String body) {
@@ -71,8 +71,12 @@ public class Message {
 	public void setBody(String body) {
 		this.body = body;
 	}
-	
-	
-	
 
+	public boolean isTrained() {
+		return isTrained;
+	}
+
+	public void setTrained(boolean isTrained) {
+		this.isTrained = isTrained;
+	}
 }

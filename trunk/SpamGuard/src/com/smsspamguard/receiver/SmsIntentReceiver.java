@@ -112,6 +112,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			
 			cursor.close();
 			db.close();
+
 			
 			//display a notification for caught spam
 			mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
