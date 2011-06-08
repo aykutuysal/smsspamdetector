@@ -1,14 +1,7 @@
 package com.smsspamguard.receiver;
-import com.smsspamguard.activity.Main;
-import com.smsspamguard.activity.Spams;
-import com.smsspamguard.db.Database;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -22,6 +15,7 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.smsspamguard.db.Database;
 import com.smsspamguard.model.Message;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
@@ -299,6 +293,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					new Thread(r).start();
 					
 					
+
 
 //					int icon = R.drawable.notification_icon;        // icon from resources
 					CharSequence tickerText = "Hello";              // ticker-text
