@@ -8,6 +8,8 @@ import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Set;
 
+import android.content.Context;
+
 import com.smsspamguard.engine.bayesian.common.SmsFormatter;
 import com.smsspamguard.engine.bayesian.common.Token;
 
@@ -24,7 +26,6 @@ public abstract class AbstractBayesianFilter {
 	public void train(String message, String type) {
 		
 		message = SmsFormatter.format(message);
-		
 		String[] tokenList = this.returnTokenList(message);
 		
 		for(String str : tokenList) {
@@ -55,11 +56,13 @@ public abstract class AbstractBayesianFilter {
 	 * @param filePath
 	 * @param type
 	 */
-	public void trainBulk(String filePath, String type) {
+	public void trainBulk(String filePath, String type, Context context) {
 		int count = 0;
 		try
 		{
-			Scanner scanner = new Scanner(new FileInputStream(filePath), "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
+			FileInputStream fis = context.openFileInput(filePath);
+			Scanner scanner = new Scanner(fis, "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
+		
 			while(scanner.hasNext())
 			{
 				String temp = scanner.next();
