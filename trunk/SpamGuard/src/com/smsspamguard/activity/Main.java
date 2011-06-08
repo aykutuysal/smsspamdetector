@@ -59,7 +59,7 @@ public class Main extends TabActivity {
 		PendingIntent sender = PendingIntent.getBroadcast(this, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		Calendar cal = Calendar.getInstance();
 		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 3*60*1000, sender);
+		am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 5*60*1000, sender);
 	    Log.i("SpamGuard", "Alarm is set by Main.java");
 
 	}

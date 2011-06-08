@@ -14,6 +14,8 @@ import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.engine.svm.SvmManager;
+import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.engine.svm.input.InputFileCreator;
 import com.smsspamguard.model.Message;
 
@@ -35,6 +37,9 @@ public class AlarmReceiver extends BroadcastReceiver {
 			createCleansFile(context);
 			InputFileCreator ifc = new InputFileCreator(context);
 			ifc.createSvmInputs();
+			
+			SVMSpam svmSpam = SvmManager.getSvm(context);
+			svmSpam.start();
 		}
 		
 		/**

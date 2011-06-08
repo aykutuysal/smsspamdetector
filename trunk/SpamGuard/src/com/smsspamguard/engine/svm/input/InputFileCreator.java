@@ -198,7 +198,7 @@ public class InputFileCreator {
 				fos.write(line.getBytes());
 			}
 			System.out.println("Finished reading " + cleanSourcePath);
-			Log.i(Constants.DEBUG_TAG,"SVM Input File is creatd(" + destPath + ")");
+			Log.i(Constants.DEBUG_TAG,"SVM Input File is created(" + destPath + ")");
 			fisClean.close();
 			fos.close();
 		}
