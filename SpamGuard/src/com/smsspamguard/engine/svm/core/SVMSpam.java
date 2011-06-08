@@ -1,6 +1,7 @@
 package com.smsspamguard.engine.svm.core;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,6 +12,10 @@ import libsvm.svm_model;
 import libsvm.svm_node;
 import libsvm.svm_parameter;
 import libsvm.svm_problem;
+import android.content.Context;
+import android.util.Log;
+
+import com.smsspamguard.constant.Constants;
 
 public class SVMSpam {
 
@@ -23,6 +28,8 @@ public class SVMSpam {
 	private int featureCount;
 	private String trainFile, testFile;
 	
+	private Context context;
+	
 	public SVMSpam(int featureCount, String trainFile, String testFile) {
 		this.trainFile = trainFile;
 		this.testFile = testFile;
@@ -31,31 +38,42 @@ public class SVMSpam {
 	}
 
 	
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
 	public void start() {
 		
-		
 		try {
-			this.scaler.scale("data/range", null, "data/" + trainFile, -1.0, 1.0);
-			this.scaler.scale(null, "data/range", "data/" + testFile, -1.0, 1.0);
+			Log.i(Constants.DEBUG_TAG,"Scaling started");
+			//this.scaler.scale("data/range", null, "data/" + trainFile, -1.0, 1.0);
+			this.scaler.scale(Constants.SVM_RANGE_SAVE_PATH, null, Constants.SVM_INPUT_FILENAME, -1.0, 1.0,context);
+			//this.scaler.scale(null, "data/range", "data/" + testFile, -1.0, 1.0);
+			this.scaler.scale(null,Constants.SVM_RANGE_LOAD_PATH, testFile, -1.0, 1.0,context);
+			Log.i(Constants.DEBUG_TAG,"Scaling Finished");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
+		Log.i(Constants.DEBUG_TAG,"Creating svmProblem");
+		this.svmSpamTrainProblem = readInput(Constants.SVM_INPUT_FILENAME + ".scaled");
 		
-		this.svmSpamTrainProblem = readInput("data/" + trainFile + ".scaled");
+		Log.i(Constants.DEBUG_TAG,"Creating svmParameter");
 		this.svmSpamParameter = createSvmParameter();
 		
-		
-		
+		Log.i(Constants.DEBUG_TAG,"Cross validation");
 		do_cross_validation();
 		
+		Log.i(Constants.DEBUG_TAG,"Starting SVM training");
 		this.svmSpamModel = train();
+		Log.i(Constants.DEBUG_TAG, "SVM Training has finished.");
 		
-		this.svmSpamTestProblem = readInput("data/" + testFile + ".scaled");
-		predict();
-		
-		
-	
+//		this.svmSpamTestProblem = readInput("data/" + testFile + ".scaled");
+//		predict();
 //		double[] target = new double[svmSpamProblem.l];
 //		svm.svm_cross_validation(svmSpamProblem, svmSpamParameter, 5, target );
 //		
@@ -155,8 +173,8 @@ public class SVMSpam {
 	public svm_problem readInput(String path) {
 		
 		try {
-			File trainingFile = new File(path);
-			Scanner scanner = new Scanner(trainingFile);
+			FileInputStream fis = context.openFileInput(path);
+			Scanner scanner = new Scanner(fis);
 			
 			// length of the input
 			int length = 0;
@@ -166,7 +184,7 @@ public class SVMSpam {
 			}
 		
 			scanner.close();
-			scanner = new Scanner(trainingFile);
+			scanner = new Scanner(fis);
 			
 			double[] yList = new double[length];
 			int index = 0;

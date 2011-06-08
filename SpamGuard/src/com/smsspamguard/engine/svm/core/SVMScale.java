@@ -3,11 +3,17 @@ package com.smsspamguard.engine.svm.core;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.util.Formatter;
 import java.util.StringTokenizer;
+
+import android.content.Context;
 
 public class SVMScale {
 
@@ -32,13 +38,14 @@ public class SVMScale {
 	}
 
 	private BufferedReader rewind(BufferedReader paramBufferedReader,
-			String paramString) throws IOException {
+			String paramString, Context context) throws IOException {
 		paramBufferedReader.close();
-		return new BufferedReader(new FileReader(paramString));
+		FileInputStream fis = context.openFileInput(paramString);
+		return new BufferedReader(new InputStreamReader(fis));
 	}
 
 	public void scale(String rangeSavePath, String rangeLoadPath,
-			String inputPath, double lowerBound, double upperBound)
+			String inputPath, double lowerBound, double upperBound, Context context)
 			throws IOException {
 
 		BufferedReader localBufferedReader1 = null;
@@ -63,7 +70,8 @@ public class SVMScale {
 
 		if (str2 != null) {
 			try {
-				localBufferedReader2 = new BufferedReader(new FileReader(str2));
+				FileInputStream fis2 = context.openFileInput(str2);
+				localBufferedReader2 = new BufferedReader(new InputStreamReader(fis2));
 			} catch (Exception localException2) {
 				System.err.println("can't open file " + str2);
 				System.exit(1);
@@ -84,7 +92,7 @@ public class SVMScale {
 				int k = Integer.parseInt(localStringTokenizer2.nextToken());
 				this.max_index = Math.max(this.max_index, k);
 			}
-			localBufferedReader2 = rewind(localBufferedReader2, str2);
+			localBufferedReader2 = rewind(localBufferedReader2, str2, context);
 		}
 		int j;
 		while (readline(localBufferedReader1) != null) {
@@ -111,7 +119,7 @@ public class SVMScale {
 			this.feature_min[i] = 1.7976931348623157E+308D;
 		}
 
-		localBufferedReader1 = rewind(localBufferedReader1, str3);
+		localBufferedReader1 = rewind(localBufferedReader1, str3, context);
 		int m;
 		StringTokenizer localStringTokenizer3;
 		double d4;
@@ -143,7 +151,7 @@ public class SVMScale {
 			}
 		}
 
-		localBufferedReader1 = rewind(localBufferedReader1, str3);
+		localBufferedReader1 = rewind(localBufferedReader1, str3, context);
 
 		if (str2 != null) {
 			localBufferedReader2.mark(2);
@@ -198,7 +206,8 @@ public class SVMScale {
 			Formatter localFormatter = new Formatter(new StringBuilder());
 			BufferedWriter localBufferedWriter = null;
 			try {
-				localBufferedWriter = new BufferedWriter(new FileWriter(str1));
+				FileOutputStream fos1 = context.openFileOutput(str2, Context.MODE_PRIVATE);
+				localBufferedWriter = new BufferedWriter(new OutputStreamWriter(fos1));
 			} catch (IOException localIOException) {
 				System.err.println("can't open file " + str1);
 				System.exit(1);
@@ -227,26 +236,26 @@ public class SVMScale {
 			localBufferedWriter.close();
 		}
 
-		FileWriter outFile = new FileWriter(new File(str3 + ".scaled"));
+		FileOutputStream outFile = context.openFileOutput(str3 + ".scaled", Context.MODE_PRIVATE);
 		
 		while (readline(localBufferedReader1) != null) {
 			int i1 = 1;
 
 			localStringTokenizer3 = new StringTokenizer(this.line, " \t\n\r\f:");
 			double d2 = Double.parseDouble(localStringTokenizer3.nextToken());
-			outFile.write(output_target(d2));
+			outFile.write(output_target(d2).getBytes());
 			while (localStringTokenizer3.hasMoreElements()) {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
 				for (int i = i1; i < j; ++i)
-					outFile.write(output(i, 0.0D));
-				outFile.write(output(j, d4));
+					outFile.write(output(i, 0.0D).getBytes());
+				outFile.write(output(j, d4).getBytes());
 				i1 = j + 1;
 			}
 
 			for (int i = i1; i <= this.max_index; ++i)
-				outFile.write(output(i, 0.0D));
-			outFile.write("\n");
+				outFile.write(output(i, 0.0D).getBytes());
+			outFile.write("\n".getBytes());
 		}
 		if (this.new_num_nonzeros > this.num_nonzeros) {
 			System.err.print("Warning: original #nonzeros " + this.num_nonzeros
