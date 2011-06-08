@@ -61,11 +61,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 			int before = cursor.getCount();
 			Log.i("before", String.valueOf(before));
-	
-
-//			Toast.makeText(ctx, "SPAM: " + body, Toast.LENGTH_LONG)
-//					.show();
-
+			
 			while (before == cursor.getCount()) {
 				try {
 					Thread.sleep(1000);
@@ -303,22 +299,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					this.abortBroadcast();
 					Runnable r = new SpamThread(context,body);
 					new Thread(r).start();
-					
-					
-
-
-//					int icon = R.drawable.notification_icon;        // icon from resources
-					CharSequence tickerText = "Hello";              // ticker-text
-					long when = System.currentTimeMillis();         // notification time
-					CharSequence contentTitle = "My notification";  // expanded message title
-					CharSequence contentText = "Hello World!";      // expanded message text
-
-//					Intent notificationIntent = new Intent(this, Main.class);
-//					PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-//
-//					// the next two lines initialize the Notification, using the configurations above
-//					Notification notification = new Notification(icon, tickerText, when);
-//					notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
 				}
 			}
 			db.close();
