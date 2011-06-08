@@ -1,22 +1,18 @@
 package com.smsspamguard.activity;
 
-import com.smsspamguard.R;
-import com.smsspamguard.R.id;
-import com.smsspamguard.R.layout;
-import com.smsspamguard.R.string;
-
 import android.app.ListActivity;
-import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.SimpleCursorAdapter;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.smsspamguard.R;
 
 public class SpamFromInbox extends ListActivity {
 	

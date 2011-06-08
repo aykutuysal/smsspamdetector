@@ -1,14 +1,12 @@
 package com.smsspamguard.activity;
 
-import com.smsspamguard.R;
-import com.smsspamguard.R.drawable;
-import com.smsspamguard.R.layout;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+
+import com.smsspamguard.R;
 
 public class Blacklist extends TabActivity {
 	public void onCreate(Bundle savedInstanceState) {

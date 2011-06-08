@@ -3,17 +3,9 @@ package com.smsspamguard.activity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.smsspamguard.R;
-import com.smsspamguard.R.id;
-import com.smsspamguard.R.menu;
-import com.smsspamguard.R.string;
-import com.smsspamguard.db.Database;
-import com.smsspamguard.model.Message;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.telephony.SmsMessage;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +14,10 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.smsspamguard.R;
+import com.smsspamguard.db.Database;
+import com.smsspamguard.model.Message;
 
 public class Spams extends ListActivity {
 	private Database db;

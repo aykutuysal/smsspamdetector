@@ -19,7 +19,6 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.smsspamguard.R;
-import com.smsspamguard.activity.Main;
 import com.smsspamguard.activity.Spams;
 import com.smsspamguard.db.Database;
 import com.smsspamguard.model.Message;

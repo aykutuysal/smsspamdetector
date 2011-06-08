@@ -1,12 +1,5 @@
 package com.smsspamguard.activity;
 
-import com.smsspamguard.R;
-import com.smsspamguard.R.id;
-import com.smsspamguard.R.layout;
-import com.smsspamguard.R.menu;
-import com.smsspamguard.R.string;
-import com.smsspamguard.db.Database;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ListActivity;
@@ -27,6 +20,9 @@ import android.widget.EditText;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+
+import com.smsspamguard.R;
+import com.smsspamguard.db.Database;
 
 public class BlacklistSender extends ListActivity {
 	private Database db;

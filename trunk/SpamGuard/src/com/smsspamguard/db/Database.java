@@ -3,8 +3,6 @@ package com.smsspamguard.db;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.smsspamguard.model.Message;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -12,8 +10,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteStatement;
 import android.provider.BaseColumns;
-import android.telephony.SmsMessage;
 import android.util.Log;
+
+import com.smsspamguard.model.Message;
 
 public class Database {
 
