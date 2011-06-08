@@ -203,7 +203,9 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					return; // do not run spam filter for whitelist sender
 				} else {
 					// Allow Contacts
-					if (allowContacts && !sender.matches("[^+\\d]")) {
+					Pattern p = Pattern.compile("[^+\\d]");
+					Matcher m = p.matcher(sender);
+					if (allowContacts && !m.find()) {
 						Cursor phones = null;
 						if (sender.length() >= 7) {
 							String tmp = sender;
@@ -236,16 +238,16 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 					// Regex Filtering
 					if (!regexString.equals("")) {
-						Pattern p = Pattern.compile(regexString); // Android
+						Pattern p2 = Pattern.compile(regexString); // Android
 																	// default
 																	// takes
 																	// it
 																	// unicode
 																	// case
 																	// insensitive
-						Matcher m = p.matcher("");
+						m = p2.matcher("");
 						for (int i = 0; i < msg.length; i++) {
-							m = p.matcher(msg[i].getDisplayMessageBody());
+							m = p2.matcher(msg[i].getDisplayMessageBody());
 							if (m.find()) {
 								regexMatch = true;
 								break;
@@ -256,7 +258,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					// Block Non-Numeric Sender
 					if (blockNonnumeric) {
 						Log.i("senderAddress", sender);
-						if (sender.matches("[^+\\d]")) {
+						m = p.matcher(sender);
+						if (m.find()) {
 							nonNumeric = true;
 						}
 					}
@@ -264,10 +267,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					// Block All-Capital Message
 					if (blockAllcapital) {
 						allCapital = true;
-						Pattern p = Pattern.compile("[a-z]");
-						Matcher m = p.matcher("");
+						Pattern p3 = Pattern.compile("[a-z]");
+						m = p3.matcher("");
 						for (int i = 0; i < msg.length; i++) {
-							m = p.matcher(msg[i].getDisplayMessageBody());
+							m = p3.matcher(msg[i].getDisplayMessageBody());
 							if (m.find()) {
 								allCapital = false;
 								break;
