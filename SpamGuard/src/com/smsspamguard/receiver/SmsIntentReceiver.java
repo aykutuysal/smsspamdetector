@@ -2,6 +2,9 @@ package com.smsspamguard.receiver;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,6 +18,9 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
+import com.smsspamguard.R;
+import com.smsspamguard.activity.Main;
+import com.smsspamguard.activity.Spams;
 import com.smsspamguard.db.Database;
 import com.smsspamguard.model.Message;
 
@@ -33,7 +39,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean regexMatch = false;
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
-
+	private NotificationManager mNotificationManager;
+	private int SIMPLE_NOTFICATION_ID = 1;
 	private class SpamThread implements Runnable {
 
 		Context ctx;
@@ -111,7 +118,13 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			cursor.close();
 			db.close();
 			
-
+			//display a notification for caught spam
+			mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+			Notification notifySpam = new Notification(R.drawable.ic_menu_add,"SpamGuarded!",System.currentTimeMillis());
+			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, new Intent(ctx, Spams.class), 0);
+			notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
+			notifySpam.setLatestEventInfo(ctx, "SpamGuard", "Click to view spams", myIntent);
+			mNotificationManager.notify(SIMPLE_NOTFICATION_ID, notifySpam);
 		}
 	}
 	
@@ -131,7 +144,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		}
 		return retMsgs;
 	}
-
+	
 	private void checkLists(String sender) {
 		Cursor c = db.searchList(sender);
 		if (c.getCount() > 0) {

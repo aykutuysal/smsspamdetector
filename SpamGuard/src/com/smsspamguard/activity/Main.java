@@ -59,12 +59,12 @@ public class Main extends TabActivity {
 	    tabHost.setCurrentTab(0);
 	
 	    //start alarm for training
-	    Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-		intent.putExtra("alarm_message", "Job Working");
-		PendingIntent sender = PendingIntent.getBroadcast(this, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		Calendar cal = Calendar.getInstance();
-		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-		am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 15*1000, sender);
+//	    Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+//		intent.putExtra("alarm_message", "Job Working");
+//		PendingIntent sender = PendingIntent.getBroadcast(this, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//		Calendar cal = Calendar.getInstance();
+//		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+//		am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 15*1000, sender);
 	    Log.i("SpamGuard", "Alarm is set");
 	}
 }
