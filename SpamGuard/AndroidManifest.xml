@@ -5,30 +5,48 @@
 	<uses-permission android:name="android.permission.READ_CONTACTS" />
 	<uses-permission android:name="android.permission.READ_SMS" />
 	<uses-permission android:name="android.permission.WRITE_SMS" />
-	
-	<application android:icon="@drawable/icon" android:label="@string/app_name" 
-					android:theme="@android:style/Theme.NoTitleBar">
+
+	<application android:icon="@drawable/icon" android:label="@string/app_name"
+		android:theme="@android:style/Theme.NoTitleBar">
 		<activity android:name=".activity.Main" android:label="@string/app_name">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-        
-        <activity android:name="com.smsspamguard.activity.Preferences" android:label="@string/title_preferences"/>
-        <activity android:name="com.smsspamguard.activity.Blacklist" android:label="@string/title_blacklist"/>
-        <activity android:name="com.smsspamguard.activity.BlacklistSender" android:label="@string/title_blacklist_sender"/>
-        <activity android:name="com.smsspamguard.activity.BlacklistText" android:label="@string/title_blacklist_text"/>
-        <activity android:name="com.smsspamguard.activity.BlacklistRegex" android:label="@string/title_blacklist_regex"/>
-        <activity android:name="com.smsspamguard.activity.Whitelist" android:label="@string/title_whitelist"/>
-        <activity android:name="com.smsspamguard.activity.Spams" android:label="@string/title_spams"/>
-        <activity android:name="com.smsspamguard.activity.SpamFromInbox" android:label="@string/title_spam_from_inbox"/>
-        
-  
-		<receiver android:name="com.smsspamguard.receiver.SmsIntentReceiver" android:enabled="true">
-			<intent-filter android:priority="100" >
+			<intent-filter>
+				<action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</activity>
+
+		<activity android:name="com.smsspamguard.activity.Preferences"
+			android:label="@string/title_preferences" />
+		<activity android:name="com.smsspamguard.activity.Blacklist"
+			android:label="@string/title_blacklist" />
+		<activity android:name="com.smsspamguard.activity.BlacklistSender"
+			android:label="@string/title_blacklist_sender" />
+		<activity android:name="com.smsspamguard.activity.BlacklistText"
+			android:label="@string/title_blacklist_text" />
+		<activity android:name="com.smsspamguard.activity.BlacklistRegex"
+			android:label="@string/title_blacklist_regex" />
+		<activity android:name="com.smsspamguard.activity.Whitelist"
+			android:label="@string/title_whitelist" />
+		<activity android:name="com.smsspamguard.activity.Spams"
+			android:label="@string/title_spams" />
+		<activity android:name="com.smsspamguard.activity.SpamFromInbox"
+			android:label="@string/title_spam_from_inbox" />
+
+
+		<receiver android:name="com.smsspamguard.receiver.SmsIntentReceiver"
+			android:enabled="true">
+			<intent-filter android:priority="100">
 				<action android:name="android.provider.Telephony.SMS_RECEIVED" />
+			</intent-filter>
+		</receiver>
+		<receiver android:process=":remote"
+			android:name="com.smsspamguard.receiver.AlarmReceiver"></receiver>
+			
+		<receiver android:name="com.smsspamguard.receiver.StartUpReceiver">
+			<intent-filter>
+				<action android:name="android.intent.action.BOOT_COMPLETED" />
+				<category android:name="android.intent.category.HOME" />
 			</intent-filter>
 		</receiver>
 	</application>

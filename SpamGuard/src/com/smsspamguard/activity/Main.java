@@ -1,13 +1,21 @@
 package com.smsspamguard.activity;
 
+import java.util.Calendar;
+
 import com.smsspamguard.R;
 import com.smsspamguard.R.drawable;
 import com.smsspamguard.R.layout;
+import com.smsspamguard.receiver.AlarmReceiver;
+import com.smsspamguard.receiver.StartUpReceiver;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TabActivity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 public class Main extends TabActivity {
@@ -49,5 +57,14 @@ public class Main extends TabActivity {
 	    tabHost.addTab(spec);
 	    
 	    tabHost.setCurrentTab(0);
+	
+	    //start alarm for training
+	    Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+		intent.putExtra("alarm_message", "Job Working");
+		PendingIntent sender = PendingIntent.getBroadcast(this, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		Calendar cal = Calendar.getInstance();
+		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+		am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 15*1000, sender);
+	    Log.i("SpamGuard", "Alarm is set");
 	}
 }
