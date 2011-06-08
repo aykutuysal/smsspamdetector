@@ -12,9 +12,9 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.util.Log;
 
-
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.engine.svm.input.InputFileCreator;
 import com.smsspamguard.model.Message;
 
 public class AlarmReceiver extends BroadcastReceiver {
@@ -32,9 +32,10 @@ public class AlarmReceiver extends BroadcastReceiver {
 		}
 		
 		createSpamsFile(messageBodies, context);
+		createCleansFile(context);
 		
-//		InputFileCreator ifc = new InputFileCreator(context);
-//		ifc.createSvmInputs();
+		InputFileCreator ifc = new InputFileCreator(context);
+		ifc.createSvmInputs();
 	}
 	
 	/**
@@ -82,4 +83,34 @@ public class AlarmReceiver extends BroadcastReceiver {
 		
 	}
 
+	/**
+	 * Reads default clean file and merges it with new spams
+	 * Creates a new internal file
+	 * @param spams
+	 * @param context
+	 */
+	public void createCleansFile(Context context) {
+		
+		Log.i(Constants.DEBUG_TAG,"Creating internal cleans file");
+		try {
+			//read default spams file and add it to the internal file
+			InputStream defaultCleansIs = context.getAssets().open("defaultCleans.txt", AssetManager.ACCESS_UNKNOWN);
+			
+			FileOutputStream fos = context.openFileOutput(Constants.CLEANS_FILENAME, Context.MODE_PRIVATE);
+			
+			// copying default spams file to new internal spams file
+			byte[] b = new byte[1024];  
+			int read;  
+			while ((read = defaultCleansIs.read(b)) != -1) {  
+				fos.write(b, 0, read);  
+			}  
+            
+            fos.close();
+            defaultCleansIs.close();
+            
+            Log.i(Constants.DEBUG_TAG,"Internal spams file is created (" + Constants.CLEANS_FILENAME + ")");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

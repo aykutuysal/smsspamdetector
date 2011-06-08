@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.engine.bayesian.common.Token;
@@ -196,7 +197,8 @@ public class InputFileCreator {
 							" 5:" + triSpamFeature + " 6:" + triCleanFeature + "\n";
 				fos.write(line.getBytes());
 			}
-			System.out.println("Finished reading " + spamSourcePath);
+			System.out.println("Finished reading " + cleanSourcePath);
+			Log.i(Constants.DEBUG_TAG,"SVM Input File is creatd(" + destPath + ")");
 			fisClean.close();
 			fos.close();
 		}
