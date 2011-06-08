@@ -1,4 +1,11 @@
-package com.smsspamguard;
+package com.smsspamguard.activity;
+
+import com.smsspamguard.R;
+import com.smsspamguard.R.id;
+import com.smsspamguard.R.layout;
+import com.smsspamguard.R.menu;
+import com.smsspamguard.R.string;
+import com.smsspamguard.db.Database;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -36,7 +43,7 @@ public class BlacklistSender extends ListActivity {
 			Log.i("dialog", "start");
 			final EditText input = new EditText(this);
 			Log.i("dialog", "1");
-			final AlertDialog dialog = new AlertDialog.Builder(this).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+			final AlertDialog dialog = new AlertDialog.Builder(getParent()).setTitle(R.string.insert_number).setView(input).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input.getText().toString() != null) {
@@ -70,7 +77,7 @@ public class BlacklistSender extends ListActivity {
 			return dialog;
 		case 1:
 			final EditText input2 = new EditText(this);
-			final AlertDialog dialog2 = new AlertDialog.Builder(BlacklistSender.this).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
+			final AlertDialog dialog2 = new AlertDialog.Builder(getParent()).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (input2.getText().toString() != null) {	//BURDA TEXTINI CEKIP SETLEMEK LAZIM

@@ -1,4 +1,4 @@
-package com.smsspamguard;
+package com.smsspamguard.activity;
 
 import android.app.Activity;
 import android.database.Cursor;
