@@ -53,11 +53,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 			FileOutputStream fos = context.openFileOutput(Constants.SPAMS_FILENAME, Context.MODE_PRIVATE);
 			
 			// copying default spams file to new internal spams file
-			int readCount;
-            byte[] buffer = new byte[1024];
-            while ((readCount = defaultSpamsIs.read(buffer, 0, 1024)) != 0) {
-                fos.write(buffer, 0, readCount);
-            }
+			byte[] b = new byte[1024];  
+			int read;  
+			while ((read = defaultSpamsIs.read(b)) != -1) {  
+				fos.write(b, 0, read);  
+			}  
             
             // writing new spams to the internal file
             String delimiter = "\n###SpamGuardDelimiter###\n";
