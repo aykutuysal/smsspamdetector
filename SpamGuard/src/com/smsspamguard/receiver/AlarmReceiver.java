@@ -59,9 +59,13 @@ public class AlarmReceiver extends BroadcastReceiver {
 				fos.write(b, 0, read);  
 			}  
             
-            // writing new spams to the internal file
             String delimiter = "\n###SpamGuardDelimiter###\n";
-            fos.write(delimiter.getBytes());
+            
+            // writing new spams to the internal file
+			if( spams.size() > 0 ) {
+	            fos.write(delimiter.getBytes());
+			}
+			
             for(int i=0;i<spams.size();i++) {
             	fos.write(spams.get(i).getBytes());
             	if( i < spams.size()-1 )
