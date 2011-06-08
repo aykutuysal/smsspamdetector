@@ -1,4 +1,5 @@
 package com.smsspamguard.receiver;
+import com.smsspamguard.db.Database;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,7 +17,6 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.telephony.SmsMessage;
 import android.util.Log;
 
-import com.smsspamguard.db.Database;
 import com.smsspamguard.model.Message;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
