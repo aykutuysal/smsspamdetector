@@ -1,4 +1,8 @@
-package com.smsspamguard;
+package com.smsspamguard.activity;
+
+import com.smsspamguard.R;
+import com.smsspamguard.R.drawable;
+import com.smsspamguard.R.layout;
 
 import android.app.TabActivity;
 import android.content.Intent;

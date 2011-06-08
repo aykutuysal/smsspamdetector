@@ -1,8 +1,13 @@
-package com.smsspamguard;
+package com.smsspamguard.activity;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import com.smsspamguard.R;
+import com.smsspamguard.R.id;
+import com.smsspamguard.R.menu;
+import com.smsspamguard.R.string;
+import com.smsspamguard.db.Database;
 import com.smsspamguard.model.Message;
 
 import android.app.ListActivity;
