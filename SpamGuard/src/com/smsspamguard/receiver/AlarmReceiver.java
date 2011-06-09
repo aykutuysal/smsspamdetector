@@ -4,7 +4,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -13,11 +12,9 @@ import android.content.res.AssetManager;
 import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
-import com.smsspamguard.db.Database;
 import com.smsspamguard.engine.svm.SvmManager;
 import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.engine.svm.input.InputFileCreator;
-import com.smsspamguard.model.Message;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -40,6 +37,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 			
 			SVMSpam svmSpam = SvmManager.getSvm(context);
 			svmSpam.start();
+			SvmManager.isSvmTrained = true;
 		}
 		
 		/**
