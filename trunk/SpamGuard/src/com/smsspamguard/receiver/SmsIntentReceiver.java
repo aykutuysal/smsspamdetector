@@ -1,4 +1,5 @@
 package com.smsspamguard.receiver;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean allowContacts;
 	private boolean blockNonnumeric;
 	private boolean blockAllcapital;
-	private String regexString;
 
 	private boolean isBlacklisted = false;
 	private boolean isWhitelisted = false;
@@ -40,28 +40,28 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean allCapital = false;
 	private NotificationManager mNotificationManager;
 	private int SIMPLE_NOTFICATION_ID = 1;
+
 	private class SpamThread implements Runnable {
 
 		Context ctx;
 		String body;
 		Database db;
-		
+
 		public SpamThread(Context ctx, String body) {
-			this.ctx=ctx;
-			this.body=body;
+			this.ctx = ctx;
+			this.body = body;
 		}
-		
+
 		@Override
 		public void run() {
-			
+
 			db = new Database(ctx);
 			Uri uri = Uri.parse("content://sms/inbox");
-			Cursor cursor = ctx.getContentResolver().query(uri,
-					new String[] { "_id" }, null, null, null);
+			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id" }, null, null, null);
 
 			int before = cursor.getCount();
 			Log.i("before", String.valueOf(before));
-			
+
 			while (before == cursor.getCount()) {
 				try {
 					Thread.sleep(1000);
@@ -73,14 +73,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Log.i("after", String.valueOf(cursor.getCount()));
 			boolean unreadOnly = false;
 			String SMS_READ_COLUMN = "read";
-			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN
-					+ " = 0" : null;
+			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
 			String SORT_ORDER = "date DESC";
 
-			cursor = ctx.getContentResolver().query(
-					uri,
-					new String[] { "_id", "thread_id", "address",
-							"person", "date", "body", "read" },
+			cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "thread_id", "address", "person", "date", "body", "read" },
 					WHERE_CONDITION, null, SORT_ORDER);
 
 			cursor.moveToFirst();
@@ -92,38 +88,32 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			long date = cursor.getLong(4);
 			String messageBody = cursor.getString(5);
 
-			Message message = new Message(messageId, threadId, address,
-					contactId, date, messageBody);
+			Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
 			db.insertSpam(message);
 
-			System.out.println(messageId + " " + threadId + " "
-					+ address + " " + contactId + " " + date + " "
-					+ body);
+			System.out.println(messageId + " " + threadId + " " + address + " " + contactId + " " + date + " " + body);
 
 			ContentValues values = new ContentValues();
 			values.put("read", 1);
-			ctx.getContentResolver().update(Uri.parse("content://sms/conversations/"
-							+ threadId), values, "_id=?", new String[] { String.valueOf(messageId) });
-			
+			ctx.getContentResolver().update(Uri.parse("content://sms/conversations/" + threadId), values, "_id=?",
+					new String[] { String.valueOf(messageId) });
+
 			ctx.getContentResolver()
-					.delete(Uri.parse("content://sms/conversations/"
-							+ threadId), "_id=?",
-							new String[] { String.valueOf(messageId) });
-			
+					.delete(Uri.parse("content://sms/conversations/" + threadId), "_id=?", new String[] { String.valueOf(messageId) });
+
 			cursor.close();
 			db.close();
 
-			
-			//display a notification for caught spam
-			mNotificationManager = (NotificationManager)ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-			Notification notifySpam = new Notification(R.drawable.ic_menu_add,"SpamGuarded!",System.currentTimeMillis());
+			// display a notification for caught spam
+			mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+			Notification notifySpam = new Notification(R.drawable.ic_menu_add, "SpamGuarded!", System.currentTimeMillis());
 			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, new Intent(ctx, Spams.class), 0);
 			notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
 			notifySpam.setLatestEventInfo(ctx, "SpamGuard", "Click to view spams", myIntent);
 			mNotificationManager.notify(SIMPLE_NOTFICATION_ID, notifySpam);
 		}
 	}
-	
+
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
 		SmsMessage retMsgs[] = null;
 		Bundle bdl = intent.getExtras();
@@ -140,15 +130,14 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		}
 		return retMsgs;
 	}
-	
-	private void checkLists(String sender) {
-		Cursor c = db.searchList(sender);
+
+	private void checkLists(String type, String value) {
+		Cursor c = db.searchList(value);
 		if (c.getCount() > 0) {
 			c.moveToFirst();
-			String type = c.getString(0);
-			if (type.startsWith("b")) {
+			if (c.getString(0).equals("b" + type + "t")) {
 				isBlacklisted = true;
-			} else {
+			} else if (c.getString(0).equals("w" + type + "t")) {
 				isWhitelisted = true;
 			}
 		}
@@ -159,21 +148,14 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		SharedPreferences sp = PreferenceManager
-				.getDefaultSharedPreferences(context);
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
 		allowContacts = sp.getBoolean("allow_contacts", true);
-		regexString = sp.getString("regex_string", "");
 		blockNonnumeric = sp.getBoolean("block_nonnumeric", true);
 		blockAllcapital = sp.getBoolean("block_allcapital", false);
 
-		if (regexString == null) {
-			regexString = "";
-		}
-
 		if (toggleApp) {
-			if (intent.getAction().equals(
-					"android.provider.Telephony.SMS_RECEIVED")) {
+			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
 				db = new Database(context);
 				SmsMessage msg[] = getMessagesFromIntent(intent);
@@ -183,29 +165,66 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					body = body + msg[i].getDisplayMessageBody();
 				}
 
-				if (!sender.matches("[^+\\d]") && sender.length() >= 7) // if
-																		// number
-																		// is
-																		// conventional,
-																		// look
-																		// for
-																		// matches
-																		// without
-																		// country/region
-																		// code
+				// check sender against white/blacklist texts
+				if (!sender.matches("[^+\\d]") && sender.length() >= 7) // if number is conventional, look for matches without country/region code
 				{
 					String tmp = sender;
 					for (int i = 0; i <= tmp.length() - 7; i++) {
 						tmp = sender.substring(i, sender.length());
-						checkLists(tmp);
+						checkLists("s", tmp);
 						if (isBlacklisted || isWhitelisted) {
 							break;
 						}
 					}
 				} else // if sender is unconventional, like service number or
-						// alphanumeric, look for exact match
+				// alphanumeric, look for exact match
 				{
-					checkLists(sender);
+					checkLists("s", sender);
+				}
+
+				// check sender against white/blacklist regex
+				if (!isBlacklisted && !isWhitelisted) {
+					Cursor cursor = db.getRegex("_sr");
+					cursor.moveToFirst();
+					while (!cursor.isAfterLast()) {
+						Pattern p = Pattern.compile(cursor.getString(1));
+						Matcher m = p.matcher(sender);
+						if (m.find()) {
+							if (cursor.getString(0).equals("wsr")) {
+								isWhitelisted = true;
+							} else {
+								isBlacklisted = true;
+							}
+							cursor.close();
+							break;
+						}
+						cursor.moveToNext();
+					}
+				}
+
+				// check content against white/blacklist texts
+				if (!isBlacklisted && !isWhitelisted) {
+					checkLists("c", body);
+				}
+
+				// check content against white/blacklist regex
+				if (!isBlacklisted && !isWhitelisted) {
+					Cursor cursor = db.getRegex("_cr");
+					cursor.moveToFirst();
+					while (!cursor.isAfterLast()) {
+						Pattern p = Pattern.compile(cursor.getString(1));
+						Matcher m = p.matcher(body);
+						if (m.find()) {
+							if (cursor.getString(0).equals("wcr")) {
+								isWhitelisted = true;
+							} else {
+								isBlacklisted = true;
+							}
+							cursor.close();
+							break;
+						}
+						cursor.moveToNext();
+					}
 				}
 
 				if (isWhitelisted) {
@@ -223,10 +242,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							for (int i = 0; i <= tmp.length() - 7; i++) {
 								tmp = sender.substring(i, sender.length());
 								Log.i("tmp", tmp);
-								phones = context.getContentResolver().query(
-										Phone.CONTENT_URI, null,
-										Phone.NUMBER + " = '" + tmp + "'",
-										null, null);
+								phones = context.getContentResolver().query(Phone.CONTENT_URI, null, Phone.NUMBER + " = '" + tmp + "'", null, null);
 								if (phones.getCount() > 0) {
 									Log.i("contact", "found");
 									phones.close();
@@ -235,10 +251,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 								}
 							}
 						} else {
-							phones = context.getContentResolver().query(
-									Phone.CONTENT_URI, null,
-									Phone.NUMBER + " = '" + sender + "'", null,
-									null);
+							phones = context.getContentResolver().query(Phone.CONTENT_URI, null, Phone.NUMBER + " = '" + sender + "'", null, null);
 							if (phones.getCount() > 0) {
 								phones.close();
 								db.close();
@@ -248,23 +261,23 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					}
 
 					// Regex Filtering
-					if (!regexString.equals("")) {
-						Pattern p2 = Pattern.compile(regexString); // Android
-																	// default
-																	// takes
-																	// it
-																	// unicode
-																	// case
-																	// insensitive
-						m = p2.matcher("");
-						for (int i = 0; i < msg.length; i++) {
-							m = p2.matcher(msg[i].getDisplayMessageBody());
-							if (m.find()) {
-								regexMatch = true;
-								break;
-							}
-						}
-					}
+					// if (!regexString.equals("")) {
+					// Pattern p2 = Pattern.compile(regexString); // Android
+					// // default
+					// // takes
+					// // it
+					// // unicode
+					// // case
+					// // insensitive
+					// m = p2.matcher("");
+					// for (int i = 0; i < msg.length; i++) {
+					// m = p2.matcher(msg[i].getDisplayMessageBody());
+					// if (m.find()) {
+					// regexMatch = true;
+					// break;
+					// }
+					// }
+					// }
 
 					// Block Non-Numeric Sender
 					if (blockNonnumeric) {
@@ -290,7 +303,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					}
 				}
 
-				Log.i("regexMatch", String.valueOf(regexMatch));
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
 				Log.i("isBlacklisted", String.valueOf(isBlacklisted));
@@ -298,7 +310,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				// deduce spam or not
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
-					Runnable r = new SpamThread(context,body);
+					Runnable r = new SpamThread(context, body);
 					new Thread(r).start();
 				}
 			}

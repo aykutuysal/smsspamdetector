@@ -19,12 +19,12 @@ public class StartUpReceiver extends BroadcastReceiver{
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("StartUpReceiver", "StartUpReceiver working");
-		Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-		PendingIntent sender = PendingIntent.getBroadcast(context, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		Calendar cal = Calendar.getInstance();
-		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-		am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, sender);
-		Log.i("StartUpReceiver", "Alarm is set by StartUpReceiver");
+//		Log.i("StartUpReceiver", "StartUpReceiver working");
+//		Intent alarmIntent = new Intent(context, AlarmReceiver.class);
+//		PendingIntent sender = PendingIntent.getBroadcast(context, StartUpReceiver.requestCode, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//		Calendar cal = Calendar.getInstance();
+//		AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+//		am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, sender);
+//		Log.i("StartUpReceiver", "Alarm is set by StartUpReceiver");
 	}
 }
