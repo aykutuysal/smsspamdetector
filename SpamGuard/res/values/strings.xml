@@ -7,10 +7,11 @@
 	<!--Tabs-->
 	<string name="title_preferences">Preferences</string>
 	<string name="title_whitelist">Whitelist</string>
+		<string name="title_whitelist_sender">Sender</string>
+		<string name="title_whitelist_text">Content</string>
 	<string name="title_blacklist">Blacklist</string>
-	<string name="title_blacklist_sender">Sender</string>
-	<string name="title_blacklist_text">Content</string>
-	<string name="title_blacklist_regex">Regex</string>
+		<string name="title_blacklist_sender">Sender</string>
+		<string name="title_blacklist_text">Content</string>
 	<string name="title_spams">Spams</string>
 	
 	<!--Toggle App-->

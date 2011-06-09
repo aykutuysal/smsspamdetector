@@ -36,8 +36,7 @@ public class SpamFromInbox extends ListActivity {
 						"body" }, WHERE_CONDITION, null, SORT_ORDER);
 		
 		String[] from = new String[] { "body" };
-		int[] to = new int[] { R.id.list_entry };
-		cursorAdapter = new SimpleCursorAdapter(this, R.layout.mylist, cursor, from, to);
+		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursor, from, new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
 		registerForContextMenu(getListView());
 	}

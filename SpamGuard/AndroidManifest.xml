@@ -24,10 +24,12 @@
 			android:label="@string/title_blacklist_sender" />
 		<activity android:name="com.smsspamguard.activity.BlacklistText"
 			android:label="@string/title_blacklist_text" />
-		<activity android:name="com.smsspamguard.activity.BlacklistRegex"
-			android:label="@string/title_blacklist_regex" />
 		<activity android:name="com.smsspamguard.activity.Whitelist"
 			android:label="@string/title_whitelist" />
+		<activity android:name="com.smsspamguard.activity.WhitelistSender"
+			android:label="@string/title_whitelist_sender" />
+		<activity android:name="com.smsspamguard.activity.WhitelistText"
+			android:label="@string/title_whitelist_text" />
 		<activity android:name="com.smsspamguard.activity.Spams"
 			android:label="@string/title_spams" />
 		<activity android:name="com.smsspamguard.activity.SpamFromInbox"

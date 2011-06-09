@@ -121,19 +121,19 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("AlarmReceiver", "AlarmReceiver started");
-		
-		Database db = new Database(context);
-		List<Message> spams = db.selectAllSpam();
-		db.close();
-
-		ArrayList<String> messageBodies = new ArrayList<String>();
-		for (Message message : spams) {
-			messageBodies.add(message.getBody());
-		}
-		
-		Runnable r = new TrainThread(context, messageBodies);
-		new Thread(r).start();
+//		Log.i("AlarmReceiver", "AlarmReceiver started");
+//		
+//		Database db = new Database(context);
+//		List<Message> spams = db.selectAllSpam();
+//		db.close();
+//
+//		ArrayList<String> messageBodies = new ArrayList<String>();
+//		for (Message message : spams) {
+//			messageBodies.add(message.getBody());
+//		}
+//		
+//		Runnable r = new TrainThread(context, messageBodies);
+//		new Thread(r).start();
 	}
 	
 	
