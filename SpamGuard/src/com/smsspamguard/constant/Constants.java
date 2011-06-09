@@ -5,6 +5,6 @@ public class Constants {
 	public static String SPAMS_FILENAME = "SpamGuardSpams.txt";
 	public static String CLEANS_FILENAME = "SpamGuardCleans.txt";
 	public static String SVM_INPUT_FILENAME = "SvmInput.txt";
-	public static String SVM_RANGE_SAVE_PATH = "";
+	public static String SVM_RANGE_SAVE_PATH = "svm.scaled";
 	public static String SVM_RANGE_LOAD_PATH = "";
 }

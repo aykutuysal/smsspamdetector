@@ -45,7 +45,7 @@ public class Spams extends ListActivity {
 		
 		Log.i(Constants.DEBUG_TAG, "Starting SVM Test");
 		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
-		double result = svmSpam.predictSingle("Bu bir test mesajıdır.");
+		double result = svmSpam.predictSingle("Bu bir test mesajidir.");
 		Log.i(Constants.DEBUG_TAG, "Result : " + result);
 		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
 		
