@@ -23,7 +23,7 @@ public class Database {
 	private static final String SPAM_TABLE = "spam_table";
 
 	private static final String INSERT_LIST = "insert into " + LIST_TABLE + " (type,value) values (?,?)";
-	private static final String UPDATE_LIST = "update " + LIST_TABLE + " set value=? where " + BaseColumns._ID + "=?";
+//	private static final String UPDATE_LIST = "update " + LIST_TABLE + " set value=? where " + BaseColumns._ID + "=?";
 	private static final String INSERT_SPAM = "insert into " + SPAM_TABLE + " (messageId, threadId, address, contactId, date, body) "
 			+ "values (?,?,?,?,?,?)";
 
@@ -125,10 +125,14 @@ public class Database {
 	public Cursor getList(String type)
 	{
 		Cursor cursor = null;
-		if (type.equals("w")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type like 'w%'", null, null, null, "value asc");
-		} else if (type.equals("b")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value" }, "type like 'b%'", null, null, null, "value asc");
+		if (type.equals("ws")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'ws%'", null, null, null, "value asc");
+		} else if (type.equals("wc")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'wc%'", null, null, null, "value asc");
+		} else if (type.equals("bs")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bs%'", null, null, null, "value asc");
+		} else if (type.equals("bc")) {
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bc%'", null, null, null, "value asc");
 		}
 		return cursor;
 	}

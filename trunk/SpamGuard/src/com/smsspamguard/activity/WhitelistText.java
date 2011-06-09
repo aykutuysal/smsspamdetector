@@ -23,7 +23,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.smsspamguard.R;
 import com.smsspamguard.db.Database;
 
-public class BlacklistSender extends ListActivity {
+public class WhitelistText extends ListActivity {
 	private Database db;
 	private Cursor listCursor = null;
 	private SimpleCursorAdapter cursorAdapter;
@@ -46,7 +46,7 @@ public class BlacklistSender extends ListActivity {
 									//cursorAdapter.notifyDataSetChanged();
 								} catch (SQLiteConstraintException e) {
 									Toast
-											.makeText(BlacklistSender.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(WhitelistText.this, "Phone number already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							}
@@ -79,12 +79,12 @@ public class BlacklistSender extends ListActivity {
 									cursorAdapter.getCursor().requery();
 								} catch (SQLiteConstraintException e) {
 									Toast
-											.makeText(BlacklistSender.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(WhitelistText.this, "Phone number already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							} else {
 								Toast
-								.makeText(BlacklistSender.this, "Entry cannot be empty.",
+								.makeText(WhitelistText.this, "Entry cannot be empty.",
 										Toast.LENGTH_LONG).show();
 							}
 						}
@@ -110,19 +110,19 @@ public class BlacklistSender extends ListActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.listsendermenu, menu);
+		inflater.inflate(R.menu.listcontentmenu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.add_number:
-			type = "bsn";
+		case R.id.add_text:
+			type = "wct";
 			showDialog(0);
 			return true;
 		case R.id.add_regex:
-			type = "bsr";
+			type = "wcr";
 			showDialog(0);
 			return true;
 		}
@@ -156,7 +156,7 @@ public class BlacklistSender extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.db = new Database(this);
-		listCursor = db.getList("bs");
+		listCursor = db.getList("wc");
 		String[] from = new String[] { listCursor.getColumnName(1) };
 		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, listCursor, from, new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
