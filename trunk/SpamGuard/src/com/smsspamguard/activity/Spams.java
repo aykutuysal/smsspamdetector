@@ -6,6 +6,7 @@ import java.util.List;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -16,7 +17,10 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ArrayAdapter;
 
 import com.smsspamguard.R;
+import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.engine.svm.SvmManager;
+import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.model.Message;
 
 public class Spams extends ListActivity {
@@ -38,6 +42,13 @@ public class Spams extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		Log.i(Constants.DEBUG_TAG, "Starting SVM Test");
+		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
+		double result = svmSpam.predictSingle("Bu bir test mesajıdır.");
+		Log.i(Constants.DEBUG_TAG, "Result : " + result);
+		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
+		
 		this.db = new Database(this);
 		refreshList();
 	}

@@ -16,6 +16,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
+import com.smsspamguard.engine.svm.SvmManager;
 
 public class SVMSpam {
 
@@ -91,7 +92,12 @@ public class SVMSpam {
 		return svm.svm_train(svmSpamTrainProblem, svmSpamParameter);
 	}
 	
-	public void predict() {
+	public double predictSingle(String msg) {
+		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, context);
+		return svm.svm_predict(svmSpamModel, nodes);	
+	}
+	
+	public void predictMultiple() {
 		
 		try {
 			
