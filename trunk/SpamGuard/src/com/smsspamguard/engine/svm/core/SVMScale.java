@@ -57,7 +57,8 @@ public class SVMScale {
 		String str2 = rangeLoadPath;
 		String str3 = inputPath;
 
-		localBufferedReader1 = new BufferedReader(new FileReader(str3));
+		FileInputStream fis = context.openFileInput(str3);
+		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis));
 		if (this.upper <= this.lower) {
 			System.err.println("inconsistent lower/upper specification");
 			System.exit(1);
