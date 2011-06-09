@@ -11,6 +11,9 @@ import java.util.Formatter;
 import java.util.StringTokenizer;
 
 import android.content.Context;
+import android.util.Log;
+
+import com.smsspamguard.constant.Constants;
 
 public class SVMScale {
 
@@ -55,6 +58,9 @@ public class SVMScale {
 		String str1 = rangeSavePath;
 		String str2 = rangeLoadPath;
 		String str3 = inputPath;
+
+		Log.i(Constants.DEBUG_TAG,"Scale 1 ---");	
+		Log.i(Constants.DEBUG_TAG,"opening str3 (inputPath) :  " + str3);
 
 		FileInputStream fis = context.openFileInput(str3);
 		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis),DEFUALT_BUFF_SIZE);
@@ -249,7 +255,10 @@ public class SVMScale {
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
 				for (int i = i1; i < j; ++i)
 					outFile.write(output(i, 0.0D).getBytes());
-				outFile.write(output(j, d4).getBytes());
+				
+				if(output(j, d4)!= null)
+					outFile.write(output(j, d4).getBytes());
+				
 				i1 = j + 1;
 			}
 
