@@ -260,25 +260,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						}
 					}
 
-					// Regex Filtering
-					// if (!regexString.equals("")) {
-					// Pattern p2 = Pattern.compile(regexString); // Android
-					// // default
-					// // takes
-					// // it
-					// // unicode
-					// // case
-					// // insensitive
-					// m = p2.matcher("");
-					// for (int i = 0; i < msg.length; i++) {
-					// m = p2.matcher(msg[i].getDisplayMessageBody());
-					// if (m.find()) {
-					// regexMatch = true;
-					// break;
-					// }
-					// }
-					// }
-
 					// Block Non-Numeric Sender
 					if (blockNonnumeric) {
 						Log.i("senderAddress", sender);
