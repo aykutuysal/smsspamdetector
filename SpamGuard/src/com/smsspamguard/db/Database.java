@@ -143,19 +143,24 @@ public class Database {
 	{
 		Cursor cursor = null;
 		if (type.equals("ws")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'ws%'", null, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'ws_'", null, null, null, "value asc");
 		} else if (type.equals("wc")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'wc%'", null, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'wc_'", null, null, null, "value asc");
 		} else if (type.equals("bs")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bs%'", null, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bs_'", null, null, null, "value asc");
 		} else if (type.equals("bc")) {
-			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bc%'", null, null, null, "value asc");
+			cursor = this.db.query(LIST_TABLE, new String[] { BaseColumns._ID, "value", "type" }, "type like 'bc_'", null, null, null, "value asc");
 		}
 		return cursor;
 	}
 
-	public Cursor searchList(String sender) {
-		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "value=?", new String[] { sender }, null, null, null);
+	public Cursor searchList(String value) {
+		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "value=?", new String[] { value }, null, null, null);
+		return cursor;
+	}
+	
+	public Cursor getRegex(String type) {
+		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type", "value" }, "type like '" + type + "'", null, null, null, null);
 		return cursor;
 	}
 	

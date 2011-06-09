@@ -31,11 +31,11 @@ public class Spams extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		Log.i(Constants.DEBUG_TAG, "Starting SVM Test");
-		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
-		double result = svmSpam.predictSingle("Bu bir test mesajidir.");
-		Log.i(Constants.DEBUG_TAG, "Result : " + result);
-		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
+//		Log.i(Constants.DEBUG_TAG, "Starting SVM Test");
+//		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
+//		double result = svmSpam.predictSingle("Bu bir test mesajidir.");
+//		Log.i(Constants.DEBUG_TAG, "Result : " + result);
+//		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
 		
 		this.db = new Database(this);
 		spamCursor = db.getSpams();
