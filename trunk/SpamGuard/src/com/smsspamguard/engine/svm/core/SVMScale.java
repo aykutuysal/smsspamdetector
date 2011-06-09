@@ -2,11 +2,8 @@ package com.smsspamguard.engine.svm.core;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -30,6 +27,8 @@ public class SVMScale {
 	private double lower;
 	private double upper;
 	private long new_num_nonzeros;
+	
+	private static int DEFUALT_BUFF_SIZE = 8*1024;
 
 	private String readline(BufferedReader paramBufferedReader)
 			throws IOException {
@@ -41,7 +40,7 @@ public class SVMScale {
 			String paramString, Context context) throws IOException {
 		paramBufferedReader.close();
 		FileInputStream fis = context.openFileInput(paramString);
-		return new BufferedReader(new InputStreamReader(fis));
+		return new BufferedReader(new InputStreamReader(fis),DEFUALT_BUFF_SIZE);
 	}
 
 	public void scale(String rangeSavePath, String rangeLoadPath,
@@ -58,7 +57,7 @@ public class SVMScale {
 		String str3 = inputPath;
 
 		FileInputStream fis = context.openFileInput(str3);
-		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis));
+		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis),DEFUALT_BUFF_SIZE);
 		if (this.upper <= this.lower) {
 			System.err.println("inconsistent lower/upper specification");
 			System.exit(1);
@@ -72,7 +71,7 @@ public class SVMScale {
 		if (str2 != null) {
 			try {
 				FileInputStream fis2 = context.openFileInput(str2);
-				localBufferedReader2 = new BufferedReader(new InputStreamReader(fis2));
+				localBufferedReader2 = new BufferedReader(new InputStreamReader(fis2),DEFUALT_BUFF_SIZE);
 			} catch (Exception localException2) {
 				System.err.println("can't open file " + str2);
 				System.exit(1);
@@ -208,7 +207,7 @@ public class SVMScale {
 			BufferedWriter localBufferedWriter = null;
 			try {
 				FileOutputStream fos1 = context.openFileOutput(str1, Context.MODE_PRIVATE);
-				localBufferedWriter = new BufferedWriter(new OutputStreamWriter(fos1));
+				localBufferedWriter = new BufferedWriter(new OutputStreamWriter(fos1),DEFUALT_BUFF_SIZE);
 			} catch (IOException localIOException) {
 				System.err.println("can't open file " + str1);
 				System.exit(1);
