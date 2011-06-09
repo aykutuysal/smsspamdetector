@@ -37,7 +37,7 @@ public class Database {
 		this.context = context;
 		openHelper = new OpenHelper(this.context);
 		this.db = openHelper.getWritableDatabase();
-		//openHelper.onUpgrade(db, 0, 1);
+		openHelper.onUpgrade(db, 0, 1);
 	}
 
 	public void insertSpam(Message msg) {
