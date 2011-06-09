@@ -146,7 +146,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		if (c.getCount() > 0) {
 			c.moveToFirst();
 			String type = c.getString(0);
-			if (type.equals("bn") || type.equals("bt")) {
+			if (type.startsWith("b")) {
 				isBlacklisted = true;
 			} else {
 				isWhitelisted = true;
