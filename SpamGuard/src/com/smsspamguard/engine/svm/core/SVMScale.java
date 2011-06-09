@@ -207,7 +207,7 @@ public class SVMScale {
 			Formatter localFormatter = new Formatter(new StringBuilder());
 			BufferedWriter localBufferedWriter = null;
 			try {
-				FileOutputStream fos1 = context.openFileOutput(str2, Context.MODE_PRIVATE);
+				FileOutputStream fos1 = context.openFileOutput(str1, Context.MODE_PRIVATE);
 				localBufferedWriter = new BufferedWriter(new OutputStreamWriter(fos1));
 			} catch (IOException localIOException) {
 				System.err.println("can't open file " + str1);
