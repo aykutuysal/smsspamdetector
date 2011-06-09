@@ -1,44 +1,32 @@
 package com.smsspamguard.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ArrayAdapter;
 
 import com.smsspamguard.R;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
 import com.smsspamguard.engine.svm.SvmManager;
 import com.smsspamguard.engine.svm.core.SVMSpam;
-import com.smsspamguard.model.Message;
 
 public class Spams extends ListActivity {
 	private Database db;
-	private List<String> messageBodies = new ArrayList<String>();
-
-	public void refreshList() {
-		List<Message> spams = db.selectAllSpam();
-
-		for (Message message : spams) {
-			messageBodies.add(message.getBody());
-		}
-
-		setListAdapter(new ArrayAdapter<String>(Spams.this,
-				android.R.layout.simple_list_item_1, messageBodies));
-		getListView().setTextFilterEnabled(true);
-	}
-
+	private Cursor spamCursor = null;
+	private SimpleCursorAdapter cursorAdapter;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,7 +38,12 @@ public class Spams extends ListActivity {
 		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
 		
 		this.db = new Database(this);
-		refreshList();
+		spamCursor = db.getSpams();
+		String[] from = new String[] { spamCursor.getColumnName(6) };
+		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, spamCursor, from, new int[] { android.R.id.text1 });
+		this.setListAdapter(cursorAdapter);
+		registerForContextMenu(getListView());
+		cursorAdapter.notifyDataSetChanged();	//bu satir istedigim gibi calismiyor, spamse bakarken yeni sms gelince listeyi update etsin istiom
 	}
 
 	public void onStart() {
@@ -70,6 +63,7 @@ public class Spams extends ListActivity {
 		if (db != null) {
 			db.close();
 		}
+		spamCursor.close();
 	}
 
 	@Override
@@ -108,7 +102,17 @@ public class Spams extends ListActivity {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case 0:
+			ContentValues values = new ContentValues();
+			values.put("_id", cursorAdapter.getCursor().getLong(1));
+			values.put("thread_id", cursorAdapter.getCursor().getLong(2));
+			values.put("address", cursorAdapter.getCursor().getString(3));
+			values.put("person", cursorAdapter.getCursor().getLong(4));
+			values.put("date", cursorAdapter.getCursor().getLong(5));
+			values.put("body", cursorAdapter.getCursor().getString(6));
+			getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
 			
+			db.deleteSpam(info.id);
+			cursorAdapter.getCursor().requery();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
