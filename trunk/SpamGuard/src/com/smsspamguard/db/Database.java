@@ -141,6 +141,11 @@ public class Database {
 		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "value=?", new String[] { sender }, null, null, null);
 		return cursor;
 	}
+	
+	public Cursor conflictCheck(String type, String value) {
+		Cursor cursor = this.db.query(LIST_TABLE, new String[] { "type" }, "type like '" + type + "' AND value=?", new String[] { value }, null, null, null);
+		return cursor;
+	}
 
 	public void close() {
 		// NOTE: openHelper must now be a member of CallDataHelper;
@@ -158,7 +163,7 @@ public class Database {
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL("CREATE TABLE IF NOT EXISTS " + LIST_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, value TEXT UNIQUE ON CONFLICT ROLLBACK)");
+			db.execSQL("CREATE TABLE IF NOT EXISTS " + LIST_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, type TEXT, value TEXT)");
 
 			db.execSQL("CREATE TABLE IF NOT EXISTS " + SPAM_TABLE + " (" + BaseColumns._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, messageId INTEGER, threadId INTEGER, " +
 						"address TEXT, contactId INTEGER, date INTEGER, body TEXT)");
@@ -168,7 +173,7 @@ public class Database {
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 			Log.w("Example", "Upgrading database, this will drop tables and recreate.");
 			db.execSQL("DROP TABLE IF EXISTS " + LIST_TABLE);
-			db.execSQL("DROP TABLE IF EXISTS " + SPAM_TABLE);
+			//db.execSQL("DROP TABLE IF EXISTS " + SPAM_TABLE);
 			onCreate(db);
 		}
 	}

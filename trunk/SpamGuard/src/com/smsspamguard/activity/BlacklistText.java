@@ -6,7 +6,6 @@ import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -26,6 +25,7 @@ import com.smsspamguard.db.Database;
 public class BlacklistText extends ListActivity {
 	private Database db;
 	private Cursor listCursor = null;
+	private Cursor conflictCursor = null;
 	private SimpleCursorAdapter cursorAdapter;
 	private long selectedItemId;
 	private String type;
@@ -39,14 +39,17 @@ public class BlacklistText extends ListActivity {
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (!input.getText().toString().equals("")) {
-								try {
+								conflictCursor = db.conflictCheck("_c_", input.getText().toString());
+								if(conflictCursor.getCount() == 0)
+								{
 									db.insertList(type, input.getText().toString());
 									input.setText(null);
 									cursorAdapter.getCursor().requery();
 									//cursorAdapter.notifyDataSetChanged();
-								} catch (SQLiteConstraintException e) {
+								} else {
+									input.setText(null);
 									Toast
-											.makeText(BlacklistText.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(BlacklistText.this, "Text already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							}
@@ -72,14 +75,16 @@ public class BlacklistText extends ListActivity {
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (!input2.getText().toString().equals("")) {
-								try {
+								conflictCursor = db.conflictCheck("_c_", input2.getText().toString());
+								if(conflictCursor.getCount() == 0)
+								{
 									ContentValues values = new ContentValues();
 									values.put("value", input2.getText().toString());
 									db.updateList(selectedItemId, values);
 									cursorAdapter.getCursor().requery();
-								} catch (SQLiteConstraintException e) {
+								} else {
 									Toast
-											.makeText(BlacklistText.this, "Phone number already exists in either whitelist or blacklist.",
+											.makeText(BlacklistText.this, "Text already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
 							} else {
