@@ -37,7 +37,7 @@ public class Database {
 		this.context = context;
 		openHelper = new OpenHelper(this.context);
 		this.db = openHelper.getWritableDatabase();
-		openHelper.onUpgrade(db, 0, 1);
+		//openHelper.onUpgrade(db, 0, 1);
 	}
 
 	public void insertSpam(Message msg) {
@@ -51,6 +51,23 @@ public class Database {
 			this.insertStmt.bindLong(5, msg.getDate());
 			this.insertStmt.bindString(6, msg.getBody());
 			this.insertStmt.executeInsert();
+			this.db.setTransactionSuccessful();
+		} finally {
+			this.db.endTransaction();
+		}
+	}
+	
+	public Cursor getSpams()
+	{
+		Cursor cursor = null;
+		cursor = this.db.query(SPAM_TABLE, new String[] { BaseColumns._ID, "messageId","threadId","address","contactId","date","body" }, null, null, null, null, BaseColumns._ID + " desc");
+		return cursor;
+	}
+	
+	public void deleteSpam(long id) {
+		this.db.beginTransaction();
+		try {
+			this.db.delete(SPAM_TABLE, BaseColumns._ID + "=" + id, null);
 			this.db.setTransactionSuccessful();
 		} finally {
 			this.db.endTransaction();

@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -71,6 +72,7 @@ public class BlacklistSender extends ListActivity {
 		case 1:
 			final EditText input2 = new EditText(this);
 			input2.setText(cursorAdapter.getCursor().getString(1));
+			Log.i("value", cursorAdapter.getCursor().getString(1));
 			final AlertDialog dialog2 = new AlertDialog.Builder(getParent()).setTitle(R.string.update_entry).setView(input2).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
