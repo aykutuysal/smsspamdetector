@@ -187,8 +187,11 @@ public class SVMSpam {
 	public svm_problem readInput(String path) {
 		
 		try {
+			Log.i(Constants.DEBUG_TAG,"SVM Read Input Started");
+			Log.i(Constants.DEBUG_TAG,"Opening file stream : " + path);
 			FileInputStream fis = context.openFileInput(path);
 			Scanner scanner = new Scanner(fis);
+			
 			
 			// length of the input
 			int length = 0;
@@ -198,6 +201,8 @@ public class SVMSpam {
 			}
 		
 			scanner.close();
+			fis.close();
+			fis = context.openFileInput(path);
 			scanner = new Scanner(fis);
 			
 			double[] yList = new double[length];
@@ -233,6 +238,8 @@ public class SVMSpam {
 			
 			return svmProblem;
 		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		
