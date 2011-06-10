@@ -1,5 +1,7 @@
 package com.smsspamguard.activity;
 
+import java.io.IOException;
+
 import libsvm.svm_node;
 import android.app.ListActivity;
 import android.content.ContentValues;
@@ -9,13 +11,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.SimpleCursorAdapter;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.SimpleCursorAdapter;
 
 import com.smsspamguard.R;
 import com.smsspamguard.constant.Constants;
@@ -32,7 +34,7 @@ public class Spams extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		String msg = "Bedava indirim her yerde carefoursa";
+		String msg = "27-28 Kasim 2010 tarihinde duzenlemis oldugumuz Insaat Muhendisligi Calistayi'nda gorusulen Rapor Taslaklari Subemizin www.imoistanbul.org.tr adresinde yayimlanmistir. Rapor taslaklarini inceleyerek, goruslerinizi 31 Aralik 2010 tarihine kadar Subemize iletmenizi rica ederiz.";
 		Log.i(Constants.DEBUG_TAG, "Starting SVM Test for: " + msg);
 		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
 		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, getApplicationContext());
@@ -40,6 +42,13 @@ public class Spams extends ListActivity {
 		double result = svmSpam.predictSingle(scaledNodes);
 		Log.i(Constants.DEBUG_TAG, "Result : " + result);
 		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
+		
+		
+		try {
+			FileCopier.backupFiles();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		this.db = new Database(this);
 		spamCursor = db.getSpams();
