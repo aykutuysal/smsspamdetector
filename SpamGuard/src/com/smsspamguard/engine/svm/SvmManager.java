@@ -1,5 +1,15 @@
 package com.smsspamguard.engine.svm;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
 import libsvm.svm_node;
 import android.content.Context;
 import android.util.Log;
@@ -15,7 +25,6 @@ public class SvmManager {
 
 	private static SVMSpam svmSpam;
 	public static boolean isSvmTrained = false;
-	
 	
 	private static BayesianFilterMonogram monogramFilter;
 	private static BayesianFilterBigram bigramFilter;
@@ -166,4 +175,72 @@ public class SvmManager {
 		
 		return nodes;
 	}
+	
+	/**
+	 * Saves nodes value to a file and calls scale function of SVM with that file and range load path
+	 * @param nodes -> svm_nodes extracted from the single message
+	 * @param context
+	 */
+	public static svm_node[] scaleSingleMessage(svm_node[] nodes, Context context) {
+		
+		FileOutputStream fos;
+		try {
+			fos = context.openFileOutput(Constants.SVM_SINGLE_MSG_FEATURE_FILE, Context.MODE_PRIVATE);
+			
+			fos.write("1 ".getBytes());
+			for(svm_node node : nodes) {
+				String feature = node.index + ":" + node.value;
+				fos.write(feature.getBytes());
+			}
+			fos.close();
+			
+			// create scaled file from the newly created file
+			svmSpam.scaleSingle(Constants.SVM_SINGLE_MSG_FEATURE_FILE);
+			
+		} catch (FileNotFoundException e) {
+			Log.i(Constants.DEBUG_TAG, "Cannot create single message feature file");
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			// Read single msg featue file scaled
+			FileInputStream fis = context.openFileInput(Constants.SVM_SINGLE_MSG_FEATURE_FILE_SCALED);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis),8*1024);
+			String line = br.readLine();
+			Log.i(Constants.DEBUG_TAG,"Line from single feature scaled file : " + line);
+			
+			// Extracting scaled index and value pairs from file
+			StringTokenizer tokenizer = new StringTokenizer(line,  " \t\n\r\f:");
+			tokenizer.nextToken();
+			svm_node[] scaledNodes = new svm_node[nodes.length];
+			while(tokenizer.hasMoreTokens()) {
+				svm_node scaledNode = new svm_node();
+				scaledNode.index = Integer.parseInt(tokenizer.nextToken());
+				scaledNode.value = Double.parseDouble(tokenizer.nextToken());
+			}
+			
+			// DEBUG logs
+			Log.i(Constants.DEBUG_TAG, "Extracted scaled svm_nodes : ");
+			for(svm_node n : scaledNodes) {
+				Log.i(Constants.DEBUG_TAG, n.index + ":" + n.value);
+			}
+			
+			br.close();
+			fis.close();
+			
+			return scaledNodes;
+		} catch (FileNotFoundException e) {
+			Log.i(Constants.DEBUG_TAG,"FileNotFound: " + Constants.SVM_SINGLE_MSG_FEATURE_FILE_SCALED);
+			e.printStackTrace();
+		} catch (IOException e) {
+			Log.i(Constants.DEBUG_TAG,"Could not read the line from file: " + Constants.SVM_SINGLE_MSG_FEATURE_FILE_SCALED);
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+
 }
