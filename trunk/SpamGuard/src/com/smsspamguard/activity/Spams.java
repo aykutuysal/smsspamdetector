@@ -3,6 +3,7 @@ package com.smsspamguard.activity;
 import java.io.IOException;
 
 import libsvm.svm_node;
+import libsvm.svm_problem;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -37,8 +38,28 @@ public class Spams extends ListActivity {
 		String msg = "27-28 Kasim 2010 tarihinde duzenlemis oldugumuz Insaat Muhendisligi Calistayi'nda gorusulen Rapor Taslaklari Subemizin www.imoistanbul.org.tr adresinde yayimlanmistir. Rapor taslaklarini inceleyerek, goruslerinizi 31 Aralik 2010 tarihine kadar Subemize iletmenizi rica ederiz.";
 		Log.i(Constants.DEBUG_TAG, "Starting SVM Test for: " + msg);
 		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
+		
+		svm_problem problem = svmSpam.getSvmSpamProblem();
+		Log.i(Constants.DEBUG_TAG,"Problem l: " + problem.l);
+		
+		double[] ys = problem.y;
+		Log.i(Constants.DEBUG_TAG,"Problem y values: ");
+		for(double d : ys)
+			Log.i(Constants.DEBUG_TAG,""+d);
+		
+		svm_node[][] xs = problem.x;
+		System.out.println("Problem x values: ");
+		for(int i=0;i<xs.length;i++) {
+			for(int j=0;j<xs[i].length;j++) {
+				System.out.print(xs[i][j].index + ":" + xs[i][j].value);
+			}
+			System.out.print("\n");
+		}
+
 		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, getApplicationContext());
 		svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, getApplicationContext());
+		
+		
 		double result = svmSpam.predictSingle(scaledNodes);
 		Log.i(Constants.DEBUG_TAG, "Result : " + result);
 		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
