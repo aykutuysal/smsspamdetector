@@ -92,9 +92,17 @@ public class SVMSpam {
 		return svm.svm_train(svmSpamTrainProblem, svmSpamParameter);
 	}
 	
-	public double predictSingle(String msg) {
-		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, context);
-		return svm.svm_predict(svmSpamModel, nodes);	
+	public void scaleSingle(String filePath) {
+		try {
+			this.scaler.scale(null,Constants.SVM_RANGE_LOAD_PATH, filePath, -1.0, 1.0,context);
+		} catch (IOException e) {
+			Log.i(Constants.DEBUG_TAG, "Cannot open: " + filePath);
+			e.printStackTrace();
+		}
+	}
+	
+	public double predictSingle(svm_node[] nodes) {
+		return svm.svm_predict(svmSpamModel, nodes);
 	}
 	
 	public void predictMultiple() {

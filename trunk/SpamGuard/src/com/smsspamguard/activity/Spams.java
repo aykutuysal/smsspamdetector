@@ -1,5 +1,6 @@
 package com.smsspamguard.activity;
 
+import libsvm.svm_node;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -31,11 +32,14 @@ public class Spams extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-//		Log.i(Constants.DEBUG_TAG, "Starting SVM Test");
-//		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
-//		double result = svmSpam.predictSingle("Bu bir test mesajidir.");
-//		Log.i(Constants.DEBUG_TAG, "Result : " + result);
-//		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
+		String msg = "Bedava indirim her yerde carefoursa";
+		Log.i(Constants.DEBUG_TAG, "Starting SVM Test for: " + msg);
+		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
+		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, getApplicationContext());
+		svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, getApplicationContext());
+		double result = svmSpam.predictSingle(scaledNodes);
+		Log.i(Constants.DEBUG_TAG, "Result : " + result);
+		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
 		
 		this.db = new Database(this);
 		spamCursor = db.getSpams();
