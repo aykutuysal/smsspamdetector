@@ -186,8 +186,13 @@ public class SvmManager {
 			fos = context.openFileOutput(Constants.SVM_SINGLE_MSG_FEATURE_FILE, Context.MODE_PRIVATE);
 			
 			fos.write("1 ".getBytes());
-			for(svm_node node : nodes) {
-				String feature = node.index + ":" + node.value + " ";
+			for(int i=0;i<nodes.length;i++) {
+				svm_node node = nodes[i];
+				String feature = node.index + ":" + node.value;
+				
+				if(i<nodes.length-1)
+					feature += " ";
+				
 				fos.write(feature.getBytes());
 			}
 			fos.close();
