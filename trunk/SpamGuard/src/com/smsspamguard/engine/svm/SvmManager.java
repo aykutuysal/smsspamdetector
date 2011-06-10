@@ -224,10 +224,12 @@ public class SvmManager {
 			StringTokenizer tokenizer = new StringTokenizer(line,  " \t\n\r\f:");
 			tokenizer.nextToken();
 			svm_node[] scaledNodes = new svm_node[nodes.length];
+			int index = 0;
 			while(tokenizer.hasMoreTokens()) {
 				svm_node scaledNode = new svm_node();
 				scaledNode.index = Integer.parseInt(tokenizer.nextToken());
 				scaledNode.value = Double.parseDouble(tokenizer.nextToken());
+				scaledNodes[index++] = scaledNode;
 			}
 			
 			// DEBUG logs
