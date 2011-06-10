@@ -66,6 +66,7 @@ public class SVMSpam {
 		Log.i(Constants.DEBUG_TAG,"Creating svmParameter");
 		this.svmSpamParameter = createSvmParameter();
 		
+		
 		Log.i(Constants.DEBUG_TAG,"Cross validation");
 		do_cross_validation();
 		
@@ -172,7 +173,7 @@ public class SVMSpam {
 	    svmParameter.gamma = 1.0/(double)featureCount;
 	    svmParameter.coef0 = 0.0D;
 	    svmParameter.nu = 0.5D;
-	    svmParameter.cache_size = 100.0D;
+	    svmParameter.cache_size = 5.0D;
 	    svmParameter.C = 1.0D;
 	    svmParameter.eps = 0.001D;
 	    svmParameter.p = 0.1D;
@@ -224,13 +225,13 @@ public class SVMSpam {
 				index++;
 			}
 
-//			//print nodes
-//			for(int i=0;i<length;i++) {
-//				for(int j=0;j<featureCount;j++) {
-//					System.out.print(i + ". " + yList[i] + " " + nodes[i][j].index + ":" + nodes[i][j].value + " ");
-//				}
-//				System.out.println();
-//			}
+			//print nodes
+			for(int i=0;i<length;i++) {
+				for(int j=0;j<featureCount;j++) {
+					System.out.print(i + ". " + yList[i] + " " + nodes[i][j].index + ":" + nodes[i][j].value + " ");
+				}
+				System.out.println();
+			}
 			
 			svm_problem svmProblem = new svm_problem();
 			svmProblem.l = length;
