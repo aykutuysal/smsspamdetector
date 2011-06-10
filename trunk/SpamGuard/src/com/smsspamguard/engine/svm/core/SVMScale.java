@@ -22,16 +22,16 @@ public class SVMScale {
 	private long num_nonzeros;
 	private double[] feature_max;
 	private double[] feature_min;
-//	private double y_max;
-//	private double y_min;
-//	private double y_lower;
-//	private double y_upper;
-//	private boolean y_scaling;
+	// private double y_max;
+	// private double y_min;
+	// private double y_lower;
+	// private double y_upper;
+	// private boolean y_scaling;
 	private double lower;
 	private double upper;
 	private long new_num_nonzeros;
-	
-	private static int DEFUALT_BUFF_SIZE = 8*1024;
+
+	private static int DEFUALT_BUFF_SIZE = 8 * 1024;
 
 	private String readline(BufferedReader paramBufferedReader)
 			throws IOException {
@@ -43,12 +43,12 @@ public class SVMScale {
 			String paramString, Context context) throws IOException {
 		paramBufferedReader.close();
 		FileInputStream fis = context.openFileInput(paramString);
-		return new BufferedReader(new InputStreamReader(fis),DEFUALT_BUFF_SIZE);
+		return new BufferedReader(new InputStreamReader(fis), DEFUALT_BUFF_SIZE);
 	}
 
 	public void scale(String rangeSavePath, String rangeLoadPath,
-			String inputPath, double lowerBound, double upperBound, Context context)
-			throws IOException {
+			String inputPath, double lowerBound, double upperBound,
+			Context context) throws IOException {
 
 		BufferedReader localBufferedReader1 = null;
 		BufferedReader localBufferedReader2 = null;
@@ -59,11 +59,12 @@ public class SVMScale {
 		String str2 = rangeLoadPath;
 		String str3 = inputPath;
 
-		Log.i(Constants.DEBUG_TAG,"Scale 1 ---");	
-		Log.i(Constants.DEBUG_TAG,"opening str3 (inputPath) :  " + str3);
+		Log.i(Constants.DEBUG_TAG, "Scale 1 ---");
+		Log.i(Constants.DEBUG_TAG, "opening str3 (inputPath) :  " + str3);
 
 		FileInputStream fis = context.openFileInput(str3);
-		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis),DEFUALT_BUFF_SIZE);
+		localBufferedReader1 = new BufferedReader(new InputStreamReader(fis),
+				DEFUALT_BUFF_SIZE);
 		if (this.upper <= this.lower) {
 			System.err.println("inconsistent lower/upper specification");
 			System.exit(1);
@@ -77,7 +78,8 @@ public class SVMScale {
 		if (str2 != null) {
 			try {
 				FileInputStream fis2 = context.openFileInput(str2);
-				localBufferedReader2 = new BufferedReader(new InputStreamReader(fis2),DEFUALT_BUFF_SIZE);
+				localBufferedReader2 = new BufferedReader(
+						new InputStreamReader(fis2), DEFUALT_BUFF_SIZE);
 			} catch (Exception localException2) {
 				System.err.println("can't open file " + str2);
 				System.exit(1);
@@ -134,8 +136,8 @@ public class SVMScale {
 
 			localStringTokenizer3 = new StringTokenizer(this.line, " \t\n\r\f:");
 			double d1 = Double.parseDouble(localStringTokenizer3.nextToken());
-//			this.y_max = Math.max(this.y_max, d1);
-//			this.y_min = Math.min(this.y_min, d1);
+			// this.y_max = Math.max(this.y_max, d1);
+			// this.y_min = Math.min(this.y_min, d1);
 
 			while (localStringTokenizer3.hasMoreTokens()) {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
@@ -167,17 +169,17 @@ public class SVMScale {
 				localBufferedReader2.readLine();
 				localStringTokenizer4 = new StringTokenizer(
 						localBufferedReader2.readLine());
-//				this.y_lower = Double.parseDouble(localStringTokenizer4
-//						.nextToken());
-//				this.y_upper = Double.parseDouble(localStringTokenizer4
-//						.nextToken());
-//				localStringTokenizer4 = new StringTokenizer(
-//						localBufferedReader2.readLine());
-//				this.y_min = Double.parseDouble(localStringTokenizer4
-//						.nextToken());
-//				this.y_max = Double.parseDouble(localStringTokenizer4
-//						.nextToken());
-//				this.y_scaling = true;
+				// this.y_lower = Double.parseDouble(localStringTokenizer4
+				// .nextToken());
+				// this.y_upper = Double.parseDouble(localStringTokenizer4
+				// .nextToken());
+				// localStringTokenizer4 = new StringTokenizer(
+				// localBufferedReader2.readLine());
+				// this.y_min = Double.parseDouble(localStringTokenizer4
+				// .nextToken());
+				// this.y_max = Double.parseDouble(localStringTokenizer4
+				// .nextToken());
+				// this.y_scaling = true;
 				System.out.println("I am here O_0");
 			} else {
 				localBufferedReader2.reset();
@@ -212,38 +214,44 @@ public class SVMScale {
 			Formatter localFormatter = new Formatter(new StringBuilder());
 			BufferedWriter localBufferedWriter = null;
 			try {
-				FileOutputStream fos1 = context.openFileOutput(str1, Context.MODE_PRIVATE);
-				localBufferedWriter = new BufferedWriter(new OutputStreamWriter(fos1),DEFUALT_BUFF_SIZE);
+				FileOutputStream fos1 = context.openFileOutput(str1,
+						Context.MODE_PRIVATE);
+				localBufferedWriter = new BufferedWriter(
+						new OutputStreamWriter(fos1), DEFUALT_BUFF_SIZE);
 			} catch (IOException localIOException) {
 				System.err.println("can't open file " + str1);
 				System.exit(1);
 			}
 
-//			if (this.y_scaling) {
-//				localFormatter.format("y\n", new Object[0]);
-//				localFormatter.format("%.16g %.16g\n", new Object[] {
-//						Double.valueOf(this.y_lower),
-//						Double.valueOf(this.y_upper) });
-//				localFormatter.format("%.16g %.16g\n",
-//						new Object[] { Double.valueOf(this.y_min),
-//								Double.valueOf(this.y_max) });
-//			}
+			// if (this.y_scaling) {
+			// localFormatter.format("y\n", new Object[0]);
+			// localFormatter.format("%.16g %.16g\n", new Object[] {
+			// Double.valueOf(this.y_lower),
+			// Double.valueOf(this.y_upper) });
+			// localFormatter.format("%.16g %.16g\n",
+			// new Object[] { Double.valueOf(this.y_min),
+			// Double.valueOf(this.y_max) });
+			// }
 			localFormatter.format("x\n", new Object[0]);
-			localFormatter.format("%.16g %.16g\n", new Object[] {
-					Double.valueOf(this.lower), Double.valueOf(this.upper) });
+			localFormatter.format(
+					"%.16g %.16g\n",
+					new Object[] { Double.valueOf(this.lower),
+							Double.valueOf(this.upper) });
 			for (int i = 1; i <= this.max_index; i++) {
 				if (this.feature_min[i] != this.feature_max[i])
-					localFormatter.format("%d %.16g %.16g\n", new Object[] {
-							Integer.valueOf(i),
-							Double.valueOf(this.feature_min[i]),
-							Double.valueOf(this.feature_max[i]) });
+					localFormatter.format(
+							"%d %.16g %.16g\n",
+							new Object[] { Integer.valueOf(i),
+									Double.valueOf(this.feature_min[i]),
+									Double.valueOf(this.feature_max[i]) });
 			}
 			localBufferedWriter.write(localFormatter.toString());
 			localBufferedWriter.close();
 		}
 
-		FileOutputStream outFile = context.openFileOutput(str3 + ".scaled", Context.MODE_PRIVATE);
-		
+		FileOutputStream outFile = context.openFileOutput(str3 + ".scaled",
+				Context.MODE_PRIVATE);
+
 		while (readline(localBufferedReader1) != null) {
 			int i1 = 1;
 
@@ -254,16 +262,15 @@ public class SVMScale {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
 				for (int i = i1; i < j; ++i)
-					outFile.write(output(i, 0.0D).getBytes());
-				
-				if(output(j, d4)!= null)
-					outFile.write(output(j, d4).getBytes());
-				
+					output(i, 0.0D, outFile);
+
+					output(j, d4, outFile);
+
 				i1 = j + 1;
 			}
 
 			for (int i = i1; i <= this.max_index; ++i)
-				outFile.write(output(i, 0.0D).getBytes());
+				output(i, 0.0D,outFile);
 			outFile.write("\n".getBytes());
 		}
 		if (this.new_num_nonzeros > this.num_nonzeros) {
@@ -278,24 +285,46 @@ public class SVMScale {
 	}
 
 	private String output_target(double paramDouble) {
-//		if (this.y_scaling) {
-//			if (paramDouble == this.y_min)
-//				paramDouble = this.y_lower;
-//			else if (paramDouble == this.y_max)
-//				paramDouble = this.y_upper;
-//			else {
-//				paramDouble = this.y_lower + (this.y_upper - this.y_lower)
-//						* (paramDouble - this.y_min)
-//						/ (this.y_max - this.y_min);
-//			}
-//		}
+		// if (this.y_scaling) {
+		// if (paramDouble == this.y_min)
+		// paramDouble = this.y_lower;
+		// else if (paramDouble == this.y_max)
+		// paramDouble = this.y_upper;
+		// else {
+		// paramDouble = this.y_lower + (this.y_upper - this.y_lower)
+		// * (paramDouble - this.y_min)
+		// / (this.y_max - this.y_min);
+		// }
+		// }
 
 		return String.valueOf(paramDouble) + " ";
 	}
 
-	private String output(int paramInt, double paramDouble) {
+//	private String output(int paramInt, double paramDouble) {
+//		if (this.feature_max[paramInt] == this.feature_min[paramInt]) {
+//			return null;
+//		}
+//		if (paramDouble == this.feature_min[paramInt])
+//			paramDouble = this.lower;
+//		else if (paramDouble == this.feature_max[paramInt])
+//			paramDouble = this.upper;
+//		else {
+//			paramDouble = this.lower + (this.upper - this.lower)
+//					* (paramDouble - this.feature_min[paramInt])
+//					/ (this.feature_max[paramInt] - this.feature_min[paramInt]);
+//		}
+//
+//		if (paramDouble != 0.0D) {
+//			this.new_num_nonzeros += 1L;
+//			return String.valueOf(paramInt) + ":" + String.valueOf(paramDouble)
+//					+ " ";
+//		}
+//		return null;
+//	}
+
+	private void output(int paramInt, double paramDouble, FileOutputStream fos) {
 		if (this.feature_max[paramInt] == this.feature_min[paramInt]) {
-			return null;
+			return;
 		}
 		if (paramDouble == this.feature_min[paramInt])
 			paramDouble = this.lower;
@@ -308,9 +337,13 @@ public class SVMScale {
 		}
 
 		if (paramDouble != 0.0D) {
+			try {
+				String out = paramInt + ":" + paramDouble + " ";
+				fos.write(out.getBytes());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			this.new_num_nonzeros += 1L;
-			return String.valueOf(paramInt) + ":" + String.valueOf(paramDouble) + " ";
 		}
-		return null;
 	}
 }
