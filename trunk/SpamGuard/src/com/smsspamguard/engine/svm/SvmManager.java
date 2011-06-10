@@ -187,7 +187,7 @@ public class SvmManager {
 			
 			fos.write("1 ".getBytes());
 			for(svm_node node : nodes) {
-				String feature = node.index + ":" + node.value;
+				String feature = node.index + ":" + node.value + " ";
 				fos.write(feature.getBytes());
 			}
 			fos.close();
