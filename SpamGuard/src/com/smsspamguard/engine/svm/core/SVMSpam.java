@@ -202,15 +202,16 @@ public class SVMSpam {
 		
 			scanner.close();
 			fis.close();
-			fis = context.openFileInput(path);
-			scanner = new Scanner(fis);
+			
+			FileInputStream fis2 = context.openFileInput(path);
+			Scanner scanner2 = new Scanner(fis2);
 			
 			double[] yList = new double[length];
 			int index = 0;
 			
 			svm_node[][] nodes = new svm_node[length][featureCount];
-			while( scanner.hasNext() ) {
-				String line = scanner.nextLine();	
+			while( scanner2.hasNext() ) {
+				String line = scanner2.nextLine();	
 				String[] instanceValues = line.split(" .:");
 				yList[index] = Double.parseDouble(instanceValues[0]);
 				
