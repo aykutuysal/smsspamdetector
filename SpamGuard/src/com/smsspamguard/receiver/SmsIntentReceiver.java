@@ -42,17 +42,15 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean allCapital = false;
 	private NotificationManager mNotificationManager;
 	private int SIMPLE_NOTFICATION_ID = 1;
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
-
+	private static ExecutorService executor = Executors.newSingleThreadExecutor();
+	
 	private class SpamThread implements Runnable {
 
 		Context ctx;
-		String body;
 		Database db;
 
-		public SpamThread(Context ctx, String body) {
+		public SpamThread(Context ctx) {
 			this.ctx = ctx;
-			this.body = body;
 		}
 
 		@Override
@@ -60,7 +58,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 			db = new Database(ctx);
 			Uri uri = Uri.parse("content://sms/inbox");
-			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "date" }, null, null, null);
+			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id" }, null, null, null);
 
 			int before = cursor.getCount();
 			Log.i("before", String.valueOf(before));
@@ -74,8 +72,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				cursor.requery();
 			}
 			Log.i("after", String.valueOf(cursor.getCount()));
-			cursor.moveToFirst();
-			Log.i("date", String.valueOf(cursor.getLong(cursor.getColumnIndex("date"))));
+
 			boolean unreadOnly = false;
 			String SMS_READ_COLUMN = "read";
 			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
@@ -96,7 +93,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
 			db.insertSpam(message);
 
-			System.out.println(messageId + " " + threadId + " " + address + " " + contactId + " " + date + " " + body);
+			//System.out.println(messageId + " " + threadId + " " + address + " " + contactId + " " + date + " " + messageBody);
 
 			ContentValues values = new ContentValues();
 			values.put("read", 1);
@@ -156,9 +153,9 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
 		toggleApp = sp.getBoolean("toggle_spamguard", true);
 		allowContacts = sp.getBoolean("allow_contacts", true);
-		blockNonnumeric = sp.getBoolean("block_nonnumeric", true);
+		blockNonnumeric = sp.getBoolean("block_nonnumeric", false);
 		blockAllcapital = sp.getBoolean("block_allcapital", false);
-
+		
 		if (toggleApp) {
 			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
@@ -296,10 +293,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				// deduce spam or not
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
-					Log.i("timestamp", String.valueOf(msg[0].getTimestampMillis()));
-					
-					Runnable r = new SpamThread(context, body);
-					//new Thread(r).start();
+					Runnable r = new SpamThread(context);
 					executor.execute(r);
 				}
 			}
