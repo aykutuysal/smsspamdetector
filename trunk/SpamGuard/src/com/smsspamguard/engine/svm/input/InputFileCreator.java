@@ -42,13 +42,14 @@ public class InputFileCreator {
 		trigramFilter.trainBulk(Constants.CLEANS_FILENAME, "clean", context);
 		trigramFilter.finalizeTraining();
 		
-		createInputDataFromFile(Constants.SPAMS_FILENAME, Constants.CLEANS_FILENAME, Constants.SVM_INPUT_FILENAME, 1);
+		createInputDataFromFile(Constants.SPAMS_FILENAME, Constants.CLEANS_FILENAME, Constants.SVM_INPUT_FILENAME);
 	}
 	
-	private void createInputDataFromFile(String spamSourcePath, String cleanSourcePath, String destPath, int classNo) {
+	private void createInputDataFromFile(String spamSourcePath, String cleanSourcePath, String destPath) {
 		
 		try
 		{
+			int classNo = 1;
 			FileInputStream fisSpam = context.openFileInput(spamSourcePath);
 			Scanner scannerSpam = new Scanner(fisSpam, "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
 			
@@ -125,6 +126,10 @@ public class InputFileCreator {
 			System.out.println("Finished reading " + spamSourcePath);
 			fisSpam.close();
 
+			
+			
+			// Cleans start here
+			classNo = 0;
 			FileInputStream fisClean = context.openFileInput(cleanSourcePath);
 			Scanner scannerClean = new Scanner(fisClean, "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
 			
@@ -192,7 +197,7 @@ public class InputFileCreator {
 					triCleanFeature /= count;
 				}				
 
-				String line = classNo + " 0:" + monoSpamFeature + " 2:" + monoCleanFeature +
+				String line = classNo + " 1:" + monoSpamFeature + " 2:" + monoCleanFeature +
 							" 3:" + biSpamFeature + " 4:" + biCleanFeature + 
 							" 5:" + triSpamFeature + " 6:" + triCleanFeature + "\n";
 				fos.write(line.getBytes());
