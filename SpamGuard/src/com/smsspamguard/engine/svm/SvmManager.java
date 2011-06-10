@@ -1,11 +1,9 @@
 package com.smsspamguard.engine.svm;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
@@ -193,6 +191,12 @@ public class SvmManager {
 				fos.write(feature.getBytes());
 			}
 			fos.close();
+			
+			FileInputStream fis = context.openFileInput(Constants.SVM_SINGLE_MSG_FEATURE_FILE);
+			BufferedReader br = new BufferedReader(new InputStreamReader(fis),8*1024);
+			String line = br.readLine();
+			Log.i(Constants.DEBUG_TAG,"Line from single feature file : " + line);
+			fis.close();
 			
 			// create scaled file from the newly created file
 			svmSpam.scaleSingle(Constants.SVM_SINGLE_MSG_FEATURE_FILE);
