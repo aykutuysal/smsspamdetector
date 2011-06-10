@@ -192,7 +192,7 @@ public class InputFileCreator {
 					triCleanFeature /= count;
 				}				
 
-				String line = classNo + " 1:" + monoSpamFeature + " 2:" + monoCleanFeature +
+				String line = classNo + " 0:" + monoSpamFeature + " 2:" + monoCleanFeature +
 							" 3:" + biSpamFeature + " 4:" + biCleanFeature + 
 							" 5:" + triSpamFeature + " 6:" + triCleanFeature + "\n";
 				fos.write(line.getBytes());
