@@ -153,7 +153,7 @@ public class SvmManager {
 		node5.value = triSpamFeature;
 		
 		svm_node node6 = new svm_node();
-		node6.index = 5;
+		node6.index = 6;
 		node6.value = triCleanFeature;
 
 		nodes[0] = node1;
