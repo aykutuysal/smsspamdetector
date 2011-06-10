@@ -1,5 +1,7 @@
 package com.smsspamguard.receiver;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,6 +42,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean allCapital = false;
 	private NotificationManager mNotificationManager;
 	private int SIMPLE_NOTFICATION_ID = 1;
+	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private class SpamThread implements Runnable {
 
@@ -57,7 +60,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 			db = new Database(ctx);
 			Uri uri = Uri.parse("content://sms/inbox");
-			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id" }, null, null, null);
+			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "date" }, null, null, null);
 
 			int before = cursor.getCount();
 			Log.i("before", String.valueOf(before));
@@ -71,6 +74,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				cursor.requery();
 			}
 			Log.i("after", String.valueOf(cursor.getCount()));
+			cursor.moveToFirst();
+			Log.i("date", String.valueOf(cursor.getLong(cursor.getColumnIndex("date"))));
 			boolean unreadOnly = false;
 			String SMS_READ_COLUMN = "read";
 			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
@@ -291,8 +296,11 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				// deduce spam or not
 				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
 					this.abortBroadcast();
+					Log.i("timestamp", String.valueOf(msg[0].getTimestampMillis()));
+					
 					Runnable r = new SpamThread(context, body);
-					new Thread(r).start();
+					//new Thread(r).start();
+					executor.execute(r);
 				}
 			}
 			db.close();
