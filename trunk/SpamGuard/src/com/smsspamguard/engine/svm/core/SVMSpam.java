@@ -16,7 +16,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
-import com.smsspamguard.engine.svm.SvmManager;
 
 public class SVMSpam {
 
@@ -242,6 +241,7 @@ public class SVMSpam {
 //				Log.i(Constants.DEBUG_TAG, ""+yList[i]);
 //			}
 			
+
 //			//print nodes
 //			for(int i=0;i<length;i++) {
 //				for(int j=0;j<featureCount;j++) {

@@ -2,15 +2,12 @@ package com.smsspamguard.activity;
 
 import java.io.IOException;
 
-import libsvm.svm_node;
-import libsvm.svm_problem;
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -21,10 +18,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.SimpleCursorAdapter;
 
 import com.smsspamguard.R;
-import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
-import com.smsspamguard.engine.svm.SvmManager;
-import com.smsspamguard.engine.svm.core.SVMSpam;
 
 public class Spams extends ListActivity {
 	private Database db;
@@ -34,37 +28,7 @@ public class Spams extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		String msg = "uzaylilar hosgeldiniz";
-		Log.i(Constants.DEBUG_TAG, "Starting SVM Test for: " + msg);
-		SVMSpam svmSpam = SvmManager.getSvm(getApplicationContext());
-		
-		svm_problem problem = svmSpam.getSvmSpamProblem();
-		Log.i(Constants.DEBUG_TAG,"Problem l: " + problem.l);
-		
-		double[] ys = problem.y;
-//		Log.i(Constants.DEBUG_TAG,"Problem y values: ");
-//		for(double d : ys)
-//			Log.i(Constants.DEBUG_TAG,""+d);
-		
-		svm_node[][] xs = problem.x;
-//		System.out.println("Problem x values: ");
-//		for(int i=0;i<xs.length;i++) {
-//			for(int j=0;j<xs[i].length;j++) {
-//				System.out.print(xs[i][j].index + ":" + xs[i][j].value);
-//			}
-//			System.out.print("\n");
-//		}
-
-		svm_node[] nodes = SvmManager.getSvmNodeFromMessage(msg, getApplicationContext());
-		svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, getApplicationContext());
-		
-		
-		double result = svmSpam.predictSingle(scaledNodes);
-		Log.i(Constants.DEBUG_TAG, "Result : " + result);
-		Log.i(Constants.DEBUG_TAG, "Finished SVM Test");
-		
-		
+				
 		try {
 			FileCopier.backupFiles();
 		} catch (IOException e) {
