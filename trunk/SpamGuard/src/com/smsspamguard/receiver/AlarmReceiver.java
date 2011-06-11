@@ -125,16 +125,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 		
 		Database db = new Database(context);
 		Cursor cursor = db.getBodies();
-		Log.i(Constants.DEBUG_TAG, String.valueOf(cursor.getCount()));
+		cursor.moveToFirst();
 		db.close();
 
 		ArrayList<String> messageBodies = new ArrayList<String>();
-		if(cursor != null)
+		if(cursor.getCount() != 0)
 		{
 			while(!cursor.isAfterLast()) {
 				messageBodies.add(cursor.getString(0));
 				cursor.moveToNext();
-				Log.i(Constants.DEBUG_TAG, cursor.getString(0));
 			}
 		}
 		cursor.close();
