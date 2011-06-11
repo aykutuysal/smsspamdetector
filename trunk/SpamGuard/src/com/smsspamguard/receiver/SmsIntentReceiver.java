@@ -205,11 +205,11 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							} else {
 								isBlacklisted = true;
 							}
-							cursor.close();
 							break;
 						}
 						cursor.moveToNext();
 					}
+					cursor.close();
 				}
 
 				// check content against white/blacklist texts
@@ -230,11 +230,11 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							} else {
 								isBlacklisted = true;
 							}
-							cursor.close();
 							break;
 						}
 						cursor.moveToNext();
 					}
+					cursor.close();
 				}
 
 				if (isWhitelisted) {

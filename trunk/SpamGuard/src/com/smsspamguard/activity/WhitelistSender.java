@@ -174,5 +174,8 @@ public class WhitelistSender extends ListActivity {
 		if (db != null) {
 			db.close();
 		}
+		if(listCursor != null) {
+			listCursor.close();
+		}
 	}
 }
