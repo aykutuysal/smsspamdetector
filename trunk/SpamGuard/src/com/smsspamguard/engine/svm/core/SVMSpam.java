@@ -52,7 +52,7 @@ public class SVMSpam {
 		try {
 			Log.i(Constants.DEBUG_TAG,"Scaling started");
 			//this.scaler.scale("data/range", null, "data/" + trainFile, -1.0, 1.0);
-			this.scaler.scale(Constants.SVM_RANGE_SAVE_PATH, null, Constants.SVM_INPUT_FILENAME, -1.0, 1.0,context);
+			this.scaler.scale(Constants.SVM_RANGE_SAVE_PATH, null, Constants.SVM_INPUT_FILENAME, 0.0, 1.0,context);
 			//this.scaler.scale(null, "data/range", "data/" + testFile, -1.0, 1.0);
 			//this.scaler.scale(null,Constants.SVM_RANGE_LOAD_PATH, testFile, -1.0, 1.0,context);
 			Log.i(Constants.DEBUG_TAG,"Scaling Finished");
