@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import libsvm.svm_node;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -23,7 +24,10 @@ import android.util.Log;
 
 import com.smsspamguard.R;
 import com.smsspamguard.activity.Spams;
+import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.engine.svm.SvmManager;
+import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.model.Message;
 
 public class SmsIntentReceiver extends BroadcastReceiver {
@@ -34,12 +38,15 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean allowContacts;
 	private boolean blockNonnumeric;
 	private boolean blockAllcapital;
+	private boolean toggleSvm;
 
 	private boolean isBlacklisted = false;
 	private boolean isWhitelisted = false;
 	private boolean regexMatch = false;
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
+	private boolean svmResult = false;
+	
 	private NotificationManager mNotificationManager;
 	private int SIMPLE_NOTFICATION_ID = 1;
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -155,6 +162,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		allowContacts = sp.getBoolean("allow_contacts", true);
 		blockNonnumeric = sp.getBoolean("block_nonnumeric", false);
 		blockAllcapital = sp.getBoolean("block_allcapital", false);
+		toggleSvm = sp.getBoolean("toggle_svm", false);
 		
 		if (toggleApp) {
 			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
@@ -284,14 +292,34 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							}
 						}
 					}
-				}
+					
+					if( toggleSvm ) {
+						Log.i(Constants.DEBUG_TAG, "Starting SVM check for: " + body);
+						SVMSpam svmSpam = SvmManager.getSvm(context);
+						svm_node[] nodes = SvmManager.getSvmNodeFromMessage(body, context);
+						svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, context);
+						double result = svmSpam.predictSingle(scaledNodes);
+						
+						// if result is 1.0, spam found
+						if(result == 1.0) {
+							svmResult = true;
+							Log.i(Constants.DEBUG_TAG, "Spam found! (" + body + ")");
+
+						}
+						else{
+							svmResult = false;
+							Log.i(Constants.DEBUG_TAG, "It's clean (" + body + ")");
+						}
+						Log.i(Constants.DEBUG_TAG, "Finished SVM check");
+					}
+ 				}
 
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
 				Log.i("isBlacklisted", String.valueOf(isBlacklisted));
 
 				// deduce spam or not
-				if (isBlacklisted || regexMatch || nonNumeric || allCapital) {
+				if (isBlacklisted || regexMatch || nonNumeric || allCapital || svmResult) {
 					this.abortBroadcast();
 					Runnable r = new SpamThread(context);
 					executor.execute(r);
