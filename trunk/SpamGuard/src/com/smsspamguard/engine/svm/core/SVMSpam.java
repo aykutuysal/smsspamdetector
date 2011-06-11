@@ -173,7 +173,7 @@ public class SVMSpam {
 	    svmParameter.gamma = 1.0/(double)featureCount;
 	    svmParameter.coef0 = 0.0D;
 	    svmParameter.nu = 0.5D;
-	    svmParameter.cache_size = 5.0D;
+	    svmParameter.cache_size = 15.0D;
 	    svmParameter.C = 1.0D;
 	    svmParameter.eps = 0.001D;
 	    svmParameter.p = 0.1D;
@@ -216,15 +216,15 @@ public class SVMSpam {
 			svm_node[][] nodes = new svm_node[length][featureCount];
 			while( scanner2.hasNext() ) {
 				String line = scanner2.nextLine();
-				Log.i(Constants.DEBUG_TAG,"Line is read: " + line);
+//				Log.i(Constants.DEBUG_TAG,"Line is read: " + line);
 				
 				String[] instanceValues = line.split(" .:");
 				yList[index] = Double.parseDouble(instanceValues[0]);
 
-				Log.i(Constants.DEBUG_TAG,"InstanceValues starting:");
-				for(int i=1;i<instanceValues.length;i++) {
-					Log.i(Constants.DEBUG_TAG,i + " " + Double.parseDouble(instanceValues[i]));
-				}
+//				Log.i(Constants.DEBUG_TAG,"InstanceValues starting:");
+//				for(int i=1;i<instanceValues.length;i++) {
+//					Log.i(Constants.DEBUG_TAG,i + " " + Double.parseDouble(instanceValues[i]));
+//				}
 				
 				for(int i=1;i<instanceValues.length;i++) {
 					svm_node node = new svm_node();
@@ -234,20 +234,24 @@ public class SVMSpam {
 				}
 				index++;
 			}
-
-			Log.i(Constants.DEBUG_TAG,"YList Length: " + yList.length);
+			scanner2.close();
+			fis2.close();
+//			Log.i(Constants.DEBUG_TAG,"YList Length: " + yList.length);
 			
-			for(int i=0;i<yList.length;i++) {
-				Log.i(Constants.DEBUG_TAG, ""+yList[i]);
-			}
+//			for(int i=0;i<yList.length;i++) {
+//				Log.i(Constants.DEBUG_TAG, ""+yList[i]);
+//			}
 			
-			//print nodes
-			for(int i=0;i<length;i++) {
-				for(int j=0;j<featureCount;j++) {
-					System.out.print(i + ". " + yList[i] + " " + nodes[i][j].index + ":" + nodes[i][j].value + " ");
-				}
-				System.out.println();
-			}
+//			//print nodes
+//			for(int i=0;i<length;i++) {
+//				for(int j=0;j<featureCount;j++) {
+//					System.out.print(i + ". " + yList[i]);
+//					System.out.print(" " + nodes[i][j].index + ":");
+//							System.out.print(nodes[i][j].value + " ");
+//							System.out.println("i = " + i);
+//				}
+//				System.out.println();
+//			}
 			
 			svm_problem svmProblem = new svm_problem();
 			svmProblem.l = length;

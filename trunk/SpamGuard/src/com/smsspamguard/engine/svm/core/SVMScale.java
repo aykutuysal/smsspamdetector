@@ -262,8 +262,9 @@ public class SVMScale {
 				j = Integer.parseInt(localStringTokenizer3.nextToken());
 				d4 = Double.parseDouble(localStringTokenizer3.nextToken());
 				for (int i = i1; i < j; ++i)
+				{
 					output(i, 0.0D, outFile);
-
+				}
 					output(j, d4, outFile);
 
 				i1 = j + 1;
@@ -335,8 +336,8 @@ public class SVMScale {
 					* (paramDouble - this.feature_min[paramInt])
 					/ (this.feature_max[paramInt] - this.feature_min[paramInt]);
 		}
-
-		if (paramDouble != 0.0D) {
+		
+//		if (paramDouble != 0.0D) {
 			try {
 				String out = paramInt + ":" + paramDouble + " ";
 				fos.write(out.getBytes());
@@ -344,6 +345,10 @@ public class SVMScale {
 				e.printStackTrace();
 			}
 			this.new_num_nonzeros += 1L;
-		}
+//		}
+//		else
+//		{
+//			Log.i(Constants.DEBUG_TAG, "FAILED HERE: " + String.valueOf(paramDouble));
+//		}
 	}
 }
