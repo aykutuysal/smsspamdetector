@@ -4,12 +4,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.smsspamguard.constant.Constants;
@@ -17,7 +17,6 @@ import com.smsspamguard.db.Database;
 import com.smsspamguard.engine.svm.SvmManager;
 import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.engine.svm.input.InputFileCreator;
-import com.smsspamguard.model.Message;
 
 public class AlarmReceiver extends BroadcastReceiver {
 
@@ -125,13 +124,20 @@ public class AlarmReceiver extends BroadcastReceiver {
 		Log.i("AlarmReceiver", "AlarmReceiver started");
 		
 		Database db = new Database(context);
-		List<Message> spams = db.selectAllSpam();
+		Cursor cursor = db.getBodies();
+		Log.i(Constants.DEBUG_TAG, String.valueOf(cursor.getCount()));
 		db.close();
 
 		ArrayList<String> messageBodies = new ArrayList<String>();
-		for (Message message : spams) {
-			messageBodies.add(message.getBody());
+		if(cursor != null)
+		{
+			while(!cursor.isAfterLast()) {
+				messageBodies.add(cursor.getString(0));
+				cursor.moveToNext();
+				Log.i(Constants.DEBUG_TAG, cursor.getString(0));
+			}
 		}
+		cursor.close();
 		
 		Runnable r = new TrainThread(context, messageBodies);
 		new Thread(r).start();

@@ -174,5 +174,8 @@ public class WhitelistText extends ListActivity {
 		if (db != null) {
 			db.close();
 		}
+		if(listCursor != null) {
+			listCursor.close();
+		}
 	}
 }

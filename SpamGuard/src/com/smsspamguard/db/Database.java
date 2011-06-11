@@ -1,8 +1,5 @@
 package com.smsspamguard.db;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -64,6 +61,13 @@ public class Database {
 		return cursor;
 	}
 	
+	public Cursor getBodies()
+	{
+		Cursor cursor = null;
+		cursor = this.db.query(SPAM_TABLE, new String[] { "body" }, null, null, null, null, null);
+		return cursor;
+	}
+	
 	public void deleteSpam(long id) {
 		this.db.beginTransaction();
 		try {
@@ -72,29 +76,6 @@ public class Database {
 		} finally {
 			this.db.endTransaction();
 		}
-	}
-
-	public List<Message> selectAllSpam() {
-
-		List<Message> list = new ArrayList<Message>();
-		Cursor cursor = this.db.query(SPAM_TABLE, new String[] { "messageId","threadId","address","contactId","date","body" }, null, null, null, null, null);
-
-		if (cursor.moveToFirst()) {
-			do {
-				long messageId = cursor.getLong(0);
-				long threadId = cursor.getLong(1);
-				String address = cursor.getString(2);
-				long contactId = cursor.getLong(3);
-				long date = cursor.getLong(4);
-				String body = cursor.getString(5);
-				Message smsMessage = new Message(messageId,threadId,address,contactId,date,body);
-				list.add(smsMessage);
-			} while (cursor.moveToNext());
-		}
-		if (cursor != null && !cursor.isClosed()) {
-			cursor.close();
-		}
-		return list;
 	}
 
 	public void insertList(String type, String value) {
