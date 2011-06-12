@@ -25,7 +25,7 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        previousPeriod = Long.parseLong(sp.getString("update_interval", "21600000"));
+        previousPeriod = Long.parseLong(sp.getString("update_interval", "86400000"));
 
     }
     
@@ -33,8 +33,9 @@ public class Preferences extends PreferenceActivity {
 		super.onPause();
 		
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		boolean toggleApp = sp.getBoolean("toggle_spamguard", true);
 		boolean toggleSvm = sp.getBoolean("toggle_svm", true);
-		long period = Long.parseLong(sp.getString("update_interval", "21600000"));
+		long period = Long.parseLong(sp.getString("update_interval", "86400000"));
 		
 		SharedPreferences alarmPref = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = alarmPref.edit();
@@ -44,7 +45,7 @@ public class Preferences extends PreferenceActivity {
 		PendingIntent sender = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 		
-		if(toggleSvm)
+		if(toggleApp && toggleSvm)
 		{
 			Calendar cal = Calendar.getInstance();
 			//initialize alarm for training if not set before

@@ -20,8 +20,7 @@
 			android:defaultValue="86400000" 
 			android:entries="@array/updateInterval"
 			android:entryValues="@array/updateIntervalValues"
-			android:dependency="toggle_svm"
-		/>
+			android:dependency="toggle_svm"	/>
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
 			android:key="allow_contacts"
