@@ -9,15 +9,15 @@
 			android:summary="@string/summary_toggle_spamguard" />
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
-			android:key="allow_contacts"
-			android:title="@string/title_allow_contacts"
-			android:defaultValue="true" />
-		<CheckBoxPreference
-			android:dependency="toggle_spamguard"
 			android:key="toggle_svm"
 			android:title="@string/title_toggle_svm"
 			android:defaultValue="true"
 			android:summary="@string/summary_toggle_svm" />
+		<CheckBoxPreference
+			android:dependency="toggle_spamguard"
+			android:key="allow_contacts"
+			android:title="@string/title_allow_contacts"
+			android:defaultValue="true" />
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
 			android:key="block_nonnumeric"
