@@ -23,6 +23,7 @@ import android.telephony.SmsMessage;
 import android.util.Log;
 
 import com.smsspamguard.R;
+import com.smsspamguard.activity.Main;
 import com.smsspamguard.activity.Spams;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
@@ -67,7 +68,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id" }, null, null, null);
 
 			int before = cursor.getCount();
-			Log.i("before", String.valueOf(before));
 
 			while (before == cursor.getCount()) {
 				try {
@@ -77,7 +77,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 				cursor.requery();
 			}
-			Log.i("after", String.valueOf(cursor.getCount()));
 
 			boolean unreadOnly = false;
 			String SMS_READ_COLUMN = "read";
@@ -115,7 +114,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			// display a notification for caught spam
 			mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 			Notification notifySpam = new Notification(R.drawable.ic_menu_add, "SpamGuarded!", System.currentTimeMillis());
-			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, new Intent(ctx, Spams.class), 0);
+			
+			Intent intent= new Intent(ctx, Main.class);
+			intent.putExtra("defaultTab", "3");
+			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, intent , 0);
 			notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
 			notifySpam.setLatestEventInfo(ctx, "SpamGuard", "Click to view spams", myIntent);
 			mNotificationManager.notify(SIMPLE_NOTFICATION_ID, notifySpam);
@@ -302,11 +304,11 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						// if result is 1.0, spam found
 						if(result == 1.0) {
 							svmResult = true;
-							Log.i(Constants.DEBUG_TAG, "Spam found! (" + body + ")");
+							Log.i(Constants.DEBUG_TAG, "SVM Result : Spam  (" + body + ")");
 						}
 						else{
 							svmResult = false;
-							Log.i(Constants.DEBUG_TAG, "It's clean (" + body + ")");
+							Log.i(Constants.DEBUG_TAG, "SVM Result : Clean (" + body + ")");
 						}
 						Log.i(Constants.DEBUG_TAG, "Finished SVM check");
 					}
@@ -319,6 +321,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 				// deduce spam or not
 				if (isBlacklisted || nonNumeric || allCapital || svmResult) {
+					
+					Log.i(Constants.DEBUG_TAG,"Marking message as spam. (" + body +")");
 					this.abortBroadcast();
 					Runnable r = new SpamThread(context);
 					executor.execute(r);
