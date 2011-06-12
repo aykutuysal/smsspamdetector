@@ -25,7 +25,7 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        previousPeriod = sp.getLong("update_interval", 21600000);
+        previousPeriod = Long.parseLong(sp.getString("update_interval", "21600000"));
 
     }
     
