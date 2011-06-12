@@ -25,7 +25,7 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        previousPeriod = sp.getLong("svm_period", 21600000);
+        previousPeriod = sp.getLong("update_interval", 21600000);
 
     }
     
@@ -34,7 +34,7 @@ public class Preferences extends PreferenceActivity {
 		
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		boolean toggleSvm = sp.getBoolean("toggle_svm", true);
-		long period = sp.getLong("svm_period", 21600000);
+		long period = sp.getLong("update_interval", 21600000);
 		
 		SharedPreferences alarmPref = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = alarmPref.edit();
@@ -60,7 +60,9 @@ public class Preferences extends PreferenceActivity {
 			if(period != previousPeriod)
 			{
 				am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), period, sender);
-				Log.i("SpamGuard", "Period changed from " + String.valueOf(previousPeriod) + " to " + String.valueOf(period));
+				Log.i("SpamGuard", String.valueOf(previousPeriod));
+				Log.i("SpamGuard", String.valueOf(period));
+				Log.i("SpamGuard", "Period changed");
 			}
 		}
 		else
