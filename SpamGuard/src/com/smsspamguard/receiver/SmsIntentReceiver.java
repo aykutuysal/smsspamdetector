@@ -24,7 +24,6 @@ import android.util.Log;
 
 import com.smsspamguard.R;
 import com.smsspamguard.activity.Main;
-import com.smsspamguard.activity.Spams;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
 import com.smsspamguard.engine.svm.SvmManager;

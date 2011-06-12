@@ -13,6 +13,15 @@
 			android:title="@string/title_toggle_svm"
 			android:defaultValue="true"
 			android:summary="@string/summary_toggle_svm" />
+		<ListPreference 
+			android:key="update_interval"
+			android:title="@string/title_update_interval"
+			android:summary="Define how often updates will be performed"
+			android:defaultValue="1000" 
+			android:entries="@array/updateInterval"
+			android:entryValues="@array/updateIntervalValues"
+			android:dependency="toggle_svm"
+		/>
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
 			android:key="allow_contacts"

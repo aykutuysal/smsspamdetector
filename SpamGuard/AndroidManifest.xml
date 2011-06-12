@@ -19,6 +19,8 @@
 
 		<activity android:name="com.smsspamguard.activity.Preferences"
 			android:label="@string/title_preferences" />
+		<activity android:name="com.smsspamguard.activity.Periods"
+			android:label="@string/title_update_interval" />
 		<activity android:name="com.smsspamguard.activity.Blacklist"
 			android:label="@string/title_blacklist" />
 		<activity android:name="com.smsspamguard.activity.BlacklistSender"
