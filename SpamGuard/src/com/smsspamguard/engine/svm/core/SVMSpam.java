@@ -26,13 +26,10 @@ public class SVMSpam {
 	private SVMScale scaler;
 	
 	private int featureCount;
-	private String trainFile, testFile;
 	
 	private Context context;
 	
-	public SVMSpam(int featureCount, String trainFile, String testFile) {
-		this.trainFile = trainFile;
-		this.testFile = testFile;
+	public SVMSpam(int featureCount) {
 		this.featureCount = featureCount;
 		this.scaler = new SVMScale();
 	}
@@ -102,7 +99,20 @@ public class SVMSpam {
 	}
 	
 	public double predictSingle(svm_node[] nodes) {
-		return svm.svm_predict(svmSpamModel, nodes);
+		
+		boolean isAllLowerBound = true;
+		for(svm_node node : nodes) {
+			if(node.value != 0) 
+				isAllLowerBound = false;
+		}
+		
+		// if all features are the lower bound value of scale
+		// then svm does not know anything about the message
+		// so it should return a default value, which is zero(clean)
+		if(isAllLowerBound)
+			return 0;
+		else
+			return svm.svm_predict(svmSpamModel, nodes);
 	}
 	
 	public void predictMultiple() {
