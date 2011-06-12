@@ -25,7 +25,7 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        previousPeriod = sp.getLong("svm_period", 7);
+        previousPeriod = sp.getLong("svm_period", 21600000);
 
     }
     
@@ -34,7 +34,7 @@ public class Preferences extends PreferenceActivity {
 		
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		boolean toggleSvm = sp.getBoolean("toggle_svm", true);
-		long period = sp.getLong("svm_period", 7);
+		long period = sp.getLong("svm_period", 21600000);
 		
 		SharedPreferences alarmPref = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = alarmPref.edit();
@@ -50,7 +50,7 @@ public class Preferences extends PreferenceActivity {
 			//initialize alarm for training if not set before
 			if(!alarmSet)
 			{
-				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 1*60*1000, sender);
+				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), period, sender);
 				editor.putBoolean("alarm_set", true);
 				editor.commit();
 			    Log.i("SpamGuard", "Alarm is set by Preferences.java");
@@ -59,7 +59,7 @@ public class Preferences extends PreferenceActivity {
 			//change period
 			if(period != previousPeriod)
 			{
-				am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 5*60*1000, sender);
+				am.setRepeating(AlarmManager.RTC, cal.getTimeInMillis(), period, sender);
 				Log.i("SpamGuard", "Period changed from " + String.valueOf(previousPeriod) + " to " + String.valueOf(period));
 			}
 		}
