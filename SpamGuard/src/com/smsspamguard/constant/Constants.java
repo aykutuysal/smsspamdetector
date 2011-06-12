@@ -9,4 +9,5 @@ public class Constants {
 	public static String SVM_RANGE_LOAD_PATH = "range";
 	public static String SVM_SINGLE_MSG_FEATURE_FILE = "SingleMsgFeature";
 	public static String SVM_SINGLE_MSG_FEATURE_FILE_SCALED = "SingleMsgFeature.scaled";
+	public static final String PREFS_NAME = "ExtraPrefs";
 }

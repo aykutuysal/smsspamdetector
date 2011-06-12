@@ -31,7 +31,7 @@ public class SvmManager {
 
 	public static SVMSpam getSvm(Context context) {
 		if(svmSpam == null) {
-			svmSpam = new SVMSpam(6, Constants.SVM_INPUT_FILENAME, "SvmText.txt");
+			svmSpam = new SVMSpam(6);
 			svmSpam.setContext(context);
 			
 			if(isSvmTrained == false) {

@@ -19,7 +19,7 @@ import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.engine.svm.input.InputFileCreator;
 
 public class AlarmReceiver extends BroadcastReceiver {
-
+	
 	private class TrainThread implements Runnable {
 
 		private Context context;
@@ -121,7 +121,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("AlarmReceiver", "AlarmReceiver started");
+		Log.i(Constants.DEBUG_TAG, "AlarmReceiver started");
 		
 		Database db = new Database(context);
 		Cursor cursor = db.getBodies();
