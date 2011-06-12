@@ -116,7 +116,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			Notification notifySpam = new Notification(R.drawable.ic_menu_add, "SpamGuarded!", System.currentTimeMillis());
 			
 			Intent intent= new Intent(ctx, Main.class);
-			intent.putExtra("defaultTab", "3");
+			intent.putExtra("defaultTab", 3);
 			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, intent , 0);
 			notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
 			notifySpam.setLatestEventInfo(ctx, "SpamGuard", "Click to view spams", myIntent);
