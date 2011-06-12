@@ -35,8 +35,8 @@
 	<string name="summary_block_allcapital"></string>
 	
 	<!--Toggle SVM-->
-	<string name="title_toggle_svm">Toggle SVM</string>
-	<string name="summary_toggle_svm">Turns on/off AI filtering</string>
+	<string name="title_toggle_svm">Toggle SmartGuard</string>
+	<string name="summary_toggle_svm">Enable smart sms monitoring by content</string>
 	
 	<!--Menu-->
 	<string name="add_number">Add Number</string>

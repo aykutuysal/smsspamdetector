@@ -32,14 +32,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 		
 		@Override
 		public void run() {
-			createSpamsFile(messageBodies, context);
-			createCleansFile(context);
-			InputFileCreator ifc = new InputFileCreator(context);
-			ifc.createSvmInputs();
-			
-			SVMSpam svmSpam = SvmManager.getSvm(context);
-			svmSpam.start();
-			SvmManager.isSvmTrained = true;
+//			createSpamsFile(messageBodies, context);
+//			createCleansFile(context);
+//			InputFileCreator ifc = new InputFileCreator(context);
+//			ifc.createSvmInputs();
+//			
+//			SVMSpam svmSpam = SvmManager.getSvm(context);
+//			svmSpam.start();
+//			SvmManager.isSvmTrained = true;
 		}
 		
 		/**
