@@ -34,14 +34,8 @@ public class Spams extends ListActivity {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
 		this.db = new Database(this);
-		spamCursor = db.getSpams();
-		String[] from = new String[] { spamCursor.getColumnName(6) };
-		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, spamCursor, from, new int[] { android.R.id.text1 });
-		this.setListAdapter(cursorAdapter);
 		registerForContextMenu(getListView());
-		cursorAdapter.notifyDataSetChanged();	//bu satir istedigim gibi calismiyor, spamse bakarken yeni sms gelince listeyi update etsin istiom
 	}
 
 	public void onStart() {
@@ -49,6 +43,10 @@ public class Spams extends ListActivity {
 	}
 
 	public void onResume() {
+		spamCursor = db.getSpams();
+		String[] from = new String[] { spamCursor.getColumnName(6) };
+		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, spamCursor, from, new int[] { android.R.id.text1 });
+		this.setListAdapter(cursorAdapter);
 		super.onResume();
 	}
 
