@@ -14,6 +14,12 @@
 			android:defaultValue="true" />
 		<CheckBoxPreference
 			android:dependency="toggle_spamguard"
+			android:key="toggle_svm"
+			android:title="@string/title_toggle_svm"
+			android:defaultValue="true"
+			android:summary="@string/summary_toggle_svm" />
+		<CheckBoxPreference
+			android:dependency="toggle_spamguard"
 			android:key="block_nonnumeric"
 			android:title="@string/title_block_nonnumeric"
 			android:defaultValue="false"
@@ -24,11 +30,5 @@
 			android:title="@string/title_block_allcapital"
 			android:defaultValue="false"
 			android:summary="@string/summary_block_allcapital" />
-		<CheckBoxPreference
-			android:dependency="toggle_spamguard"
-			android:key="toggle_svm"
-			android:title="@string/title_toggle_svm"
-			android:defaultValue="true"
-			android:summary="@string/summary_toggle_svm" />
 	</PreferenceCategory>
 </PreferenceScreen>

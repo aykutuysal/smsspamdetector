@@ -42,7 +42,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 	private boolean isBlacklisted = false;
 	private boolean isWhitelisted = false;
-	private boolean regexMatch = false;
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
 	private boolean svmResult = false;
@@ -271,7 +270,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					}
 
 					// Block Non-Numeric Sender
-					if (blockNonnumeric) {
+					if (!isBlacklisted && blockNonnumeric) {
 						Log.i("senderAddress", sender);
 						m = p.matcher(sender);
 						if (m.find()) {
@@ -280,7 +279,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					}
 
 					// Block All-Capital Message
-					if (blockAllcapital) {
+					if (!isBlacklisted && !nonNumeric && blockAllcapital) {
 						allCapital = true;
 						Pattern p3 = Pattern.compile("[a-z]");
 						m = p3.matcher("");
@@ -293,7 +292,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						}
 					}
 					
-					if( toggleSvm ) {
+					if( !isBlacklisted && !nonNumeric && !allCapital && toggleSvm ) {
 						Log.i(Constants.DEBUG_TAG, "Starting SVM check for: " + body);
 						SVMSpam svmSpam = SvmManager.getSvm(context);
 						svm_node[] nodes = SvmManager.getSvmNodeFromMessage(body, context);
@@ -304,7 +303,6 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 						if(result == 1.0) {
 							svmResult = true;
 							Log.i(Constants.DEBUG_TAG, "Spam found! (" + body + ")");
-
 						}
 						else{
 							svmResult = false;
@@ -317,9 +315,10 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
 				Log.i("isBlacklisted", String.valueOf(isBlacklisted));
+				Log.i("svmResult", String.valueOf(svmResult));
 
 				// deduce spam or not
-				if (isBlacklisted || regexMatch || nonNumeric || allCapital || svmResult) {
+				if (isBlacklisted || nonNumeric || allCapital || svmResult) {
 					this.abortBroadcast();
 					Runnable r = new SpamThread(context);
 					executor.execute(r);
