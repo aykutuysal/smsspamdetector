@@ -161,7 +161,7 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		allowContacts = sp.getBoolean("allow_contacts", true);
 		blockNonnumeric = sp.getBoolean("block_nonnumeric", false);
 		blockAllcapital = sp.getBoolean("block_allcapital", false);
-		toggleSvm = sp.getBoolean("toggle_svm", false);
+		toggleSvm = sp.getBoolean("toggle_svm", true);
 		
 		if (toggleApp) {
 			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {

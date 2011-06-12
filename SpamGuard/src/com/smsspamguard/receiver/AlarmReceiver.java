@@ -121,25 +121,25 @@ public class AlarmReceiver extends BroadcastReceiver {
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		Log.i("AlarmReceiver", "AlarmReceiver started");
-		
-		Database db = new Database(context);
-		Cursor cursor = db.getBodies();
-		cursor.moveToFirst();
-		db.close();
-
-		ArrayList<String> messageBodies = new ArrayList<String>();
-		if(cursor.getCount() != 0)
-		{
-			while(!cursor.isAfterLast()) {
-				messageBodies.add(cursor.getString(0));
-				cursor.moveToNext();
-			}
-		}
-		cursor.close();
-		
-		Runnable r = new TrainThread(context, messageBodies);
-		new Thread(r).start();
+//		Log.i("AlarmReceiver", "AlarmReceiver started");
+//		
+//		Database db = new Database(context);
+//		Cursor cursor = db.getBodies();
+//		cursor.moveToFirst();
+//		db.close();
+//
+//		ArrayList<String> messageBodies = new ArrayList<String>();
+//		if(cursor.getCount() != 0)
+//		{
+//			while(!cursor.isAfterLast()) {
+//				messageBodies.add(cursor.getString(0));
+//				cursor.moveToNext();
+//			}
+//		}
+//		cursor.close();
+//		
+//		Runnable r = new TrainThread(context, messageBodies);
+//		new Thread(r).start();
 	}
 	
 	
