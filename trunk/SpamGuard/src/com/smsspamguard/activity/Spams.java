@@ -43,11 +43,11 @@ public class Spams extends ListActivity {
 	}
 
 	public void onResume() {
+		super.onResume();
 		spamCursor = db.getSpams();
 		String[] from = new String[] { spamCursor.getColumnName(6) };
 		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, spamCursor, from, new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
-		super.onResume();
 	}
 
 	public void onPause() {
