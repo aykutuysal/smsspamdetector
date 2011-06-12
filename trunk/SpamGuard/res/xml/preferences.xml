@@ -17,7 +17,7 @@
 			android:key="update_interval"
 			android:title="@string/title_update_interval"
 			android:summary="Define how often updates will be performed"
-			android:defaultValue="1000" 
+			android:defaultValue="21600000" 
 			android:entries="@array/updateInterval"
 			android:entryValues="@array/updateIntervalValues"
 			android:dependency="toggle_svm"
