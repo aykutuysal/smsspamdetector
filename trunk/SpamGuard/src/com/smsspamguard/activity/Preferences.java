@@ -34,7 +34,7 @@ public class Preferences extends PreferenceActivity {
 		
 		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		boolean toggleSvm = sp.getBoolean("toggle_svm", true);
-		long period = sp.getLong("update_interval", 21600000);
+		long period = Long.parseLong(sp.getString("update_interval", "21600000"));
 		
 		SharedPreferences alarmPref = getSharedPreferences(PREFS_NAME, 0);
 		SharedPreferences.Editor editor = alarmPref.edit();
