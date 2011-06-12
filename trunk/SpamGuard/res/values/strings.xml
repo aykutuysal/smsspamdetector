@@ -6,7 +6,7 @@
 	
 	<!--Tabs-->
 	<string name="title_preferences">Preferences</string>
-		<string name="title_update_interval">Update interval"</string>
+		<string name="title_update_interval">Update interval</string>
 	<string name="title_whitelist">Whitelist</string>
 		<string name="title_whitelist_sender">Sender</string>
 		<string name="title_whitelist_text">Content</string>
