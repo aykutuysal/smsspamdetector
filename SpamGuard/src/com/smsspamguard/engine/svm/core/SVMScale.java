@@ -324,6 +324,7 @@ public class SVMScale {
 //	}
 
 	private void output(int paramInt, double paramDouble, FileOutputStream fos) {
+		try {
 		if (this.feature_max[paramInt] == this.feature_min[paramInt]) {
 			return;
 		}
@@ -350,5 +351,10 @@ public class SVMScale {
 //		{
 //			Log.i(Constants.DEBUG_TAG, "FAILED HERE: " + String.valueOf(paramDouble));
 //		}
+		}
+		catch (Exception e)
+		{
+			Log.i(Constants.DEBUG_TAG, "Some weirdo error occured in output function!");
+		}
 	}
 }

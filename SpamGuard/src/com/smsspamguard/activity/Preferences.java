@@ -14,7 +14,6 @@ import android.util.Log;
 
 import com.smsspamguard.R;
 import com.smsspamguard.receiver.AlarmReceiver;
-import com.smsspamguard.receiver.StartUpReceiver;
 
 public class Preferences extends PreferenceActivity {
 	
@@ -51,7 +50,7 @@ public class Preferences extends PreferenceActivity {
 			//initialize alarm for training if not set before
 			if(!alarmSet)
 			{
-				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 5*60*1000, sender);
+				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis(), 1*60*1000, sender);
 				editor.putBoolean("alarm_set", true);
 				editor.commit();
 			    Log.i("SpamGuard", "Alarm is set by Preferences.java");
