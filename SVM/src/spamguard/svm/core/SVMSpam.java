@@ -82,7 +82,23 @@ public class SVMSpam {
 			double count = 0;
 			output.write("Real - Predicted\n");
 			for(int i=0;i<svmSpamTestProblem.l;i++) {
-				double result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
+				
+				boolean isAllLowerBound = true;
+				for(svm_node node : svmSpamTestProblem.x[i]) {
+					if(node.value != 0) 
+						isAllLowerBound = false;
+				}
+				
+				
+				// if all features are the lower bound value of scale
+				// then svm does not know anything about the message
+				// so it should return a default value, which is zero(clean)
+				double result;
+				if(isAllLowerBound)
+					result = 0;
+				else
+					result = svm.svm_predict(svmSpamModel, svmSpamTestProblem.x[i]);
+				
 				output.write(svmSpamTestProblem.y[i] + "  -  " + String.valueOf(result) + "\n");
 				if( result == svmSpamTestProblem.y[i] ){
 					count++;
@@ -183,6 +199,11 @@ public class SVMSpam {
 					node.value = Double.parseDouble(instanceValues[i]);
 					nodes[index][i-1] = node;
 				}
+				
+				System.out.println("node"+index);
+				for(svm_node no : nodes[index])
+					System.out.println(no.index + " "+ no.value);
+				
 				index++;
 			}
 
