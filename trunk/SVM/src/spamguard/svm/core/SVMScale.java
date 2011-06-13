@@ -289,10 +289,7 @@ public class SVMScale {
 					/ (this.feature_max[paramInt] - this.feature_min[paramInt]);
 		}
 
-		if (paramDouble != 0.0D) {
-			this.new_num_nonzeros += 1L;
-			return String.valueOf(paramInt) + ":" + String.valueOf(paramDouble) + " ";
-		}
-		return null;
+		this.new_num_nonzeros += 1L;
+		return String.valueOf(paramInt) + ":" + String.valueOf(paramDouble) + " ";
 	}
 }
