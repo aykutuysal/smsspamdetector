@@ -46,7 +46,7 @@ public class InputFileCreator {
 		
 		try
 		{
-			Scanner scanner = new Scanner(new FileInputStream(sourcePath), "ISO-8859-9").useDelimiter("\n");
+			Scanner scanner = new Scanner(new FileInputStream(sourcePath), "UTF-8").useDelimiter("\n");
 			
 			FileWriter fw = new FileWriter(new File(destPath),false);
 			while(scanner.hasNext())
