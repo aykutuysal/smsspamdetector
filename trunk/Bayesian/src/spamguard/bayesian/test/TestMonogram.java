@@ -8,8 +8,8 @@ public class TestMonogram {
 		
 		BayesianFilterMonogram filter = new BayesianFilterMonogram();
 		
-		filter.trainBulk("spams.txt", "spam");
-		filter.trainBulk("cleans.txt", "clean");
+//		filter.trainBulk("spams.txt", "spam");
+//		filter.trainBulk("cleans.txt", "clean");
 		filter.finalizeTraining();
 		
 		double spamProb = filter.analyze("test ediyorum ben bunu. selam canım");
