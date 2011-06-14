@@ -32,9 +32,9 @@ public class InputFileCreator {
 		trigramFilter.trainBulk("data/bayesian/test/train.txt");
 		trigramFilter.finalizeTraining();
 		
-		createInputDataFromFile("data/bayesian/test/train.txt", "data/inputset3/train");
+		createInputDataFromFile("data/bayesian/test/train.txt", "data/inputset/train");
 		
-		createInputDataFromFile("data/bayesian/test/test.txt", "data/inputset3/test");
+		createInputDataFromFile("data/bayesian/test/test.txt", "data/inputset/test");
 	}
 	
 	public static void main(String[] args) {
@@ -54,16 +54,7 @@ public class InputFileCreator {
 				String line = scanner.next();
 				String type = line.split("\\W")[0];	//get type, first word of the line
 				String sms = line.substring(type.length() + 1);	//get message, rest of the line
-				int classNo;
-				if(type.equals("spam"))
-				{
-					classNo = 1;
-				}
-				else
-				{
-					classNo = 0;
-				}
-				
+				int classNo = type.equals("spam") ? 1: 0;
 				
 				// calculate monogram features monoSpamFeature, monoCleanFeauture
 				String[] monogramTokens = monogramFilter.returnTokenList(sms);
