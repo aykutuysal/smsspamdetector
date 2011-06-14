@@ -102,7 +102,7 @@ public class SVMSpam {
 		
 		boolean isAllLowerBound = true;
 		for(svm_node node : nodes) {
-			if(node.value != 0) 
+			if(node.value != 0.0) 
 				isAllLowerBound = false;
 		}
 		
