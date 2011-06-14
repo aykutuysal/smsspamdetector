@@ -1,7 +1,5 @@
 package com.smsspamguard.activity;
 
-import java.io.IOException;
-
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Intent;
@@ -29,11 +27,11 @@ public class Spams extends ListActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 				
-		try {
-			FileCopier.backupFiles();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+//		try {
+//			FileCopier.backupFiles();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		this.db = new Database(this);
 		registerForContextMenu(getListView());
 	}

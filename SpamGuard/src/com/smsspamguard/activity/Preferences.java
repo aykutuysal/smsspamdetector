@@ -7,9 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
@@ -44,17 +41,17 @@ public class Preferences extends PreferenceActivity {
 		SharedPreferences extraPrefs = getSharedPreferences(Constants.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = extraPrefs.edit();
 		
-		PackageInfo pInfo;
-	    try {
-	        pInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA);
-	        if ( extraPrefs.getLong( "lastRunVersionCode", 0) < pInfo.versionCode ) {
-	        	editor.putBoolean("alarm_set", false);
-	            editor.putLong("lastRunVersionCode", pInfo.versionCode);
-	            editor.commit();
-	        }
-	    } catch (NameNotFoundException e) {
-	        e.printStackTrace();
-	    }
+//		PackageInfo pInfo;
+//	    try {
+//	        pInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA);
+//	        if ( extraPrefs.getLong( "lastRunVersionCode", 0) < pInfo.versionCode ) {
+//	        	editor.putBoolean("alarm_set", false);
+//	            editor.putLong("lastRunVersionCode", pInfo.versionCode);
+//	            editor.commit();
+//	        }
+//	    } catch (NameNotFoundException e) {
+//	        e.printStackTrace();
+//	    }
 	    
 		boolean toggleApp = sp.getBoolean("toggle_spamguard", true);
 		boolean toggleSvm = sp.getBoolean("toggle_svm", true);
@@ -72,7 +69,7 @@ public class Preferences extends PreferenceActivity {
 			long left = 0;
 			if(alarmStart > 0)
 			{
-				left = cal.getTimeInMillis() - alarmStart;
+				left = cal.getTimeInMillis() + previousPeriod - alarmStart;
 				left = left % previousPeriod;
 				left = period - left;
 				if(left < 0)
