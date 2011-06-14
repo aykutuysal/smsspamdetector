@@ -2,9 +2,8 @@ package com.smsspamguard.constant;
 
 public class Constants {
 	public static String DEBUG_TAG = "SpamGuard";
-	public static String SPAMS_FILENAME = "SpamGuardSpams.txt";
-	public static String CLEANS_FILENAME = "SpamGuardCleans.txt";
-	public static String SVM_INPUT_FILENAME = "SvmInput.txt";
+	public static String CORPUS_FILENAME = "Corpus";
+	public static String SVM_INPUT_FILENAME = "SvmInput";
 	public static String SVM_RANGE_SAVE_PATH = "range";
 	public static String SVM_RANGE_LOAD_PATH = "range";
 	public static String SVM_SINGLE_MSG_FEATURE_FILE = "SingleMsgFeature";
