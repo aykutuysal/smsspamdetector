@@ -95,100 +95,100 @@ public abstract class AbstractBayesianFilter {
 			Token t = tokens.get(key);
 			t.calculateSpamRatio(keys.size());
 			t.calculateNonSpamRatio(keys.size());
-			t.calculateSpammicity();
+			//t.calculateSpammicity();
 		}
 	}
 	
-	public double analyze(String message) {
-
-		message = SmsFormatter.format(message);
-		
-		String[] messageTokenList = this.returnTokenList(message);
-
-		int limit = 150;
-		
-		PriorityQueue<Token> matchingTokens = new PriorityQueue<Token>(limit, new Comparator<Token>() {
-			@Override
-			public int compare(Token t1, Token t2) {
-				if( t1.getInterestingRate() > t2.getInterestingRate() )
-					return -1;
-				else if( t1.getInterestingRate() < t2.getInterestingRate() )
-					return +1;
-				else
-					return 0;
-			}
-		});
-		
-		for(String str : messageTokenList) {
-			
-			if( str.length() < 3 ) {
-				continue;
-			}
-			
-			if( tokens.containsKey(str) ) {
-				
-				Token t = tokens.get(str);				
-				
-				if( matchingTokens.isEmpty() ) {
-					matchingTokens.add(t);
-				}
-				else {
-				
-					boolean contains = false;
-					for(Token temp : matchingTokens ) {
-						if( temp.getText().equals(str) )
-							contains = true;
-					}
-					
-					if( !contains && t.getInterestingRate() >= matchingTokens.peek().getInterestingRate()) {
-							matchingTokens.add(t);
-					}
-					
-					while( matchingTokens.size() > limit ) {
-						matchingTokens.poll();
-					}
-				}
-			}
-		}		
-
-		// Bayes' rule for computing overall spamicity of the message
-		double spamicityProduct = 1;
-		double minusOneSpamicityProduct = 1;
-
-		while( !matchingTokens.isEmpty() ){
-			Token t = matchingTokens.poll();
-			spamicityProduct *= t.getSpamicity();
-			minusOneSpamicityProduct *= (1.0 - t.getSpamicity());
-		}
-		
-		double spamProbability = spamicityProduct / (spamicityProduct + minusOneSpamicityProduct);
-		
-		return spamProbability;
-	}
-
-	public void printTokens() {		
-//		Set<String> keys = tokens.keySet();
-//		System.out.println("----------------- All Tokens Start --------------------------------------------");
-//		for(String key : keys) {
-//			Token t = tokens.get(key);
-//			System.out.println(key + " " + t.getSpamCount() + " " + t.getSpamRatio() + " " + t.getNonSpamCount() + " " + t.getNonSpamRatio() + " " + t.getSpamicity() + " " + t.getInterestingRate());
+//	public double analyze(String message) {
+//
+//		message = SmsFormatter.format(message);
+//		
+//		String[] messageTokenList = this.returnTokenList(message);
+//
+//		int limit = 150;
+//		
+//		PriorityQueue<Token> matchingTokens = new PriorityQueue<Token>(limit, new Comparator<Token>() {
+//			@Override
+//			public int compare(Token t1, Token t2) {
+//				if( t1.getInterestingRate() > t2.getInterestingRate() )
+//					return -1;
+//				else if( t1.getInterestingRate() < t2.getInterestingRate() )
+//					return +1;
+//				else
+//					return 0;
+//			}
+//		});
+//		
+//		for(String str : messageTokenList) {
+//			
+//			if( str.length() < 3 ) {
+//				continue;
+//			}
+//			
+//			if( tokens.containsKey(str) ) {
+//				
+//				Token t = tokens.get(str);				
+//				
+//				if( matchingTokens.isEmpty() ) {
+//					matchingTokens.add(t);
+//				}
+//				else {
+//				
+//					boolean contains = false;
+//					for(Token temp : matchingTokens ) {
+//						if( temp.getText().equals(str) )
+//							contains = true;
+//					}
+//					
+//					if( !contains && t.getInterestingRate() >= matchingTokens.peek().getInterestingRate()) {
+//							matchingTokens.add(t);
+//					}
+//					
+//					while( matchingTokens.size() > limit ) {
+//						matchingTokens.poll();
+//					}
+//				}
+//			}
+//		}		
+//
+//		// Bayes' rule for computing overall spamicity of the message
+//		double spamicityProduct = 1;
+//		double minusOneSpamicityProduct = 1;
+//
+//		while( !matchingTokens.isEmpty() ){
+//			Token t = matchingTokens.poll();
+//			spamicityProduct *= t.getSpamicity();
+//			minusOneSpamicityProduct *= (1.0 - t.getSpamicity());
 //		}
-//		System.out.println("----------------- All Tokens Finish --------------------------------------------");
-
-	}
-
-	public HashMap<String, Token> getTokens() {
-		return tokens;
-	}
-
-	public void setTokens(HashMap<String, Token> tokens) {
-		this.tokens = tokens;
-	}
+//		
+//		double spamProbability = spamicityProduct / (spamicityProduct + minusOneSpamicityProduct);
+//		
+//		return spamProbability;
+//	}
+//
+//	public void printTokens() {		
+////		Set<String> keys = tokens.keySet();
+////		System.out.println("----------------- All Tokens Start --------------------------------------------");
+////		for(String key : keys) {
+////			Token t = tokens.get(key);
+////			System.out.println(key + " " + t.getSpamCount() + " " + t.getSpamRatio() + " " + t.getNonSpamCount() + " " + t.getNonSpamRatio() + " " + t.getSpamicity() + " " + t.getInterestingRate());
+////		}
+////		System.out.println("----------------- All Tokens Finish --------------------------------------------");
+//
+//	}
+//
+//	public HashMap<String, Token> getTokens() {
+//		return tokens;
+//	}
+//
+//	public void setTokens(HashMap<String, Token> tokens) {
+//		this.tokens = tokens;
+//	}
 	
 	public Token findToken(String tokenKey) {
 		Set<String> keys = tokens.keySet();
 		for(String key : keys){
-			if( key.equalsIgnoreCase(tokenKey) )
+			if( key.equals(tokenKey) )
 				return tokens.get(key);
 		}
 		return null;
