@@ -22,7 +22,6 @@ import com.smsspamguard.engine.svm.core.SVMSpam;
 public class SvmManager {
 
 	private static SVMSpam svmSpam;
-	public static boolean isSvmTrained = false;
 	
 	private static BayesianFilterMonogram monogramFilter;
 	private static BayesianFilterBigram bigramFilter;
@@ -33,22 +32,9 @@ public class SvmManager {
 		if(svmSpam == null) {
 			svmSpam = new SVMSpam(6);
 			svmSpam.setContext(context);
-			
-			if(isSvmTrained == false) {
-				svmSpam.start();
-				SvmManager.isSvmTrained = true;
-			}
-			return svmSpam;
+			svmSpam.start();
 		}
-		else {
-			
-			if(!isSvmTrained) {
-				svmSpam.start();
-				SvmManager.isSvmTrained = true;
-			}
-			
-			return svmSpam;
-		}
+		return svmSpam;
 	}
 	
 	public static svm_node[] getSvmNodeFromMessage(String msg, Context context) {

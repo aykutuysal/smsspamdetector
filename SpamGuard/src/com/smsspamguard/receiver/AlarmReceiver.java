@@ -38,7 +38,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 			
 			SVMSpam svmSpam = SvmManager.getSvm(context);
 			svmSpam.start();
-			SvmManager.isSvmTrained = true;
 		}
 		
 		/**
