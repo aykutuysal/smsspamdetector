@@ -35,8 +35,8 @@ public class SVMSpam {
 		
 		
 		try {
-			this.scaler.scale("data/range", null, "data/" + trainFile, -1.0, 1.0);
-			this.scaler.scale(null, "data/range", "data/" + testFile, -1.0, 1.0);
+			this.scaler.scale("data/range", null, "data/" + trainFile, 0.0, 1.0);
+			this.scaler.scale(null, "data/range", "data/" + testFile, 0.0, 1.0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -80,6 +80,8 @@ public class SVMSpam {
 			FileWriter output = new FileWriter(new File("data/predictResults.txt"));
 			
 			double count = 0;
+			double falseNegatives = 0;
+			double falsePositives = 0;
 			output.write("Real - Predicted\n");
 			for(int i=0;i<svmSpamTestProblem.l;i++) {
 				
@@ -103,9 +105,19 @@ public class SVMSpam {
 				if( result == svmSpamTestProblem.y[i] ){
 					count++;
 				}
+				else if(result == 1.0 && svmSpamTestProblem.y[i] == 0)
+				{
+					falsePositives++;
+				}
+				else
+				{
+					falseNegatives++;
+				}
 			}
 			
 			System.out.println("Predict Accuracy : %" + count/(double)svmSpamTestProblem.l*100);
+			System.out.println("False Positives : %" + falsePositives/(double)svmSpamTestProblem.l*100);
+			System.out.println("False Negatives : %" + falseNegatives/(double)svmSpamTestProblem.l*100);
 			output.close();
 			
 		} catch (IOException e) {
@@ -194,15 +206,16 @@ public class SVMSpam {
 				yList[index] = Double.parseDouble(instanceValues[0]);
 				
 				for(int i=1;i<instanceValues.length;i++) {
+					//System.out.println(index);
 					svm_node node = new svm_node();
 					node.index = i;
 					node.value = Double.parseDouble(instanceValues[i]);
 					nodes[index][i-1] = node;
 				}
 				
-				System.out.println("node"+index);
-				for(svm_node no : nodes[index])
-					System.out.println(no.index + " "+ no.value);
+//				System.out.println("node"+index);
+//				for(svm_node no : nodes[index])
+//					System.out.println(no.index + " "+ no.value);
 				
 				index++;
 			}

@@ -17,49 +17,59 @@ public class InputFileCreator {
 	private static BayesianFilterBigram bigramFilter;
 	private static BayesianFilterTrigram trigramFilter;
 	
-	public static void main(String[] args) {
-		
+	public static void start()
+	{
 		monogramFilter = new BayesianFilterMonogram();
 		bigramFilter = new BayesianFilterBigram();
 		trigramFilter = new BayesianFilterTrigram();
 		
-		monogramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
-		monogramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
+		monogramFilter.trainBulk("data/bayesian/test/train.txt");
 		monogramFilter.finalizeTraining();
 		
-		bigramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
-		bigramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
+		bigramFilter.trainBulk("data/bayesian/test/train.txt");
 		bigramFilter.finalizeTraining();
 		
-		trigramFilter.trainBulk("data/bayesian/2/spamsTrain.txt", "spam");
-		trigramFilter.trainBulk("data/bayesian/2/cleansTrain.txt", "clean");
+		trigramFilter.trainBulk("data/bayesian/test/train.txt");
 		trigramFilter.finalizeTraining();
 		
-		createInputDataFromFile("data/bayesian/2/spamsTrain.txt", "data/inputset2/train.2", 1);
-		createInputDataFromFile("data/bayesian/2/cleansTrain.txt", "data/inputset2/train.2", 0);
+		createInputDataFromFile("data/bayesian/test/train.txt", "data/inputset3/train");
 		
-		createInputDataFromFile("data/bayesian/2/spamsTest.txt", "data/inputset2/test.2", 1);
-		createInputDataFromFile("data/bayesian/2/cleansTest.txt", "data/inputset2/test.2", 0);
-
-
+		createInputDataFromFile("data/bayesian/test/test.txt", "data/inputset3/test");
 	}
 	
-	private static void createInputDataFromFile(String sourcePath, String destPath, int classNo) {
+	public static void main(String[] args) {
+		
+		start();
+	}
+	
+	private static void createInputDataFromFile(String sourcePath, String destPath) {
 		
 		try
 		{
-			Scanner scanner = new Scanner(new FileInputStream(sourcePath), "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
+			Scanner scanner = new Scanner(new FileInputStream(sourcePath), "ISO-8859-9").useDelimiter("\n");
 			
-			FileWriter fw = new FileWriter(new File(destPath),true);
+			FileWriter fw = new FileWriter(new File(destPath),false);
 			while(scanner.hasNext())
 			{
-				String sms = scanner.next();
+				String line = scanner.next();
+				String type = line.split("\\W")[0];	//get type, first word of the line
+				String sms = line.substring(type.length() + 1);	//get message, rest of the line
+				int classNo;
+				if(type.equals("spam"))
+				{
+					classNo = 1;
+				}
+				else
+				{
+					classNo = 0;
+				}
+				
 				
 				// calculate monogram features monoSpamFeature, monoCleanFeauture
 				String[] monogramTokens = monogramFilter.returnTokenList(sms);
-				double monoSpamFeature = 0;
-				double monoCleanFeature = 0;
-				int count = 0;
+				double monoSpamFeature = 0.0;
+				double monoCleanFeature = 0.0;
+				double count = 0.0;
 				for(String tokenKey : monogramTokens) {
 					
 					Token monogramToken = monogramFilter.findToken(tokenKey);
@@ -82,9 +92,9 @@ public class InputFileCreator {
 				
 				// calculate trigram features triSpamFeature, triCleanFeauture
 				String[] bigramTokens = bigramFilter.returnTokenList(sms);
-				double biSpamFeature = 0;
-				double biCleanFeature = 0;
-				count = 0;
+				double biSpamFeature = 0.0;
+				double biCleanFeature = 0.0;
+				count = 0.0;
 				for(String tokenKey : bigramTokens) {
 					
 					Token bigramToken = bigramFilter.findToken(tokenKey);
@@ -108,9 +118,9 @@ public class InputFileCreator {
 				
 				// calculate bigram features biSpamFeature, biCleanFeauture
 				String[] trigramTokens = trigramFilter.returnTokenList(sms);
-				double triSpamFeature = 0;
-				double triCleanFeature = 0;
-				count = 0;
+				double triSpamFeature = 0.0;
+				double triCleanFeature = 0.0;
+				count = 0.0;
 				for(String tokenKey : trigramTokens) {
 					
 					Token trigramToken = trigramFilter.findToken(tokenKey);
@@ -132,11 +142,15 @@ public class InputFileCreator {
 //				System.out.println("triCleanFeature : " + triCleanFeature);
 				
 
-				
-				fw.append(classNo + " 1:" + monoSpamFeature + " 2:" + monoCleanFeature +
+				try{
+				fw.write(classNo + " 1:" + monoSpamFeature + " 2:" + monoCleanFeature +
 									" 3:" + biSpamFeature + " 4:" + biCleanFeature + 
 									" 5:" + triSpamFeature + " 6:" + triCleanFeature + "\n");
-
+				}
+				catch (IOException e)
+				{
+					e.printStackTrace();
+				}
 //				System.out.println("Finished for sms : " + sms);
 			}
 			System.out.println("Finished reading " + sourcePath);
