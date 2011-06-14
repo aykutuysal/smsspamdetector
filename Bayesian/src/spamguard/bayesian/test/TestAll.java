@@ -7,9 +7,9 @@ public class TestAll {
 	public static void main(String[] args) {
 
 		BayesianFilterAll filter = new BayesianFilterAll();
-
-		filter.trainBulk("spams.txt", "spam");
-		filter.trainBulk("cleans.txt", "clean");
+//
+//		filter.trainBulk("spams.txt", "spam");
+//		filter.trainBulk("cleans.txt", "clean");
 		filter.finalizeTraining();
 
 		double spamProb = filter.analyze("test ediyorum ben bunu. selam canım");

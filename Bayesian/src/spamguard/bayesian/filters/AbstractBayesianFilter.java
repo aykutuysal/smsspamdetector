@@ -21,25 +21,27 @@ public abstract class AbstractBayesianFilter {
 		this.tokens = new HashMap<String, Token>();
 	}
 	
-	public void train(String message, String type) {
+	public void train(String line) {
 		
-		message = SmsFormatter.format(message);
+		line = SmsFormatter.format(line);
+		String type = line.split("\\W")[0];	//get type, first word of the line
+		String message = line.substring(type.length() + 1);	//get message, rest of the line
 		
 		String[] tokenList = this.returnTokenList(message);
 		
-		for(String str : tokenList) {
+		for(int i = 1; i < tokenList.length; i++) {
 			
-			if( str.length() <= 3)
+			if( tokenList[i].length() <= 3)
 				continue;
 			
-			str = str.toLowerCase();
+			tokenList[i] = tokenList[i].toLowerCase();
 			
-			if(!tokens.containsKey(str)) {
-				Token t = new Token(str);
-				tokens.put(str, t);
+			if(!tokens.containsKey(tokenList[i])) {
+				Token t = new Token(tokenList[i]);
+				tokens.put(tokenList[i], t);
 			}
 			
-			Token temp = tokens.get(str);
+			Token temp = tokens.get(tokenList[i]);
 			
 			if( type.equals("spam") ) 
 				temp.markSpam();
@@ -55,18 +57,18 @@ public abstract class AbstractBayesianFilter {
 	 * @param filePath
 	 * @param type
 	 */
-	public void trainBulk(String filePath, String type) {
+	public void trainBulk(String filePath) {
 		int count = 0;
 		try
 		{
-			Scanner scanner = new Scanner(new FileInputStream(filePath), "ISO-8859-9").useDelimiter("\n###SpamGuardDelimiter###\n");
+			Scanner scanner = new Scanner(new FileInputStream(filePath), "ISO-8859-9").useDelimiter("\n");
 			while(scanner.hasNext())
 			{
-				String temp = scanner.next();
-				this.train(temp, type);
+				String line = scanner.next();
+				this.train(line);
 				count++;
 			}
-			System.out.println("[trainBulk] " + "Filter is trained by " + count + " " + type + "s found in " + filePath);
+			//System.out.println("[trainBulk] " + "Filter is trained by " + count + " " + type + "s found in " + filePath);
 		}
 		catch(IOException e)
 		{
@@ -165,13 +167,13 @@ public abstract class AbstractBayesianFilter {
 	}
 
 	public void printTokens() {		
-		Set<String> keys = tokens.keySet();
-		System.out.println("----------------- All Tokens Start --------------------------------------------");
-		for(String key : keys) {
-			Token t = tokens.get(key);
-			System.out.println(key + " " + t.getSpamCount() + " " + t.getSpamRatio() + " " + t.getNonSpamCount() + " " + t.getNonSpamRatio() + " " + t.getSpamicity() + " " + t.getInterestingRate());
-		}
-		System.out.println("----------------- All Tokens Finish --------------------------------------------");
+//		Set<String> keys = tokens.keySet();
+//		System.out.println("----------------- All Tokens Start --------------------------------------------");
+//		for(String key : keys) {
+//			Token t = tokens.get(key);
+//			System.out.println(key + " " + t.getSpamCount() + " " + t.getSpamRatio() + " " + t.getNonSpamCount() + " " + t.getNonSpamRatio() + " " + t.getSpamicity() + " " + t.getInterestingRate());
+//		}
+//		System.out.println("----------------- All Tokens Finish --------------------------------------------");
 
 	}
 
