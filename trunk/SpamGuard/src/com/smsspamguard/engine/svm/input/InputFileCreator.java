@@ -47,7 +47,7 @@ public class InputFileCreator {
 		try
 		{
 			FileInputStream fis = context.openFileInput(sourcePath);
-			Scanner scanner = new Scanner(new FileInputStream(sourcePath), "UTF-8").useDelimiter("\n");
+			Scanner scanner = new Scanner(fis, "UTF-8").useDelimiter("\n");
 			
 			FileOutputStream fos = context.openFileOutput(destPath, Context.MODE_PRIVATE);
 			while(scanner.hasNext())
