@@ -91,7 +91,7 @@ public class SVMSpam {
 	
 	public void scaleSingle(String filePath) {
 		try {
-			this.scaler.scale(null,Constants.SVM_RANGE_LOAD_PATH, filePath, -1.0, 1.0,context);
+			this.scaler.scale(null,Constants.SVM_RANGE_LOAD_PATH, filePath, 0.0, 1.0,context);
 		} catch (IOException e) {
 			Log.i(Constants.DEBUG_TAG, "Cannot open: " + filePath);
 			e.printStackTrace();

@@ -58,24 +58,21 @@ public class SvmManager {
 			bigramFilter = new BayesianFilterBigram();
 			trigramFilter = new BayesianFilterTrigram();
 			
-			monogramFilter.trainBulk(Constants.SPAMS_FILENAME, "spam", context);
-			monogramFilter.trainBulk(Constants.CLEANS_FILENAME, "clean", context);
+			monogramFilter.trainBulk(Constants.CORPUS_FILENAME, context);
 			monogramFilter.finalizeTraining();
 			
-			bigramFilter.trainBulk(Constants.SPAMS_FILENAME, "spam", context);
-			bigramFilter.trainBulk(Constants.CLEANS_FILENAME, "clean", context);
+			bigramFilter.trainBulk(Constants.CORPUS_FILENAME, context);
 			bigramFilter.finalizeTraining();
 			
-			trigramFilter.trainBulk(Constants.SPAMS_FILENAME, "spam", context);
-			trigramFilter.trainBulk(Constants.CLEANS_FILENAME, "clean", context);
+			trigramFilter.trainBulk(Constants.CORPUS_FILENAME, context);
 			trigramFilter.finalizeTraining();
 		}
 		
 		
 		String[] monogramTokens = monogramFilter.returnTokenList(msg);
-		double monoSpamFeature = 0;
-		double monoCleanFeature = 0;
-		int count = 0;
+		double monoSpamFeature = 0.0;
+		double monoCleanFeature = 0.0;
+		double count = 0.0;
 		for(String tokenKey : monogramTokens) {
 			
 			Token monogramToken = monogramFilter.findToken(tokenKey);
@@ -93,9 +90,9 @@ public class SvmManager {
 		
 		// calculate trigram features triSpamFeature, triCleanFeauture
 		String[] bigramTokens = bigramFilter.returnTokenList(msg);
-		double biSpamFeature = 0;
-		double biCleanFeature = 0;
-		count = 0;
+		double biSpamFeature = 0.0;
+		double biCleanFeature = 0.0;
+		count = 0.0;
 		for(String tokenKey : bigramTokens) {
 			
 			Token bigramToken = bigramFilter.findToken(tokenKey);
@@ -113,9 +110,9 @@ public class SvmManager {
 		
 		// calculate trigram features triSpamFeature, triCleanFeauture
 		String[] trigramTokens = trigramFilter.returnTokenList(msg);
-		double triSpamFeature = 0;
-		double triCleanFeature = 0;
-		count = 0;
+		double triSpamFeature = 0.0;
+		double triCleanFeature = 0.0;
+		count = 0.0;
 		for(String tokenKey : trigramTokens) {
 			
 			Token trigramToken = trigramFilter.findToken(tokenKey);

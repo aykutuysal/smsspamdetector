@@ -17,13 +17,12 @@ public class FileCopier {
 	    
 		ArrayList<String> filenames = new ArrayList<String>();
 		
-		filenames.add(Constants.CLEANS_FILENAME);
-		filenames.add(Constants.SPAMS_FILENAME);
-		filenames.add(Constants.SVM_INPUT_FILENAME);
-		filenames.add(Constants.SVM_INPUT_FILENAME + ".scaled");
-		filenames.add(Constants.SVM_RANGE_SAVE_PATH);
-		filenames.add(Constants.SVM_SINGLE_MSG_FEATURE_FILE);
-		filenames.add(Constants.SVM_SINGLE_MSG_FEATURE_FILE_SCALED);
+		filenames.add(Constants.CORPUS_FILENAME);
+//		filenames.add(Constants.SVM_INPUT_FILENAME);
+//		filenames.add(Constants.SVM_INPUT_FILENAME + ".scaled");
+//		filenames.add(Constants.SVM_RANGE_SAVE_PATH);
+//		filenames.add(Constants.SVM_SINGLE_MSG_FEATURE_FILE);
+//		filenames.add(Constants.SVM_SINGLE_MSG_FEATURE_FILE_SCALED);
 
 
 		for(String filename : filenames ) {
