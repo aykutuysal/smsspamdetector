@@ -1,0 +1,3 @@
+Predict Accuracy : %93.39901477832512
+False Positives : %1.6157635467980298
+False Negatives : %4.985221674876848
