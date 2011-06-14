@@ -7,7 +7,6 @@ public class Token {
 	private int nonSpamCount;
 	private double spamRatio;
 	private double nonSpamRatio;
-	private double spamicity;
 	
 	public Token(String text) {
 		this.text = text;
@@ -15,7 +14,6 @@ public class Token {
 		this.nonSpamCount = 0;
 		this.spamRatio = 0.0;
 		this.nonSpamRatio = 0.0;
-		this.spamicity = 0.0;
 	}
 	
 	public void markSpam() {
@@ -34,18 +32,6 @@ public class Token {
 	public void calculateNonSpamRatio(int total) {
 		if( total == 0) return;
 		this.nonSpamRatio = this.nonSpamCount / (double) total;
-	}
-	
-	public void calculateSpammicity() {
-		if (spamRatio + nonSpamRatio > 0) 
-			spamicity = spamRatio / (spamRatio + nonSpamRatio);
-	    
-		if (spamicity < 0.01) spamicity = 0.01;
-	    else if (spamicity > 0.99) spamicity = 0.99;
-	}
-
-	public double getInterestingRate(){
-		return Math.abs(0.5 - spamicity);
 	}
 	
 	public String getText() {
@@ -87,13 +73,4 @@ public class Token {
 	public void setNonSpamRatio(double nonSpamRatio) {
 		this.nonSpamRatio = nonSpamRatio;
 	}
-
-	public double getSpamicity() {
-		return spamicity;
-	}
-
-	public void setSpamicity(double spamicity) {
-		this.spamicity = spamicity;
-	}	
-	
 }
