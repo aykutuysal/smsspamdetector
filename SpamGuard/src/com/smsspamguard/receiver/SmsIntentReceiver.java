@@ -283,13 +283,9 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 					if (!isBlacklisted && !nonNumeric && blockAllcapital) {
 						allCapital = true;
 						Pattern p3 = Pattern.compile("[a-z]");
-						m = p3.matcher("");
-						for (int i = 0; i < msg.length; i++) {
-							m = p3.matcher(msg[i].getDisplayMessageBody());
-							if (m.find()) {
-								allCapital = false;
-								break;
-							}
+						m = p3.matcher(body);
+						if (m.find()) {
+							allCapital = false;
 						}
 					}
 					
