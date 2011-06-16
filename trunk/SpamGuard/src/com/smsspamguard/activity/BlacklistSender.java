@@ -36,7 +36,7 @@ public class BlacklistSender extends ListActivity {
 		switch (id) {
 		case 0:
 			final EditText input = new EditText(this);
-			final AlertDialog dialog = new AlertDialog.Builder(getParent()).setTitle(R.string.insert_number).setView(input).setPositiveButton(
+			final AlertDialog dialog = new AlertDialog.Builder(getParent()).setTitle(R.string.add_number).setView(input).setPositiveButton(
 					R.string.alert_dialog_ok, new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							if (!input.getText().toString().equals("")) {
