@@ -76,7 +76,8 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 				}
 				cursor.requery();
 			}
-
+			cursor.close();
+			
 			boolean unreadOnly = false;
 			String SMS_READ_COLUMN = "read";
 			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
