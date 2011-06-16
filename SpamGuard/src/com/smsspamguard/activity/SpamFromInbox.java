@@ -10,19 +10,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.SimpleCursorAdapter;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.smsspamguard.R;
+import com.smsspamguard.db.Database;
+import com.smsspamguard.model.Message;
 
 public class SpamFromInbox extends ListActivity {
 	
 	private Cursor cursor;
 	private SimpleCursorAdapter cursorAdapter;
+	private Database db;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		db = new Database(getApplicationContext());
 		boolean unreadOnly = false;
 		String SMS_READ_COLUMN = "read";
 		String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
@@ -43,6 +46,14 @@ public class SpamFromInbox extends ListActivity {
 	}
 	
 	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (db != null) {
+			db.close();
+		}
+	}
+	
+	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		menu.setHeaderTitle("Choose...");
 		menu.add(0, 0, 0, R.string.mark_as_spam);
@@ -50,7 +61,7 @@ public class SpamFromInbox extends ListActivity {
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		//AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()) {
 		case 0:
 			cursor.move(item.getItemId());
@@ -59,13 +70,14 @@ public class SpamFromInbox extends ListActivity {
 			long threadId = cursor.getLong(1);
 			String address = cursor.getString(2);
 			long contactId = cursor.getLong(3);
-			String contactId_string = String.valueOf(contactId);
-			long timestamp = cursor.getLong(4);
-			String body = cursor.getString(5);
+			long date = cursor.getLong(4);
+			String messageBody = cursor.getString(5);
 			
-			getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId),null,null);
+			Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
+			db.insertSpam(message);
+			getContentResolver().delete(Uri.parse("content://sms/inbox/" + messageId),null,null);
 			
-			Log.i("SPAMGUARD", "Marking As Spam : " + body );
+			Log.i("SpamGuard", "Marked As Spam : " + messageBody );
 			
 			cursorAdapter.notifyDataSetChanged();
 			//setResult();
