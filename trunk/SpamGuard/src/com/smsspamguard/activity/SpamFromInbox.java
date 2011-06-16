@@ -75,7 +75,7 @@ public class SpamFromInbox extends ListActivity {
 			
 			Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
 			db.insertSpam(message);
-			getContentResolver().delete(Uri.parse("content://sms/inbox/" + messageId),null,null);
+			getContentResolver().delete(Uri.parse("content://sms/conversations/" + threadId), "_id=?", new String[] { String.valueOf(messageId) });
 			
 			Log.i("SpamGuard", "Marked As Spam : " + messageBody );
 			
