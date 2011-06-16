@@ -53,6 +53,7 @@ public class BlacklistSender extends ListActivity {
 											.makeText(BlacklistSender.this, "Sender already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
+								conflictCursor.close();
 							}
 						}
 					}).setNegativeButton(R.string.alert_dialog_cancel, new DialogInterface.OnClickListener() {
@@ -89,6 +90,7 @@ public class BlacklistSender extends ListActivity {
 											.makeText(BlacklistSender.this, "Sender already exists in either whitelist or blacklist.",
 													Toast.LENGTH_LONG).show();
 								}
+								conflictCursor.close();
 							} else {
 								Toast
 								.makeText(BlacklistSender.this, "Entry cannot be empty.",
@@ -167,6 +169,7 @@ public class BlacklistSender extends ListActivity {
 		String[] from = new String[] { listCursor.getColumnName(1) };
 		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, listCursor, from, new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
+		startManagingCursor(listCursor);
 		registerForContextMenu(getListView());
 	}
 
