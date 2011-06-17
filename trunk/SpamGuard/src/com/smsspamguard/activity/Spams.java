@@ -98,8 +98,8 @@ public class Spams extends ListActivity {
 		switch (item.getItemId()) {
 		case 0:
 			ContentValues values = new ContentValues();
-			values.put("_id", cursorAdapter.getCursor().getLong(1));
-			values.put("thread_id", cursorAdapter.getCursor().getLong(2));
+			//values.put("_id", cursorAdapter.getCursor().getLong(1));
+			//values.put("thread_id", cursorAdapter.getCursor().getLong(2));
 			values.put("address", cursorAdapter.getCursor().getString(3));
 			values.put("person", cursorAdapter.getCursor().getLong(4));
 			values.put("date", cursorAdapter.getCursor().getLong(5));
