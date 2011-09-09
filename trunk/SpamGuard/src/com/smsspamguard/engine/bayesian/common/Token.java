@@ -4,35 +4,35 @@ public class Token {
 
 	private String text;
 	private int spamCount;
-	private int nonSpamCount;
-	private double spamRatio;
-	private double nonSpamRatio;
+	private int cleanCount;
+//	private double spamRatio;
+//	private double cleanRatio;
 	
 	public Token(String text) {
 		this.text = text;
 		this.spamCount = 0;
-		this.nonSpamCount = 0;
-		this.spamRatio = 0.0;
-		this.nonSpamRatio = 0.0;
+		this.cleanCount = 0;
+//		this.spamRatio = 0.0;
+//		this.cleanRatio = 0.0;
 	}
 	
 	public void markSpam() {
 		this.spamCount++;
 	}
 	
-	public void markNonSpam() {
-		this.nonSpamCount++;
+	public void markClean() {
+		this.cleanCount++;
 	}
 	
-	public void calculateSpamRatio(int total) {
-		if( total == 0) return;
-		this.spamRatio = this.spamCount / (double) total;
-	}
+//	public void calculateSpamRatio(int total) {
+//		if( total == 0) return;
+//		this.spamRatio = this.spamCount / (double) total;
+//	}
 	
-	public void calculateNonSpamRatio(int total) {
-		if( total == 0) return;
-		this.nonSpamRatio = this.nonSpamCount / (double) total;
-	}
+//	public void calculateCleanRatio(int total) {
+//		if( total == 0) return;
+//		this.cleanRatio = this.cleanCount / (double) total;
+//	}
 	
 	public String getText() {
 		return text;
@@ -50,27 +50,27 @@ public class Token {
 		this.spamCount = spamCount;
 	}
 
-	public int getNonSpamCount() {
-		return nonSpamCount;
+	public int getCleanCount() {
+		return cleanCount;
 	}
 
-	public void setNonSpamCount(int nonSpamCount) {
-		this.nonSpamCount = nonSpamCount;
+	public void setCleanCount(int cleanCount) {
+		this.cleanCount = cleanCount;
 	}
 
-	public double getSpamRatio() {
-		return spamRatio;
-	}
+//	public double getSpamRatio() {
+//		return spamRatio;
+//	}
+//
+//	public void setSpamRatio(double spamRatio) {
+//		this.spamRatio = spamRatio;
+//	}
 
-	public void setSpamRatio(double spamRatio) {
-		this.spamRatio = spamRatio;
-	}
-
-	public double getNonSpamRatio() {
-		return nonSpamRatio;
-	}
-
-	public void setNonSpamRatio(double nonSpamRatio) {
-		this.nonSpamRatio = nonSpamRatio;
-	}
+//	public double getCleanRatio() {
+//		return cleanRatio;
+//	}
+//
+//	public void setCleanRatio(double cleanRatio) {
+//		this.cleanRatio = cleanRatio;
+//	}
 }

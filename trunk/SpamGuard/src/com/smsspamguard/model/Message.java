@@ -1,44 +1,45 @@
 package com.smsspamguard.model;
 
-
 public class Message {
-	
-	private long messageId;
-	private long threadId;
+
+	// private long messageId;
+	// private long threadId;
 	private String address;
-	private long contactId;
+	// private long contactId;
 	private long date;
 	private String body;
+	private int type;
 	private boolean isTrained = false;
-	
-	public Message() {}
-	
-	public Message(long messageId, long threadId, String address,
-			long contactId, long date, String body) {
+
+	public Message() {
+	}
+
+	public Message(String address, long date, String body, int type) {
 		super();
-		this.messageId = messageId;
-		this.threadId = threadId;
+		// this.messageId = messageId;
+		// this.threadId = threadId;
 		this.address = address;
-		this.contactId = contactId;
+		// this.contactId = contactId;
 		this.date = date;
 		this.body = body;
+		this.type = type;
 	}
 
-	public long getMessageId() {
-		return messageId;
-	}
-
-	public void setMessageId(long messageId) {
-		this.messageId = messageId;
-	}
-
-	public long getThreadId() {
-		return threadId;
-	}
-
-	public void setThreadId(long threadId) {
-		this.threadId = threadId;
-	}
+	// public long getMessageId() {
+	// return messageId;
+	// }
+	//
+	// public void setMessageId(long messageId) {
+	// this.messageId = messageId;
+	// }
+	//
+	// public long getThreadId() {
+	// return threadId;
+	// }
+	//
+	// public void setThreadId(long threadId) {
+	// this.threadId = threadId;
+	// }
 
 	public String getAddress() {
 		return address;
@@ -48,13 +49,14 @@ public class Message {
 		this.address = address;
 	}
 
-	public long getContactId() {
-		return contactId;
-	}
-
-	public void setContactId(long contactId) {
-		this.contactId = contactId;
-	}
+	//
+	// public long getContactId() {
+	// return contactId;
+	// }
+	//
+	// public void setContactId(long contactId) {
+	// this.contactId = contactId;
+	// }
 
 	public long getDate() {
 		return date;
@@ -70,6 +72,14 @@ public class Message {
 
 	public void setBody(String body) {
 		this.body = body;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 
 	public boolean isTrained() {

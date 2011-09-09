@@ -1,7 +1,5 @@
 package com.smsspamguard.receiver;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +13,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
@@ -26,6 +23,9 @@ import com.smsspamguard.R;
 import com.smsspamguard.activity.Main;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.engine.bayesian.common.Token;
+import com.smsspamguard.engine.bayesian.filter.BayesianFilterBigram;
+import com.smsspamguard.engine.bayesian.filter.BayesianFilterTrigram;
 import com.smsspamguard.engine.svm.SvmManager;
 import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.model.Message;
@@ -45,84 +45,12 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 	private boolean nonNumeric = false;
 	private boolean allCapital = false;
 	private boolean svmResult = false;
-	
+
+	private String body = "";
+	private long date = 0;
+
 	private NotificationManager mNotificationManager;
 	private int SIMPLE_NOTFICATION_ID = 1;
-	private static ExecutorService executor = Executors.newSingleThreadExecutor();
-	
-	private class SpamThread implements Runnable {
-
-		Context ctx;
-		Database db;
-
-		public SpamThread(Context ctx) {
-			this.ctx = ctx;
-		}
-
-		@Override
-		public void run() {
-
-			db = new Database(ctx);
-			Uri uri = Uri.parse("content://sms/inbox");
-			Cursor cursor = ctx.getContentResolver().query(uri, new String[] { "_id" }, null, null, null);
-
-			int before = cursor.getCount();
-
-			while (before == cursor.getCount()) {
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				cursor.requery();
-			}
-			cursor.close();
-			
-			boolean unreadOnly = false;
-			String SMS_READ_COLUMN = "read";
-			String WHERE_CONDITION = unreadOnly ? SMS_READ_COLUMN + " = 0" : null;
-			String SORT_ORDER = "date DESC";
-
-			cursor = ctx.getContentResolver().query(uri, new String[] { "_id", "thread_id", "address", "person", "date", "body", "read" },
-					WHERE_CONDITION, null, SORT_ORDER);
-
-			cursor.moveToFirst();
-
-			long messageId = cursor.getLong(0);
-			long threadId = cursor.getLong(1);
-			String address = cursor.getString(2);
-			long contactId = cursor.getLong(3);
-			long date = cursor.getLong(4);
-			String messageBody = cursor.getString(5);
-
-			Message message = new Message(messageId, threadId, address, contactId, date, messageBody);
-			db.insertSpam(message);
-
-			//System.out.println(messageId + " " + threadId + " " + address + " " + contactId + " " + date + " " + messageBody);
-
-			ContentValues values = new ContentValues();
-			values.put("read", 1);
-			ctx.getContentResolver().update(Uri.parse("content://sms/conversations/" + threadId), values, "_id=?",
-					new String[] { String.valueOf(messageId) });
-
-			ctx.getContentResolver()
-					.delete(Uri.parse("content://sms/conversations/" + threadId), "_id=?", new String[] { String.valueOf(messageId) });
-
-			cursor.close();
-			db.close();
-
-			// display a notification for caught spam
-			mNotificationManager = (NotificationManager) ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-			Notification notifySpam = new Notification(R.drawable.ic_menu_add, "SpamGuarded!", System.currentTimeMillis());
-			
-			Intent intent= new Intent(ctx, Main.class);
-			intent.putExtra("defaultTab", 3);
-			PendingIntent myIntent = PendingIntent.getActivity(ctx, 0, intent , 0);
-			notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
-			notifySpam.setLatestEventInfo(ctx, "SpamGuard", "Click to view spams", myIntent);
-			mNotificationManager.notify(SIMPLE_NOTFICATION_ID, notifySpam);
-		}
-	}
 
 	private SmsMessage[] getMessagesFromIntent(Intent intent) {
 		SmsMessage retMsgs[] = null;
@@ -155,6 +83,30 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 			c.close();
 		}
 	}
+	
+	public void insertTokens(String[] ngrams, int type, String feature)
+	{
+		for (String str : ngrams) {
+			long id = db.findToken(str, feature);
+			if (id == -1) {
+				Token t = new Token(str);
+				if (type == 1) {
+					t.markSpam();
+				} else {
+					t.markClean();
+				}
+				db.insertToken(t, feature);
+			} else {
+				ContentValues values = new ContentValues();
+				if (type == 1) {
+					values.put("spamCount", db.getSpamCount(str, feature) + 1);
+				} else {
+					values.put("cleanCount", db.getCleanCount(str, feature) + 1);
+				}
+				db.updateToken(id, values, feature);
+			}
+		}
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
@@ -164,17 +116,20 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 		blockNonnumeric = sp.getBoolean("block_nonnumeric", false);
 		blockAllcapital = sp.getBoolean("block_allcapital", false);
 		toggleSvm = sp.getBoolean("toggle_svm", true);
-		
+
 		if (toggleApp) {
 			if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
 
-				db = new Database(context);
+				db = Database.getInstance(context);
 				SmsMessage msg[] = getMessagesFromIntent(intent);
 				String sender = msg[0].getDisplayOriginatingAddress();
-				String body = "";
+				body = "";
 				for (int i = 0; i < msg.length; i++) {
 					body = body + msg[i].getDisplayMessageBody();
 				}
+				date = msg[0].getTimestampMillis();
+				String address = msg[0].getOriginatingAddress();
+				Message message = new Message(address, date, body, 0); // at start, incoming sms marked as clean
 
 				// check sender against white/blacklist texts
 				if (!sender.matches("[^+\\d]") && sender.length() >= 7) // if number is conventional, look for matches without country/region code
@@ -289,26 +244,27 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 							allCapital = false;
 						}
 					}
-					
-					if( !isBlacklisted && !nonNumeric && !allCapital && toggleSvm ) {
+
+					if (!isBlacklisted && !nonNumeric && !allCapital && toggleSvm) {
 						Log.i(Constants.DEBUG_TAG, "Starting SVM check for: " + body);
-						SVMSpam svmSpam = SvmManager.getSvm(context);
-						svm_node[] nodes = SvmManager.getSvmNodeFromMessage(body, context);
-						svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, context);
+						SVMSpam svmSpam = new SVMSpam(context);
+						svmSpam.loadSvmModel();
+
+						svm_node[] scaledNodes = SvmManager.getSvmNodeFromMessage(body, context);
+						//svm_node[] scaledNodes = SvmManager.scaleSingleMessage(nodes, context);
 						double result = svmSpam.predictSingle(scaledNodes);
-						
+
 						// if result is 1.0, spam found
-						if(result == 1.0) {
+						if (result == 1.0) {
 							svmResult = true;
 							Log.i(Constants.DEBUG_TAG, "SVM Result : Spam  (" + body + ")");
-						}
-						else{
+						} else {
 							svmResult = false;
 							Log.i(Constants.DEBUG_TAG, "SVM Result : Clean (" + body + ")");
 						}
 						Log.i(Constants.DEBUG_TAG, "Finished SVM check");
 					}
- 				}
+				}
 
 				Log.i("nonNumeric", String.valueOf(nonNumeric));
 				Log.i("allCapital", String.valueOf(allCapital));
@@ -317,14 +273,33 @@ public class SmsIntentReceiver extends BroadcastReceiver {
 
 				// deduce spam or not
 				if (isBlacklisted || nonNumeric || allCapital || svmResult) {
-					
-					Log.i(Constants.DEBUG_TAG,"Marking message as spam. (" + body +")");
+
+					Log.i(Constants.DEBUG_TAG, "Marking message as spam. (" + body + ")");
 					this.abortBroadcast();
-					Runnable r = new SpamThread(context);
-					executor.execute(r);
+					Log.i(Constants.DEBUG_TAG, "abort sonrasi");
+
+					message.setType(1); // mark entry as spam
+
+					// context.startService(new Intent(context, HandleSpam.class));
+					mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+					Notification notifySpam = new Notification(R.drawable.ic_menu_add, "SpamGuarded!", System.currentTimeMillis());
+					Intent notifyIntent = new Intent(context, Main.class);
+					notifyIntent.putExtra("defaultTab", 3);
+					PendingIntent myIntent = PendingIntent.getActivity(context, 0, notifyIntent, 0);
+					notifySpam.flags |= Notification.FLAG_AUTO_CANCEL;
+					notifySpam.setLatestEventInfo(context, "SpamGuard", "Click to view spams", myIntent);
+					mNotificationManager.notify(SIMPLE_NOTFICATION_ID, notifySpam);
 				}
+				BayesianFilterBigram bigramFilter = new BayesianFilterBigram();
+				BayesianFilterTrigram trigramFilter = new BayesianFilterTrigram();
+				String[] bigrams = bigramFilter.returnTokenList(body);
+				String[] trigrams = trigramFilter.returnTokenList(body);
+				insertTokens(bigrams, message.getType(), "bi");
+				insertTokens(trigrams, message.getType(), "tri");
+				
+				db.insertSms(message);
+				db.close();
 			}
-			db.close();
 		}
 	}
 }
