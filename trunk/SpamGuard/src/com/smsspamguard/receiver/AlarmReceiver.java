@@ -30,14 +30,14 @@ public class AlarmReceiver extends BroadcastReceiver {
 			InputFileCreator ifc = new InputFileCreator(context);
 			ifc.createSvmInputs();
 			
-//			try {
-//				FileCopier.backupFiles();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			
 			SVMSpam svmSpam = new SVMSpam(context);
 			svmSpam.createSvmModel();
+			
+			try {
+				FileCopier.backupFiles();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 //		/**
@@ -125,8 +125,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 //		
 //		SVMSpam svmSpam = new SVMSpam(context);
 //		svmSpam.createSvmModel();
-//		Runnable r = new TrainThread(context);
-//		new Thread(r).start();
+		Runnable r = new TrainThread(context);
+		new Thread(r).start();
 	}
 	
 	

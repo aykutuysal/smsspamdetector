@@ -124,9 +124,9 @@ public class Main extends TabActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (db != null) {
-			db.close();
-			Log.i(Constants.DEBUG_TAG, "DB closed by Main");
-		}
+//		if (db != null) {
+//			db.close();
+//			Log.i(Constants.DEBUG_TAG, "DB closed by Main");
+//		}
 	}
 }

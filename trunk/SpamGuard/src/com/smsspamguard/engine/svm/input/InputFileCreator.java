@@ -34,16 +34,16 @@ public class InputFileCreator {
 
 	public void createSvmInputs() {
 
-//		Cursor cursor = db.searchSms("0", 0);
-//		if (cursor.getCount() == 0) {
-//			registerDefaultcorpus();
-//		}
-//		cursor.close();
-//
-//		Log.i(Constants.DEBUG_TAG, "Starting bi train");
-//		bigramFilter.train(context, "bi");
-//		Log.i(Constants.DEBUG_TAG, "Starting tri train");
-//		trigramFilter.train(context, "tri");
+		// Cursor cursor = db.searchSms("0", 0);
+		// if (cursor.getCount() == 0) {
+		// registerDefaultcorpus();
+		// }
+		// cursor.close();
+		//
+		// Log.i(Constants.DEBUG_TAG, "Starting bi train");
+		// bigramFilter.train(context, "bi");
+		// Log.i(Constants.DEBUG_TAG, "Starting tri train");
+		// trigramFilter.train(context, "tri");
 
 		Log.i(Constants.DEBUG_TAG, "Starting createInputData");
 		createInputData(Constants.SVM_INPUT_FILENAME);
@@ -121,7 +121,6 @@ public class InputFileCreator {
 				// double biCleanFeature = 0.0;
 				double count = 0.0;
 				for (String tokenKey : bigramTokens) {
-					Log.i(Constants.DEBUG_TAG, "Token: \'" + tokenKey + "\'");
 					double bigramRatio = db.getRatio(tokenKey, "bi");
 
 					// if (bigramToken != null) {
@@ -130,11 +129,10 @@ public class InputFileCreator {
 					count++;
 					// }
 				}
-				bigramFeature /= count;
-				// if (count > 0) {
-				// bigramFeature /= count;
-				// biCleanFeature /= count;
-				// }
+
+				if (count > 0) {
+					bigramFeature /= count;
+				}
 
 				// calculate trigram features triSpamFeature, triCleanFeauture
 				String[] trigramTokens = trigramFilter.returnTokenList(body);
@@ -151,11 +149,9 @@ public class InputFileCreator {
 					count++;
 					// }
 				}
-				trigramFeature /= count;
-				// if (count > 0) {
-				// trigramFeature /= count;
-				// // triCleanFeature /= count;
-				// }
+				if (count > 0) {
+					trigramFeature /= count;
+				}
 
 				String writeLine = type + " 1:" + bigramFeature + " 2:" + trigramFeature + /*
 																							 * " 3:" + biSpamFeature + " 4:" + biCleanFeature + " 5:"
