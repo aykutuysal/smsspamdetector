@@ -162,7 +162,7 @@ public class BlacklistText extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.db = new Database(this);
+		this.db = Database.getInstance(this);
 		listCursor = db.getList("bc");
 		String[] from = new String[] { listCursor.getColumnName(1) };
 		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, listCursor, from, new int[] { android.R.id.text1 });
@@ -174,9 +174,9 @@ public class BlacklistText extends ListActivity {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		if (db != null) {
-			db.close();
-		}
+//		if (db != null) {
+//			db.close();
+//		}
 		if(listCursor != null) {
 			listCursor.close();
 		}

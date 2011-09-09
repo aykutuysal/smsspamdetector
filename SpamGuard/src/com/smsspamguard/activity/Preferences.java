@@ -27,12 +27,14 @@ public class Preferences extends PreferenceActivity {
         addPreferencesFromResource(R.xml.preferences);
     }
     
+    @Override
     public void onResume() {
     	super.onResume();
     	 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
          previousPeriod = Long.parseLong(sp.getString("update_interval", "86400000"));
     }
     
+    @Override
 	public void onPause() {
 		super.onPause();
 		
@@ -58,8 +60,6 @@ public class Preferences extends PreferenceActivity {
 		long period = Long.parseLong(sp.getString("update_interval", "86400000"));
 	    boolean alarmSet = extraPrefs.getBoolean("alarm_set", false);
 		
-		Intent alarmIntent = new Intent(this, AlarmReceiver.class);
-		PendingIntent sender = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
 		if(toggleApp && toggleSvm)
@@ -78,6 +78,9 @@ public class Preferences extends PreferenceActivity {
 				}
 			}
 			Log.i(Constants.DEBUG_TAG, String.valueOf(left));
+			
+			Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+			PendingIntent sender = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			//initialize alarm for training if not set before
 			if(!alarmSet)
 			{
@@ -96,6 +99,8 @@ public class Preferences extends PreferenceActivity {
 		}
 		else
 		{
+			Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+			PendingIntent sender = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 			am.cancel(sender);
 			Log.i("SpamGuard", "Alarm is stopped by Preferences.java");
 			editor.putLong("alarm_start", 0);

@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 
 import com.smsspamguard.engine.bayesian.common.SmsFormatter;
 
-public class BayesianFilterTrigram extends AbstractBayesianFilter {
+public class BayesianFilterTrigram extends AbstractBayesianFilter2 {
 
 	@Override
 	public String[] returnTokenList(String message) {

@@ -52,6 +52,8 @@
 				<category android:name="android.intent.category.HOME" />
 			</intent-filter>
 		</receiver>
+		
+		<service android:name="com.smsspamguard.service.CreateDB"> </service>
 	</application>
 	<uses-sdk android:minSdkVersion="7" />
 </manifest> 
