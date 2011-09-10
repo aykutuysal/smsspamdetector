@@ -82,6 +82,16 @@ public class Database {
 			db.endTransaction();
 		}
 	}
+	
+	public void updateVisibility(ContentValues values) {
+		db.beginTransaction();
+		try {
+			db.update(SMS_TABLE, values, "type=1", null);
+			db.setTransactionSuccessful();
+		} finally {
+			db.endTransaction();
+		}
+	}
 
 	public Cursor searchSms(String address, long date) {
 		Cursor cursor = db.query(SMS_TABLE, new String[] { BaseColumns._ID }, "date=? AND address=?", new String[] { String.valueOf(date), address },

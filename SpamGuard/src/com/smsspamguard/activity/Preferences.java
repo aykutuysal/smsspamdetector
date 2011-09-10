@@ -84,17 +84,18 @@ public class Preferences extends PreferenceActivity {
 			//initialize alarm for training if not set before
 			if(!alarmSet)
 			{
-				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis() + left, period, sender);
-				editor.putLong("alarm_start", cal.getTimeInMillis() + left);
+				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis() + period, period, sender);
+				editor.putLong("alarm_start", cal.getTimeInMillis());
 				editor.putBoolean("alarm_set", true);
 				editor.commit();
-			    Log.i("SpamGuard", "Alarm is set by Preferences.java");
+			    Log.i("SpamGuard", "Alarm is started by Preferences.java");
 			}
 			
 			//change period
 			if(period != previousPeriod)
 			{
 				am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis() + left, period, sender);
+				Log.i("SpamGuard", "Alarm is modified by Preferences.java");
 			}
 		}
 		else

@@ -91,6 +91,12 @@ public class Spams extends ListActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case R.id.delete_spams:
+			ContentValues values = new ContentValues();
+			values.put("deleted", 1);
+			db.updateVisibility(values);
+			cursorAdapter.getCursor().requery();
+			return true;
 		case R.id.add_spam_from_inbox:
 			Intent intent = new Intent(this, SpamFromInbox.class);
 			startActivityForResult(intent, 0);

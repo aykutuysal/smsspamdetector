@@ -4,7 +4,6 @@
 
     <string-array name="updateInterval">
     	<item name="180000">Every 3 minutes</item>
-    	<item name="21600000">Every 6 hours</item>
         <item name="43200000">Every 12 hours</item>
         <item name="86400000">Every day</item>
         <item name="604800000">Every week</item>
