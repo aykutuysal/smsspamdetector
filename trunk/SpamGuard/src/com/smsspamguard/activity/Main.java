@@ -1,7 +1,10 @@
 package com.smsspamguard.activity;
 
 import java.io.IOException;
+import java.util.Calendar;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TabActivity;
 import android.content.Context;
@@ -11,12 +14,14 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.TabHost;
 
 import com.smsspamguard.R;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.db.Database;
+import com.smsspamguard.receiver.AlarmReceiver;
 
 public class Main extends TabActivity {
 	
@@ -104,7 +109,22 @@ public class Main extends TabActivity {
 			Runnable r = new TrainThread(this);
 			new Thread(r).start();
 			
+			SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 			SharedPreferences.Editor editor = extraPrefs.edit();
+			Calendar cal = Calendar.getInstance();
+			long period = Long.parseLong(sp.getString("update_interval", "86400000"));
+			
+			AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+			Intent alarmIntent = new Intent(this, AlarmReceiver.class);
+			PendingIntent sender = PendingIntent.getBroadcast(this, 0, alarmIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+			
+			am.setInexactRepeating(AlarmManager.RTC, cal.getTimeInMillis() + period, period, sender);
+			editor.putLong("alarm_start", cal.getTimeInMillis() + period);
+			editor.putBoolean("alarm_set", true);
+			editor.commit();
+		    Log.i("SpamGuard", "Alarm is started at first run");
+			
+			
 			editor.putBoolean("assetsCopied", true);
 			editor.commit();
 		}

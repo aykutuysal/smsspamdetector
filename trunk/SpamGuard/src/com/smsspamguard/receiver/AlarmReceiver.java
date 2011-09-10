@@ -1,13 +1,10 @@
 package com.smsspamguard.receiver;
 
-import java.io.IOException;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.smsspamguard.activity.FileCopier;
 import com.smsspamguard.constant.Constants;
 import com.smsspamguard.engine.svm.core.SVMSpam;
 import com.smsspamguard.engine.svm.input.InputFileCreator;
@@ -33,11 +30,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 			SVMSpam svmSpam = new SVMSpam(context);
 			svmSpam.createSvmModel();
 			
-			try {
-				FileCopier.backupFiles();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+//			try {
+//				FileCopier.backupFiles();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
 		}
 		
 //		/**
