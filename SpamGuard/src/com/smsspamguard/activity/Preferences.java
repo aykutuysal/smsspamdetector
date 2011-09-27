@@ -30,7 +30,7 @@ public class Preferences extends PreferenceActivity {
     @Override
     public void onResume() {
     	super.onResume();
-    	 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+    	 SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
          previousPeriod = Long.parseLong(sp.getString("update_interval", "86400000"));
     }
     
@@ -38,7 +38,7 @@ public class Preferences extends PreferenceActivity {
 	public void onPause() {
 		super.onPause();
 		
-		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		SharedPreferences extraPrefs = getSharedPreferences(Constants.PREFS_NAME, 0);
 		SharedPreferences.Editor editor = extraPrefs.edit();
