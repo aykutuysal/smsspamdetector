@@ -57,7 +57,7 @@ public class Spams extends ListActivity {
 		db = Database.getInstance(this);
 		Log.i(Constants.DEBUG_TAG, "DB opened by Spam onResume");
 		spamCursor = db.getSpams();
-		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, spamCursor, new String[] { "body" },
+		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_multiple_choice, spamCursor, new String[] { "body" },
 				new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
 		startManagingCursor(spamCursor);

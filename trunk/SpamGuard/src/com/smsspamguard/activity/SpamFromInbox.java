@@ -1,5 +1,9 @@
 package com.smsspamguard.activity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 import android.app.ListActivity;
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -10,6 +14,7 @@ import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
 import com.smsspamguard.R;
@@ -25,6 +30,7 @@ public class SpamFromInbox extends ListActivity {
 	private Cursor cursor;
 	private SimpleCursorAdapter cursorAdapter;
 	private Database db;
+	private HashSet<Long> idList;
 
 	public void insertTokens(String[] ngrams, String feature, boolean inDB) {
 		for (String str : ngrams) {
@@ -48,6 +54,7 @@ public class SpamFromInbox extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		idList = new HashSet<Long>();
 
 		db = Database.getInstance(this);// new Database(getApplicationContext());
 		boolean unreadOnly = false;
@@ -60,7 +67,8 @@ public class SpamFromInbox extends ListActivity {
 		cursor = getContentResolver().query(uri, new String[] { "_id", "thread_id", "address", "date", "body" }, WHERE_CONDITION, null, SORT_ORDER);
 
 		String[] from = new String[] { "body" };
-		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, cursor, from, new int[] { android.R.id.text1 });
+		cursorAdapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_multiple_choice, cursor, from,
+				new int[] { android.R.id.text1 });
 		this.setListAdapter(cursorAdapter);
 		startManagingCursor(cursor);
 		registerForContextMenu(getListView());
@@ -78,6 +86,18 @@ public class SpamFromInbox extends ListActivity {
 		super.onDestroy();
 		if (cursor != null) {
 			cursor.close();
+		}
+	}
+
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		super.onListItemClick(l, v, position, id);
+		if (idList.contains(id)) {
+			idList.remove(id);
+		}
+		else
+		{
+			idList.add(id);
 		}
 	}
 
